@@ -1,5 +1,9 @@
 // Generated from FOOL.g4 by ANTLR 4.4
 
+	import java.util.HashMap;
+	import ast.*;
+
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -11,30 +15,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
  * of the available methods.
  */
 public class FOOLBaseListener implements FOOLListener {
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCllist(@NotNull FOOLParser.CllistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCllist(@NotNull FOOLParser.CllistContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterArrow(@NotNull FOOLParser.ArrowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitArrow(@NotNull FOOLParser.ArrowContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -52,13 +32,13 @@ public class FOOLBaseListener implements FOOLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterHotype(@NotNull FOOLParser.HotypeContext ctx) { }
+	@Override public void enterType(@NotNull FOOLParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitHotype(@NotNull FOOLParser.HotypeContext ctx) { }
+	@Override public void exitType(@NotNull FOOLParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -83,18 +63,6 @@ public class FOOLBaseListener implements FOOLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFactor(@NotNull FOOLParser.FactorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterType(@NotNull FOOLParser.TypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitType(@NotNull FOOLParser.TypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

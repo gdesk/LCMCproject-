@@ -1,8 +1,7 @@
-// Generated from FOOLold.g4 by ANTLR 4.4
+// Generated from FOOL.g4 by ANTLR 4.4
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import ast.*;
+	import java.util.HashMap;
+	import ast.*;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -21,7 +20,7 @@ public class FOOLLexer extends Lexer {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		COLON=1, COMMA=2, ASS=3, SEMIC=4, EQ=5, PLUS=6, TIMES=7, INTEGER=8, TRUE=9, 
+		SEMIC=1, COLON=2, COMMA=3, EQ=4, ASS=5, PLUS=6, TIMES=7, INTEGER=8, TRUE=9, 
 		FALSE=10, LPAR=11, RPAR=12, CLPAR=13, CRPAR=14, IF=15, THEN=16, ELSE=17, 
 		PRINT=18, LET=19, IN=20, VAR=21, FUN=22, INT=23, BOOL=24, ID=25, WHITESP=26, 
 		COMMENT=27, ERR=28;
@@ -37,14 +36,14 @@ public class FOOLLexer extends Lexer {
 		"'\\u0019'", "'\\u001A'", "'\\u001B'", "'\\u001C'"
 	};
 	public static final String[] ruleNames = {
-		"COLON", "COMMA", "ASS", "SEMIC", "EQ", "PLUS", "TIMES", "INTEGER", "TRUE", 
+		"SEMIC", "COLON", "COMMA", "EQ", "ASS", "PLUS", "TIMES", "INTEGER", "TRUE", 
 		"FALSE", "LPAR", "RPAR", "CLPAR", "CRPAR", "IF", "THEN", "ELSE", "PRINT", 
 		"LET", "IN", "VAR", "FUN", "INT", "BOOL", "ID", "WHITESP", "COMMENT", 
 		"ERR"
 	};
 
 
-	int lexicalErrors=0;
+		int lexicalErrors=0;
 
 
 	public FOOLLexer(CharStream input) {
@@ -53,7 +52,7 @@ public class FOOLLexer extends Lexer {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "FOOLold.g4"; }
+	public String getGrammarFileName() { return "FOOL.g4"; }
 
 	@Override
 	public String[] getTokenNames() { return tokenNames; }
@@ -88,7 +87,7 @@ public class FOOLLexer extends Lexer {
 		"\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22"+
 		"\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31"+
 		"\t\31\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\3\2\3\2\3\3\3\3\3\4\3\4"+
-		"\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\b\3\b\3\t\5\tL\n\t\3\t\3\t\7\tP\n\t\f\t"+
+		"\3\5\3\5\3\5\3\6\3\6\3\7\3\7\3\b\3\b\3\t\5\tL\n\t\3\t\3\t\7\tP\n\t\f\t"+
 		"\16\tS\13\t\3\t\5\tV\n\t\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\13"+
 		"\3\13\3\f\3\f\3\r\3\r\3\16\3\16\3\17\3\17\3\20\3\20\3\20\3\21\3\21\3\21"+
 		"\3\21\3\21\3\22\3\22\3\22\3\22\3\22\3\23\3\23\3\23\3\23\3\23\3\23\3\24"+
@@ -105,12 +104,12 @@ public class FOOLLexer extends Lexer {
 		"\2\37\3\2\2\2\2!\3\2\2\2\2#\3\2\2\2\2%\3\2\2\2\2\'\3\2\2\2\2)\3\2\2\2"+
 		"\2+\3\2\2\2\2-\3\2\2\2\2/\3\2\2\2\2\61\3\2\2\2\2\63\3\2\2\2\2\65\3\2\2"+
 		"\2\2\67\3\2\2\2\29\3\2\2\2\3;\3\2\2\2\5=\3\2\2\2\7?\3\2\2\2\tA\3\2\2\2"+
-		"\13C\3\2\2\2\rF\3\2\2\2\17H\3\2\2\2\21U\3\2\2\2\23W\3\2\2\2\25\\\3\2\2"+
+		"\13D\3\2\2\2\rF\3\2\2\2\17H\3\2\2\2\21U\3\2\2\2\23W\3\2\2\2\25\\\3\2\2"+
 		"\2\27b\3\2\2\2\31d\3\2\2\2\33f\3\2\2\2\35h\3\2\2\2\37j\3\2\2\2!m\3\2\2"+
 		"\2#r\3\2\2\2%w\3\2\2\2\'}\3\2\2\2)\u0081\3\2\2\2+\u0084\3\2\2\2-\u0088"+
 		"\3\2\2\2/\u008c\3\2\2\2\61\u0090\3\2\2\2\63\u0095\3\2\2\2\65\u009d\3\2"+
-		"\2\2\67\u00a3\3\2\2\29\u00b1\3\2\2\2;<\7<\2\2<\4\3\2\2\2=>\7.\2\2>\6\3"+
-		"\2\2\2?@\7?\2\2@\b\3\2\2\2AB\7=\2\2B\n\3\2\2\2CD\7?\2\2DE\7?\2\2E\f\3"+
+		"\2\2\67\u00a3\3\2\2\29\u00b1\3\2\2\2;<\7=\2\2<\4\3\2\2\2=>\7<\2\2>\6\3"+
+		"\2\2\2?@\7.\2\2@\b\3\2\2\2AB\7?\2\2BC\7?\2\2C\n\3\2\2\2DE\7?\2\2E\f\3"+
 		"\2\2\2FG\7-\2\2G\16\3\2\2\2HI\7,\2\2I\20\3\2\2\2JL\7/\2\2KJ\3\2\2\2KL"+
 		"\3\2\2\2LM\3\2\2\2MQ\4\63;\2NP\4\62;\2ON\3\2\2\2PS\3\2\2\2QO\3\2\2\2Q"+
 		"R\3\2\2\2RV\3\2\2\2SQ\3\2\2\2TV\7\62\2\2UK\3\2\2\2UT\3\2\2\2V\22\3\2\2"+

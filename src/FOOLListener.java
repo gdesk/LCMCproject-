@@ -1,4 +1,8 @@
 // Generated from FOOL.g4 by ANTLR 4.4
+
+	import java.util.HashMap;
+	import ast.*;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -7,26 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  * {@link FOOLParser}.
  */
 public interface FOOLListener extends ParseTreeListener {
-	/**
-	 * Enter a parse tree produced by {@link FOOLParser#cllist}.
-	 * @param ctx the parse tree
-	 */
-	void enterCllist(@NotNull FOOLParser.CllistContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link FOOLParser#cllist}.
-	 * @param ctx the parse tree
-	 */
-	void exitCllist(@NotNull FOOLParser.CllistContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link FOOLParser#arrow}.
-	 * @param ctx the parse tree
-	 */
-	void enterArrow(@NotNull FOOLParser.ArrowContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link FOOLParser#arrow}.
-	 * @param ctx the parse tree
-	 */
-	void exitArrow(@NotNull FOOLParser.ArrowContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FOOLParser#term}.
 	 * @param ctx the parse tree
@@ -38,15 +22,15 @@ public interface FOOLListener extends ParseTreeListener {
 	 */
 	void exitTerm(@NotNull FOOLParser.TermContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link FOOLParser#hotype}.
+	 * Enter a parse tree produced by {@link FOOLParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void enterHotype(@NotNull FOOLParser.HotypeContext ctx);
+	void enterType(@NotNull FOOLParser.TypeContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link FOOLParser#hotype}.
+	 * Exit a parse tree produced by {@link FOOLParser#type}.
 	 * @param ctx the parse tree
 	 */
-	void exitHotype(@NotNull FOOLParser.HotypeContext ctx);
+	void exitType(@NotNull FOOLParser.TypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FOOLParser#exp}.
 	 * @param ctx the parse tree
@@ -67,16 +51,6 @@ public interface FOOLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFactor(@NotNull FOOLParser.FactorContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link FOOLParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void enterType(@NotNull FOOLParser.TypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link FOOLParser#type}.
-	 * @param ctx the parse tree
-	 */
-	void exitType(@NotNull FOOLParser.TypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FOOLParser#value}.
 	 * @param ctx the parse tree
