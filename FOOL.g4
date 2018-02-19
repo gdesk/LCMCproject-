@@ -27,10 +27,30 @@ prog returns [Node ast]:
 	{	HashMap<String,STentry> hm = new HashMap<String,STentry> ();
 		symTable.add(hm);
 	}
-	( e=exp {$ast = new ProgNode($e.ast);}
-	| LET d=declist IN e=exp 
-		{ $ast = new ProgLetInNode($d.astlist,$e.ast); }
-	) {	symTable.remove(nestingLevel); } SEMIC ;
+	( 
+		e=exp {
+			$ast = new ProgNode($e.ast);
+		}
+	|  LET (cllist (declist)? | d=declist) IN e=exp 
+		{ 
+			$ast = new ProgLetInNode($d.astlist,$e.ast);
+		}
+	) 
+	{	
+		symTable.remove(nestingLevel);
+	}  SEMIC ;
+
+//lista di funzioni 
+cllist  : ( CLASS ID (EXTENDS ID)? LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR    
+              CLPAR
+                 ( FUN ID COLON type LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
+	                     (LET (VAR ID COLON type ASS exp SEMIC)* IN)? exp 
+        	       SEMIC
+        	     )*                
+              CRPAR
+          )+
+        ; 
+
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<Node> astlist]:
@@ -99,13 +119,24 @@ declist	returns [ArrayList<Node> astlist]:
 				}
 		) SEMIC 
 	)+;
+	
+hotype  : type
+        | arrow 
+        ;
+        
+        
+arrow 	: LPAR (hotype (COMMA hotype)* )? RPAR ARROW type ;   
 
 type returns [Node ast]	: 
 	INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
 	| BOOL	{$ast = new BoolTypeNode();}
 	;
 
-exp	returns [Node ast]: t=term {$ast = $t.ast;} (PLUS t=term {$ast = new PlusNode($ast,$t.ast);})* ;
+exp	returns [Node ast]: t=term {$ast = $t.ast;}
+			(  PLUS t=term {$ast = new PlusNode($ast,$t.ast);}
+			 | MINUS t=term {$ast = new MinusNode($ast, $t.ast);}
+			 | OR t=term {$ast = new OrNode($ast, $t.ast);}
+			)* ;
 
 term returns [Node ast]: f=factor {$ast = $f.ast;} (TIMES f=factor {$ast = new MultNode($ast,$f.ast);})* ;
 
@@ -144,30 +175,44 @@ value returns [Node ast]	:
 /*------------------------------------------------------------------
  * LEXER RULES
  *------------------------------------------------------------------*/
-SEMIC	: ';' ;
-COLON	: ':' ;
-COMMA 	: ',' ;
-EQ		: '==' ;
-ASS		: '=' ;
-PLUS	: '+' ;
-TIMES	: '*' ;
-INTEGER : ('-')?(('1'..'9')('0'..'9')*) | '0';
-TRUE	: 'true' ;
-FALSE	: 'false' ;
+PLUS  	: '+' ;
+MINUS   : '-' ;
+TIMES   : '*' ;
+DIV 	: '/' ;
 LPAR	: '(' ;
 RPAR	: ')' ;
-CLPAR 	: '{' ;
+CLPAR	: '{' ;
 CRPAR	: '}' ;
-IF		: 'if' ;
-THEN	: 'then' ;
+SEMIC 	: ';' ;
+COLON   : ':' ; 
+COMMA	: ',' ;
+DOT	    : '.' ;
+OR	    : '||' ;
+AND	    : '&&' ;
+NOT	    : '!' ;
+GE	    : '>=' ;
+LE	    : '<=' ;
+EQ	    : '==' ;	
+ASS	    : '=' ;
+TRUE	: 'true' ;
+FALSE	: 'false' ;
+IF	    : 'if' ;
+THEN	: 'then';
 ELSE	: 'else' ;
 PRINT	: 'print' ;
-LET		: 'let' ;
-IN		: 'in' ;
-VAR		: 'var' ;
-FUN		: 'fun' ;
-INT		: 'int' ;
+LET     : 'let' ;	
+IN      : 'in' ;	
+VAR     : 'var' ;
+FUN	    : 'fun' ; 
+CLASS	: 'class' ; 
+EXTENDS : 'extends' ;	
+NEW 	: 'new' ;	
+NULL    : 'null' ;	  
+INT	    : 'int' ;
 BOOL	: 'bool' ;
+ARROW   : '->' ; 	
+INTEGER : '0' | ('-')?(('1'..'9')('0'..'9')*) ; 
+
 
 ID		: ('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')* ;
 
