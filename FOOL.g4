@@ -125,7 +125,14 @@ hotype returns [Node ast] :
         
         
 arrow returns [Node ast]	: 
-		  LPAR (hotype (COMMA hotype)* )? RPAR ARROW type ;   
+		  LPAR (h=hotype 
+		  {ArrowNode arrNode = new ArrowNode($h.ast);
+		  	
+		  }
+		  	
+		  	(COMMA hotype)*
+		  )? RPAR ARROW type
+		  ;   
 
 type returns [Node ast]	: 
 	  	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
