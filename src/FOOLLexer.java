@@ -43,6 +43,7 @@ public class FOOLLexer extends Lexer {
 	};
 
 
+
 		int lexicalErrors=0;
 
 

@@ -53,10 +53,11 @@ public class FOOLParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
+
 		private int nestingLevel = 0;
-		// Array di tabelle dove l'indice dell'array � il livello sintattico, ossia il livello di scope, indice 0 = dichiarazioni globali, indice 1 = dichiarazioni locali (mappano identificatori con i valori)
-		ArrayList<HashMap<String,STEntry>> symTable = new ArrayList<HashMap<String,STEntry>>();
-		// Il livello dell'ambiente con dichiarazioni pi� esterne � 0 (nelle slide � 1); il fronte della lista di tabelle � "symTable.get(nestingLevel)"
+		/* Array di tabelle dove l'indice dell'array � il livello sintattico, ossia il livello di scope, indice 0 = dichiarazioni globali, indice 1 = dichiarazioni locali (mappano identificatori con i valori) */
+		ArrayList<HashMap<String,STentry>> symTable = new ArrayList<HashMap<String,STentry>>();
+		/* Il livello dell'ambiente con dichiarazioni pi� esterne � 0 (nelle slide � 1); il fronte della lista di tabelle � "symTable.get(nestingLevel)" */
 
 	public FOOLParser(TokenStream input) {
 		super(input);
@@ -79,14 +80,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_prog; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterProg(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitProg(this);
-		}
 	}
 
 	public final ProgContext prog() throws RecognitionException {
@@ -95,7 +88,7 @@ public class FOOLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-				HashMap<String,STEntry> hm = new HashMap<String,STEntry> ();
+				HashMap<String,STentry> hm = new HashMap<String,STentry> ();
 					symTable.add(hm);
 				
 			setState(24);
@@ -213,14 +206,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_declist; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterDeclist(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitDeclist(this);
-		}
 	}
 
 	public final DeclistContext declist() throws RecognitionException {
@@ -231,7 +216,7 @@ public class FOOLParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 				((DeclistContext)_localctx).astlist =  new ArrayList<Node>();
-					int offset = -2; // Indice di convenzione di inizio (che viene decrementato)
+					int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */ 
 				
 			setState(78); 
 			_errHandler.sync(this);
@@ -251,10 +236,10 @@ public class FOOLParser extends Parser {
 					setState(35); ((DeclistContext)_localctx).e = exp();
 						VarNode v = new VarNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).t.ast,((DeclistContext)_localctx).e.ast);
 									_localctx.astlist.add(v);
-									HashMap<String,STEntry> hm = symTable.get(nestingLevel); // Tabella del livello corrente (detta tabella del fronte)
-									// Verificare che nello scope attuale (il fronte della tabella), la variabile sia gi� stata dichiarata. "put" sostituisce, ma se la chiave era gi� occupata restituisce la coppia vecchia, altrimenti null.
-									if(hm.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STEntry(nestingLevel,((DeclistContext)_localctx).t.ast,offset--)) != null) {
-										// Errore identificatore (variabile) gi� dichiarata
+									HashMap<String,STentry> hm = symTable.get(nestingLevel); /* Tabella del livello corrente (detta tabella del fronte) */
+									/* Verificare che nello scope attuale (il fronte della tabella), la variabile sia gi� stata dichiarata. "put" sostituisce, ma se la chiave era gi� occupata restituisce la coppia vecchia, altrimenti null.*/ 
+									if(hm.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STentry(nestingLevel,((DeclistContext)_localctx).t.ast,offset--)) != null) {
+										/*Errore identificatore (variabile) gi� dichiarata*/
 										System.out.println("Var id" + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null) + " at line " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getLine():0) + " already declared.");
 										System.exit(0);
 									};
@@ -270,16 +255,16 @@ public class FOOLParser extends Parser {
 						
 									FunNode f = new FunNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).t.ast);
 									_localctx.astlist.add(f);
-									HashMap<String,STEntry> hm = symTable.get(nestingLevel);
-									// Verificare che nello scope attuale (il fronte della tabella), la funzione sia gi� stata dichiarata. "put" sostituisce, ma se la chiave era gi� occupata restituisce la coppia vecchia, altrimenti null.
-									STEntry entry = new STEntry(nestingLevel,offset--);
+									HashMap<String,STentry> hm = symTable.get(nestingLevel);
+									/* Verificare che nello scope attuale (il fronte della tabella), la funzione sia gi� stata dichiarata. "put" sostituisce, ma se la chiave era gi� occupata restituisce la coppia vecchia, altrimenti null.*/
+									STentry entry = new STentry(nestingLevel,offset--);
 									if(hm.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), entry) != null) {
 										System.out.println("Fun id" + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null) + " at line " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getLine():0) + " already declared.");
 										System.exit(0);
 									};
-									// Entro dentro un nuovo scope.
-									nestingLevel++;  // Aumento il livello perch� sono all'interno di una funzione (anche i parametri passati alla funzione rientrano nel livello interno)
-									HashMap<String,STEntry> hmn = new HashMap<String,STEntry>();
+									/* Entro dentro un nuovo scope. */
+									nestingLevel++;  /* Aumento il livello perch� sono all'interno di una funzione (anche i parametri passati alla funzione rientrano nel livello interno)*/
+									HashMap<String,STentry> hmn = new HashMap<String,STentry>();
 									symTable.add(hmn);
 								
 					setState(43); match(LPAR);
@@ -293,12 +278,12 @@ public class FOOLParser extends Parser {
 						setState(45); ((DeclistContext)_localctx).i = match(ID);
 						setState(46); match(COLON);
 						setState(47); ((DeclistContext)_localctx).fty = type();
-						 // Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn
+						 /* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 												parTypes.add(((DeclistContext)_localctx).fty.ast);
 												ParNode p1 = new ParNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).fty.ast);
 												f.addPar(p1);
-												if (hmn.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STEntry(nestingLevel,((DeclistContext)_localctx).fty.ast,parOffset++)) != null) {
-													// Errore identificatore (parametro) gi� dichiarato
+												if (hmn.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STentry(nestingLevel,((DeclistContext)_localctx).fty.ast,parOffset++)) != null) {
+													/* Errore identificatore (parametro) gi� dichiarato*/
 													System.out.println("Par ID: " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null) + " at line " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getLine():0) + " already declared");
 													System.exit(0);
 												}
@@ -313,12 +298,12 @@ public class FOOLParser extends Parser {
 							setState(50); ((DeclistContext)_localctx).i = match(ID);
 							setState(51); match(COLON);
 							setState(52); ((DeclistContext)_localctx).ty = type();
-							// Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn
+							/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
 													parTypes.add(((DeclistContext)_localctx).ty.ast);
 													ParNode p2 = new ParNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).ty.ast);
 													f.addPar(p2);
-													if (hmn.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STEntry(nestingLevel,((DeclistContext)_localctx).ty.ast,parOffset++)) != null){
-														//Errore identificatore (parametro) gi� dichiarato
+													if (hmn.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), new STentry(nestingLevel,((DeclistContext)_localctx).ty.ast,parOffset++)) != null){
+														/* Errore identificatore (parametro) gi� dichiarato */
 														System.out.println("Par ID: " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null) + " at line " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getLine():0) + " already declared");
 														System.exit(0);
 													}
@@ -347,7 +332,7 @@ public class FOOLParser extends Parser {
 
 					setState(71); ((DeclistContext)_localctx).e = exp();
 						f.addBody(((DeclistContext)_localctx).e.ast);
-										symTable.remove(nestingLevel--); // Diminuisco nestingLevel perch� esco dallo scope della funzione
+										symTable.remove(nestingLevel--); /* Diminuisco nestingLevel perch� esco dallo scope della funzione */
 									
 					}
 					break;
@@ -382,14 +367,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterType(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitType(this);
-		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -444,14 +421,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exp; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterExp(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitExp(this);
-		}
 	}
 
 	public final ExpContext exp() throws RecognitionException {
@@ -508,14 +477,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_term; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterTerm(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitTerm(this);
-		}
 	}
 
 	public final TermContext term() throws RecognitionException {
@@ -535,7 +496,7 @@ public class FOOLParser extends Parser {
 				{
 				setState(101); match(TIMES);
 				setState(102); ((TermContext)_localctx).f = factor();
-				((TermContext)_localctx).ast =  new TimesNode(_localctx.ast,((TermContext)_localctx).f.ast);
+				((TermContext)_localctx).ast =  new MultNode(_localctx.ast,((TermContext)_localctx).f.ast);
 				}
 				}
 				setState(109);
@@ -572,14 +533,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_factor; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterFactor(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitFactor(this);
-		}
 	}
 
 	public final FactorContext factor() throws RecognitionException {
@@ -599,7 +552,7 @@ public class FOOLParser extends Parser {
 				{
 				setState(112); match(EQ);
 				setState(113); ((FactorContext)_localctx).v = value();
-				((FactorContext)_localctx).ast =  new EqNode(_localctx.ast,((FactorContext)_localctx).v.ast);
+				((FactorContext)_localctx).ast =  new EqualNode(_localctx.ast,((FactorContext)_localctx).v.ast);
 				}
 				}
 				setState(120);
@@ -659,14 +612,6 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_value; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterValue(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitValue(this);
-		}
 	}
 
 	public final ValueContext value() throws RecognitionException {
@@ -736,17 +681,17 @@ public class FOOLParser extends Parser {
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(150); ((ValueContext)_localctx).i = match(ID);
-					// Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)
+					/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/
 							int j = nestingLevel;
-							STEntry entry = null;
+							STentry entry = null;
 							while(j>=0 && entry==null) {
 								entry = symTable.get(j--).get((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null));
 							}
-							if(entry==null) { // Dichiarazione non presente nella symbol table quindi variabile non dichiarata
+							if(entry==null) { /* Dichiarazione non presente nella symbol table quindi variabile non dichiarata*/
 								System.out.println("Id" + (((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null) + " at line " + (((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getLine():0) + " not declared.");
 								System.exit(0);
 							}
-							((ValueContext)_localctx).ast =  new IdNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null), entry, nestingLevel); // Inserito il nestinglevel per verifiche sullo scope della variabile
+							((ValueContext)_localctx).ast =  new IdNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null), entry, nestingLevel); /* Inserito il nestinglevel per verifiche sullo scope della variabile */
 						
 				setState(169);
 				_la = _input.LA(1);
