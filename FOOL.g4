@@ -6,7 +6,6 @@ grammar FOOL;
 }
 
 @parser::members {
-
 	private int nestingLevel = 0;
 	/* Array di tabelle dove l'indice dell'array è il livello sintattico, ossia il livello di scope, indice 0 = dichiarazioni globali, indice 1 = dichiarazioni locali (mappano identificatori con i valori) */
 	ArrayList<HashMap<String,STentry>> symTable = new ArrayList<HashMap<String,STentry>>();
@@ -14,7 +13,6 @@ grammar FOOL;
 }
 
 @lexer::members {
-
 	int lexicalErrors=0;
 }
 
@@ -120,36 +118,38 @@ declist	returns [ArrayList<Node> astlist]:
 		) SEMIC 
 	)+;
 	
-hotype  : type
-        | arrow 
+hotype returns [Node ast] : 
+		  t=type {$ast = $t.ast;}
+        | a=arrow {$ast = $a.ast;}
         ;
         
         
-arrow 	: LPAR (hotype (COMMA hotype)* )? RPAR ARROW type ;   
+arrow returns [Node ast]	: 
+		  LPAR (hotype (COMMA hotype)* )? RPAR ARROW type ;   
 
 type returns [Node ast]	: 
-	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
-	| BOOL	{$ast = new BoolTypeNode();}
-	| ID
-	;
+	  	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
+		| BOOL	{$ast = new BoolTypeNode();}
+		| ID	{$ast = new IdTypeNode();}
+		  ;
 
 exp	returns [Node ast]: t=term {$ast = $t.ast;}
-			(  PLUS t=term {$ast = new PlusNode($ast,$t.ast);}
-			 | MINUS t=term {$ast = new MinusNode($ast, $t.ast);}
-			 | OR t=term {$ast = new OrNode($ast, $t.ast);}
-			)* ;
+		(  PLUS t=term {$ast = new PlusNode($ast,$t.ast);}
+		 | MINUS t=term {$ast = new MinusNode($ast, $t.ast);}
+		 | OR t=term {$ast = new OrNode($ast, $t.ast);}
+		)* ;
 
 term returns [Node ast]: f=factor {$ast = $f.ast;} 
-			(  TIMES f=factor {$ast = new MultNode($ast,$f.ast);}
-			 | DIV f=factor {$ast = new DivNode($ast,$f.ast)}
-			 | AND f=factor{ $ast = new AndNode($ast,$f.ast)}
-			)* ;
+		(  TIMES f=factor {$ast = new MultNode($ast,$f.ast);}
+		 | DIV f=factor {$ast = new DivNode($ast,$f.ast);}
+		 | AND f=factor{ $ast = new AndNode($ast,$f.ast);}
+		)* ;
 
 factor returns [Node ast] : v=value {$ast = $v.ast;}
-			(  EQ v=value {$ast = new EqualNode($ast,$v.ast);}
-			 | GE v=value {$ast = new GENode($ast,$v.ast);}
-			 | LE v=value {$ast = new LENode($ast,$v.ast);}
-			)* ;
+		(  EQ v=value {$ast = new EqualNode($ast,$v.ast);}
+		 | GE v=value {$ast = new GENode($ast,$v.ast);}
+		 | LE v=value {$ast = new LENode($ast,$v.ast);}
+		)* ;
 
 value returns [Node ast]	:
 	i = INTEGER	{$ast = new IntNode(Integer.parseInt($i.text));}
