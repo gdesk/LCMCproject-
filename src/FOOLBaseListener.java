@@ -20,6 +20,30 @@ public class FOOLBaseListener implements FOOLListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCllist(@NotNull FOOLParser.CllistContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCllist(@NotNull FOOLParser.CllistContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArrow(@NotNull FOOLParser.ArrowContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArrow(@NotNull FOOLParser.ArrowContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTerm(@NotNull FOOLParser.TermContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -27,6 +51,18 @@ public class FOOLBaseListener implements FOOLListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTerm(@NotNull FOOLParser.TermContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterHotype(@NotNull FOOLParser.HotypeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitHotype(@NotNull FOOLParser.HotypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

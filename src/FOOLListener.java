@@ -12,6 +12,26 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface FOOLListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link FOOLParser#cllist}.
+	 * @param ctx the parse tree
+	 */
+	void enterCllist(@NotNull FOOLParser.CllistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FOOLParser#cllist}.
+	 * @param ctx the parse tree
+	 */
+	void exitCllist(@NotNull FOOLParser.CllistContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link FOOLParser#arrow}.
+	 * @param ctx the parse tree
+	 */
+	void enterArrow(@NotNull FOOLParser.ArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FOOLParser#arrow}.
+	 * @param ctx the parse tree
+	 */
+	void exitArrow(@NotNull FOOLParser.ArrowContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link FOOLParser#term}.
 	 * @param ctx the parse tree
 	 */
@@ -21,6 +41,16 @@ public interface FOOLListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTerm(@NotNull FOOLParser.TermContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link FOOLParser#hotype}.
+	 * @param ctx the parse tree
+	 */
+	void enterHotype(@NotNull FOOLParser.HotypeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link FOOLParser#hotype}.
+	 * @param ctx the parse tree
+	 */
+	void exitHotype(@NotNull FOOLParser.HotypeContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link FOOLParser#type}.
 	 * @param ctx the parse tree

@@ -128,8 +128,9 @@ hotype  : type
 arrow 	: LPAR (hotype (COMMA hotype)* )? RPAR ARROW type ;   
 
 type returns [Node ast]	: 
-	INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
+	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
 	| BOOL	{$ast = new BoolTypeNode();}
+	| ID
 	;
 
 exp	returns [Node ast]: t=term {$ast = $t.ast;}
@@ -154,9 +155,12 @@ value returns [Node ast]	:
 	i = INTEGER	{$ast = new IntNode(Integer.parseInt($i.text));}
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
+	| NULL
+	| NEW ID LPAR (exp (COMMA exp)* )? RPAR
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
+	| NOT LPAR exp RPAR 
 	| PRINT LPAR e=exp RPAR	{$ast = new PrintNode($e.ast);}
 	| i=ID // Identificatore di una variabile o funzione. Combinazioni possibili ID (variabile) 
 		{	/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/
@@ -178,7 +182,10 @@ value returns [Node ast]	:
 			)*
 		)? RPAR { $ast = new CallNode($i.text,entry,arglist,nestingLevel); } // Inserito il nestinglevel per verifiche sullo scope della funzione chiamata
 		)?
-	;
+	| ID ( LPAR (exp (COMMA exp)* )? RPAR 
+	         | DOT ID LPAR (exp (COMMA exp)* )? RPAR 
+	         )?	 
+	         	;
 
 /*------------------------------------------------------------------
  * LEXER RULES
