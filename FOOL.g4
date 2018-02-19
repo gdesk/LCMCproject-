@@ -138,9 +138,17 @@ exp	returns [Node ast]: t=term {$ast = $t.ast;}
 			 | OR t=term {$ast = new OrNode($ast, $t.ast);}
 			)* ;
 
-term returns [Node ast]: f=factor {$ast = $f.ast;} (TIMES f=factor {$ast = new MultNode($ast,$f.ast);})* ;
+term returns [Node ast]: f=factor {$ast = $f.ast;} 
+			(  TIMES f=factor {$ast = new MultNode($ast,$f.ast);}
+			 | DIV f=factor {$ast = new DivNode($ast,$f.ast)}
+			 | AND f=factor{ $ast = new AndNode($ast,$f.ast)}
+			)* ;
 
-factor returns [Node ast] : v=value {$ast = $v.ast;} (EQ v=value {$ast = new EqualNode($ast,$v.ast);})* ;
+factor returns [Node ast] : v=value {$ast = $v.ast;}
+			(  EQ v=value {$ast = new EqualNode($ast,$v.ast);}
+			 | GE v=value {$ast = new GENode($ast,$v.ast);}
+			 | LE v=value {$ast = new LENode($ast,$v.ast);}
+			)* ;
 
 value returns [Node ast]	:
 	i = INTEGER	{$ast = new IntNode(Integer.parseInt($i.text));}
