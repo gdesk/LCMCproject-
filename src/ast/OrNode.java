@@ -9,7 +9,7 @@ import lib.FOOLlib;
  * @author Giulia Lucchi
  */
 public class OrNode implements Node {
-	
+
 	private Node left;
 	private Node right;
 
@@ -26,19 +26,34 @@ public class OrNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new IntTypeNode()) &&
-				FOOLlib.isSubtype(right.typeCheck(), new IntTypeNode()) ) ) {
+		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new BoolTypeNode()) &&
+				FOOLlib.isSubtype(right.typeCheck(), new BoolTypeNode()) ) ) {
 			System.out.println("Non integers in Or");
 			System.exit(0);	
 		}
-		return new IntTypeNode();
+		return new BoolTypeNode();
 	}
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"or\n"; //???????????????
+		String l1 = FOOLlib.freshLabel();
+		String l2 = FOOLlib.freshLabel();
+		String l3 = FOOLlib.freshLabel();
+
+		return 	  left.codeGeneration()
+				+ "push 0\n" 
+				+ "beq " + l1 + "\n" 
+				+ "push 1\n" 
+				+ "b " + l3 + "\n" 
+				+ l1 + ":\n"
+				+ right.codeGeneration()
+				+ "push 0\n" 
+				+ "beq " + l2 + "\n"
+				+ "push 1\n" 
+				+ "b " + l3 + "\n"
+				+ l2 + ":\n"
+				+ "push 0\n"
+				+ l3 + ":\n";
 	}
 
 

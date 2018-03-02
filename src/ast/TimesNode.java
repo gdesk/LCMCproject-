@@ -8,12 +8,12 @@ import lib.*;
  * @author Giulia Lucchi
  *
  */
-public class MultNode implements Node {
+public class TimesNode implements Node {
 
 	private Node left;
 	private Node right;
 
-	public MultNode (final Node left, final Node right) {
+	public TimesNode (final Node left, final Node right) {
 		this.left=left;
 		this.right=right;
 	}
@@ -36,9 +36,9 @@ public class MultNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"mult\n";
+		return 	  left.codeGeneration()
+				+ right.codeGeneration()
+				+ "mult\n";
 	}
 
 }  

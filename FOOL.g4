@@ -147,7 +147,7 @@ exp	returns [Node ast]: t=term {$ast = $t.ast;}
 		)* ;
 
 term returns [Node ast]: f=factor {$ast = $f.ast;} 
-		(  TIMES f=factor {$ast = new MultNode($ast,$f.ast);}
+		(  TIMES f=factor {$ast = new TimesNode($ast,$f.ast);}
 		 | DIV f=factor {$ast = new DivNode($ast,$f.ast);}
 		 | AND f=factor{ $ast = new AndNode($ast,$f.ast);}
 		)* ;
@@ -162,12 +162,12 @@ value returns [Node ast]	:
 	i = INTEGER	{$ast = new IntNode(Integer.parseInt($i.text));}
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
-	| NULL
+	| NULL		{$ast = new NullNode();}
 	| NEW ID LPAR (exp (COMMA exp)* )? RPAR
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
-	| NOT LPAR exp RPAR 
+	| NOT LPAR e=exp RPAR {$ast = new NotNode($e.ast);}
 	| PRINT LPAR e=exp RPAR	{$ast = new PrintNode($e.ast);}
 	| i=ID // Identificatore di una variabile o funzione. Combinazioni possibili ID (variabile) 
 		{	/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/

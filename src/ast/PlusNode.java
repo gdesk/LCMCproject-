@@ -37,9 +37,9 @@ public class PlusNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"add\n";
+		return 	  left.codeGeneration()
+				+ right.codeGeneration()
+				+ "add\n";
 	}
 
 }  

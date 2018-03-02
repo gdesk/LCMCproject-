@@ -9,7 +9,7 @@ import lib.FOOLlib;
  * @author Giulia Lucchi
  */
 public class DivNode implements Node {
-	
+
 	private Node left;
 	private Node right;
 
@@ -28,7 +28,7 @@ public class DivNode implements Node {
 	public Node typeCheck() {
 		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new IntTypeNode()) &&
 				FOOLlib.isSubtype(right.typeCheck(), new IntTypeNode()) ) ) {
-			System.out.println("Non integers in div");
+			System.out.println("Non integers in division");
 			System.exit(0);	
 		}
 		return new IntTypeNode();
@@ -36,9 +36,9 @@ public class DivNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"div\n";
+		return 	  left.codeGeneration()
+				+ right.codeGeneration()
+				+ "div\n";
 	}
 
 }

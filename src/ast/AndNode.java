@@ -19,19 +19,29 @@ public class AndNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new IntTypeNode()) &&
-				FOOLlib.isSubtype(right.typeCheck(), new IntTypeNode()) ) ) {
-			System.out.println("Non integers in And");
+		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new BoolTypeNode()) &&
+				FOOLlib.isSubtype(right.typeCheck(), new BoolTypeNode()) ) ) {
+			System.out.println("Non Boolean in AND");
 			System.exit(0);	
 		}
-		return new IntTypeNode();
+		return new BoolTypeNode();
 	}
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"and \n"; //???????
+		String l1 = FOOLlib.freshLabel(); 
+		String l2 = FOOLlib.freshLabel();
+		return    left.codeGeneration()
+				+ "push 0\n" 
+				+ "beq " + l1 + "\n" 
+				+ right.codeGeneration()
+				+ "push 0\n"
+				+ "beq " + l1 + "\n" 
+				+ "push 1\n" 
+				+ "b " + l2 + "\n" 
+				+ l1 + ":\n"
+				+ "push 0\n"
+				+ l2 + ":\n";
 	}
 
 }

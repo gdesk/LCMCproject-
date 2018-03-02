@@ -11,7 +11,7 @@ import lib.FOOLlib;
  */
 
 public class MinusNode implements Node {
-	
+
 	private Node left;
 	private Node right;
 
@@ -38,9 +38,9 @@ public class MinusNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		return left.codeGeneration()+
-				right.codeGeneration()+
-				"sub\n";
+		return 	  left.codeGeneration()
+				+ right.codeGeneration()
+				+ "sub\n";
 	}
 
 }
