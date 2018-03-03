@@ -21,9 +21,9 @@ public class FunNode implements Node, DecNode {
 
 	public FunNode (final String i, final Node t) {
 		this.id = i;
-		this.type = t;
-		this.declist = new ArrayList<>(); 
+		this.type = t; 
 		this.parlist = new ArrayList<>();
+		this.symType = new ArrowTypeNode(new ArrayList<>(), type);
 	}
 
 	public void addDec (ArrayList<DecNode> d) {
