@@ -45,9 +45,11 @@ public class FunNode implements Node, DecNode {
 			parlstr+=par.toPrint(indent+"  ");
 		};
 		String declstr="";
-		for (Node dec:declist){
-			declstr+=dec.toPrint(indent+"  ");
-		};
+		if(declist != null) {
+			for (Node dec:declist){
+				declstr+=dec.toPrint(indent+"  ");
+			};
+		}
 		return indent+"Fun:" + id +"\n"
 		+type.toPrint(indent+"  ")
 		+parlstr
@@ -57,9 +59,11 @@ public class FunNode implements Node, DecNode {
 
 	@Override
 	public Node typeCheck() {
-		for (Node dec:declist){
-			dec.typeCheck();
-		};
+		if(declist != null) {
+			for (Node dec:declist){
+				dec.typeCheck();
+			};
+		}
 		if (! FOOLlib.isSubtype(exp.typeCheck(),type)) {
 			System.out.println("Incompatible value for variable");
 			System.exit(0);
@@ -72,25 +76,31 @@ public class FunNode implements Node, DecNode {
 		String funl = FOOLlib.freshFunLabel();
 
 		String declCode="";
-		for (Node dec:declist){
-			declCode+=dec.codeGeneration();
-		};
+		if(declist != null) {
+			for (Node dec:declist){
+				declCode+=dec.codeGeneration();
+			};
+		}
 
 		String popDecl="";
-		for (DecNode dec:declist){
-			if(dec.getSymType() instanceof ArrowTypeNode) {
+		if(declist != null) {
+			for (DecNode dec:declist){
+				if(dec.getSymType() instanceof ArrowTypeNode) {
+					popDecl+="pop\n";
+				}
 				popDecl+="pop\n";
-			}
-			popDecl+="pop\n";
-		};
+			};
+		}
 
 		String popParl="";
-		for (ParNode par:parlist){
-			if(par.getSymType() instanceof ArrowTypeNode) {
+		if(parlist != null) {
+			for (ParNode par:parlist){
+				if(par.getSymType() instanceof ArrowTypeNode) {
+					popParl+="pop\n";
+				}
 				popParl+="pop\n";
-			}
-			popParl+="pop\n";
-		};
+			};
+		}
 
 		FOOLlib.putCode(funl+":\n"+
 				"cfp\n"+ //setta $fp allo $sp
@@ -104,7 +114,8 @@ public class FunNode implements Node, DecNode {
 				popParl + 
 				"sfp\n" + // ripristino il $fp al valore del CL 
 				"lrv\n" + // risultato della funzione sullo stack
-				"lra\n" + "js\n" // salta a $ra
+				"lra\n" + 
+				"js\n" // salta a $ra
 				);	  	  
 
 		return "push "+funl+"\n";

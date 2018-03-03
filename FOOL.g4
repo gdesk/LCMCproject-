@@ -49,7 +49,6 @@ cllist  : ( CLASS ID (EXTENDS ID)? LPAR (ID COLON type (COMMA ID COLON type)* )?
           )+
         ; 
 
-
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<DecNode> astlist]:
 	{	$astlist = new ArrayList<DecNode>();
@@ -57,7 +56,7 @@ declist	returns [ArrayList<DecNode> astlist]:
 	}
 	( 
 		(	VAR i=ID COLON h=hotype ASS e=exp
-			{	VarNode v = new VarNode($i.text,$t.ast,$e.ast);
+			{	VarNode v = new VarNode($i.text,$h.ast,$e.ast);
 				$astlist.add(v);
 				HashMap<String,STentry> hm = symTable.get(nestingLevel); /* Tabella del livello corrente (detta tabella del fronte) */
 				/* Verificare che nello scope attuale (il fronte della tabella), la variabile sia già stata dichiarata. "put" sostituisce, ma se la chiave era già occupata restituisce la coppia vecchia, altrimenti null.*/ 
@@ -87,28 +86,28 @@ declist	returns [ArrayList<DecNode> astlist]:
 			LPAR {	ArrayList<Node> parTypes = new ArrayList<Node>();
 					int parOffset = 1;
 				}
-				(i=ID COLON fty=hotype
+				(i1=ID COLON fty=hotype
 					{ /* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 						parTypes.add($fty.ast);
-						ParNode p1 = new ParNode($i.text,$fty.ast);
+						ParNode p1 = new ParNode($i1.text,$fty.ast);
 						f.addPar(p1);
 						{if($fty.ast instanceof ArrowTypeNode) parOffset++;}
-						if (hmn.put($i.text, new STentry(nestingLevel,$fty.ast,parOffset++)) != null) {
+						if (hmn.put($i1.text, new STentry(nestingLevel,$fty.ast,parOffset++)) != null) {
 							/* Errore identificatore (parametro) già dichiarato*/
-							System.out.println("Par ID: " + $i.text + " at line " + $i.line + " already declared");
+							System.out.println("Par ID: " + $i1.text + " at line " + $i1.line + " already declared");
 							System.exit(0);
 						}
 						
 					}
-				(COMMA i=ID COLON ty=hotype
+				(COMMA i2=ID COLON ty=hotype
 					{/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
 						parTypes.add($ty.ast);
-						ParNode p2 = new ParNode($i.text,$ty.ast);
+						ParNode p2 = new ParNode($i2.text,$ty.ast);
 						f.addPar(p2);
 						{if($ty.ast instanceof ArrowTypeNode) parOffset++;}
-						if (hmn.put($i.text, new STentry(nestingLevel,$ty.ast,parOffset++)) != null){
+						if (hmn.put($i2.text, new STentry(nestingLevel,$ty.ast,parOffset++)) != null){
 							/* Errore identificatore (parametro) già dichiarato */
-							System.out.println("Par ID: " + $i.text + " at line " + $i.line + " already declared");
+							System.out.println("Par ID: " + $i2.text + " at line " + $i2.line + " already declared");
 							System.exit(0);
 						}
 						
@@ -117,8 +116,9 @@ declist	returns [ArrayList<DecNode> astlist]:
 			)?
 			RPAR { entry.addType(new ArrowTypeNode(parTypes,$t.ast)); }
 			(LET d=declist IN {f.addDec($d.astlist);})? e=exp
-				{	f.addBody($e.ast);
+				{	
 					symTable.remove(nestingLevel--); /* Diminuisco nestingLevel perchè esco dallo scope della funzione */
+					f.addBody($e.ast);
 				}
 		) SEMIC 
 	)+;
@@ -137,9 +137,11 @@ arrow returns [Node ast]	:
 		  	{hotypeList.add($h1.ast);}	
 		  	)*
 		  )? RPAR ARROW t=type
-		  {ArrowTypeNode arrNode = new ArrowTypeNode(hotypeList, $t.ast);}
-		  ;   
-
+		  //ArrowTypeNode arrNode = new ArrowTypeNode(hotypeList, $t.ast);}
+		  	{Node arrNode = $t.ast;}
+		  	{$ast = new ArrowTypeNode(hotypeList, arrNode);}
+		  ;
+		 
 type returns [Node ast]	: 
 	  	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
 		| BOOL	{$ast = new BoolTypeNode();}
@@ -147,25 +149,25 @@ type returns [Node ast]	:
 		  ;
 
 exp	returns [Node ast]: t=term {$ast = $t.ast;}
-		(  PLUS t=term {$ast = new PlusNode($ast,$t.ast);}
-		 | MINUS t=term {$ast = new MinusNode($ast, $t.ast);}
-		 | OR t=term {$ast = new OrNode($ast, $t.ast);}
+		(  PLUS p=term {$ast = new PlusNode($ast,$p.ast);}
+		 | MINUS m=term {$ast = new MinusNode($ast, $m.ast);}
+		 | OR o=term {$ast = new OrNode($ast, $o.ast);}
 		)* ;
 
 term returns [Node ast]: f=factor {$ast = $f.ast;} 
-		(  TIMES f=factor {$ast = new TimesNode($ast,$f.ast);}
-		 | DIV f=factor {$ast = new DivNode($ast,$f.ast);}
-		 | AND f=factor{ $ast = new AndNode($ast,$f.ast);}
+		(  TIMES t=factor {$ast = new TimesNode($ast,$t.ast);}
+		 | DIV d=factor {$ast = new DivNode($ast,$d.ast);}
+		 | AND a=factor{ $ast = new AndNode($ast,$a.ast);}
 		)* ;
 
 factor returns [Node ast] : v=value {$ast = $v.ast;}
-		(  EQ v=value {$ast = new EqualNode($ast,$v.ast);}
-		 | GE v=value {$ast = new GENode($ast,$v.ast);}
-		 | LE v=value {$ast = new LENode($ast,$v.ast);}
+		(  EQ e=value {$ast = new EqualNode($ast,$e.ast);}
+		 | GE g=value {$ast = new GENode($ast,$g.ast);}
+		 | LE l=value {$ast = new LENode($ast,$l.ast);}
 		)* ;
 
 value returns [Node ast]	:
-	i = INTEGER	{$ast = new IntNode(Integer.parseInt($i.text));}
+	in = INTEGER	{$ast = new IntNode(Integer.parseInt($in.text));}
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
 	| NULL		{$ast = new NullNode();}
@@ -173,7 +175,7 @@ value returns [Node ast]	:
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
-	| NOT LPAR e=exp RPAR {$ast = new NotNode($e.ast);}
+	| NOT LPAR e=exp {$ast = new NotNode($e.ast);} RPAR
 	| PRINT LPAR e=exp RPAR	{$ast = new PrintNode($e.ast);}
 	| i=ID // Identificatore di una variabile o funzione. Combinazioni possibili ID (variabile) 
 		{	/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/
@@ -191,12 +193,12 @@ value returns [Node ast]	:
 		// Supporto alle chiamate a funzioni. Combinazioni possibili ID() (funzione vuota) - ID(exp) (funzione con variabili)
 		( LPAR { ArrayList<Node> arglist = new ArrayList<Node>(); }
 			( a=exp { arglist.add($a.ast); } //tutte volte che incontro un'espressione l'aggiungo alla lista dei parametri
-			(COMMA a=exp { arglist.add($a.ast); }
+			(COMMA a1=exp { arglist.add($a1.ast); }
 			)*
 		)? RPAR { $ast = new CallNode($i.text,entry,arglist,nestingLevel); } // Inserito il nestinglevel per verifiche sullo scope della funzione chiamata
-		)?
-	| ID ( LPAR (exp (COMMA exp)* )? RPAR 
-	         | DOT ID LPAR (exp (COMMA exp)* )? RPAR 
+	// | ID ( LPAR (exp (COMMA exp)* )? RPAR già fatto ELIMINARE
+	
+	| DOT ID LPAR (exp (COMMA exp)* )? RPAR 
 	         )?	 
 	         	;
 
