@@ -7,7 +7,7 @@ package ast;
  * @author Giulia Lucchi
  *
  */
-public class ParNode implements Node {
+public class ParNode implements Node, DecNode {
 
 	private String id;
 	private Node type;
@@ -31,6 +31,11 @@ public class ParNode implements Node {
 	@Override
 	public String codeGeneration() {
 		return "";
+	}
+
+	@Override
+	public Node getSymType() {
+		return this.type;
 	}
 
 }  

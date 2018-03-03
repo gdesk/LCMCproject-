@@ -70,10 +70,17 @@ public class CallNode implements Node {
 		return //allocazione della mia parte dell'AR della funzione che sto chiamando
 				"lfp\n"+ //CL
 				parCode + //allocazione valori parametri
+				
+				//Recupera FP ad AR dichiarazione funzione (Per settare l'access link)
 				"lfp\n"+getAR+ //AL
 				//codice per recuperare l'inidirizzo a cui saltare (stesso delle variabili)
 				"push "+entry.getOffset()+"\n"+ //metto l'offset sullo stack
-				"lfp\n"+getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile	 
+				"add\n"+
+				"lw\n"+ 
+				
+ 				//Recupera indir funzione (Per saltare al codice della funzione)
+				"lfp\n"+getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile
+				"push "+(entry.getOffset()-1)+"\n"+ //metto l'offset sullo stack
 				"add\n"+
 				"lw\n"+ //carico sullo stack l'indirizzo a cui saltare
 				//effettuo il salto

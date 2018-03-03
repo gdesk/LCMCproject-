@@ -51,21 +51,22 @@ cllist  : ( CLASS ID (EXTENDS ID)? LPAR (ID COLON type (COMMA ID COLON type)* )?
 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
-declist	returns [ArrayList<Node> astlist]:
-	{	$astlist = new ArrayList<Node>();
+declist	returns [ArrayList<DecNode> astlist]:
+	{	$astlist = new ArrayList<DecNode>();
 		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */ 
 	}
 	( 
-		(	VAR i=ID COLON t=type ASS e=exp
+		(	VAR i=ID COLON h=hotype ASS e=exp
 			{	VarNode v = new VarNode($i.text,$t.ast,$e.ast);
 				$astlist.add(v);
 				HashMap<String,STentry> hm = symTable.get(nestingLevel); /* Tabella del livello corrente (detta tabella del fronte) */
 				/* Verificare che nello scope attuale (il fronte della tabella), la variabile sia già stata dichiarata. "put" sostituisce, ma se la chiave era già occupata restituisce la coppia vecchia, altrimenti null.*/ 
-				if(hm.put($i.text, new STentry(nestingLevel,$t.ast,offset--)) != null) {
+				if(hm.put($i.text, new STentry(nestingLevel,$h.ast,offset--)) != null) {
 					/*Errore identificatore (variabile) già dichiarata*/
 					System.out.println("Var id" + $i.text + " at line " + $i.line + " already declared.");
 					System.exit(0);
-				};
+				}; 
+				{if($h.ast instanceof ArrowTypeNode) offset--;} /*offset doppio per tipi funzionali*/
 			}
 		| FUN i=ID COLON t=type 
 			{	
@@ -77,7 +78,7 @@ declist	returns [ArrayList<Node> astlist]:
 				if(hm.put($i.text, entry) != null) {
 					System.out.println("Fun id" + $i.text + " at line " + $i.line + " already declared.");
 					System.exit(0);
-				};
+				}
 				/* Entro dentro un nuovo scope. */
 				nestingLevel++;  /* Aumento il livello perchè sono all'interno di una funzione (anche i parametri passati alla funzione rientrano nel livello interno)*/
 				HashMap<String,STentry> hmn = new HashMap<String,STentry>();
@@ -86,27 +87,31 @@ declist	returns [ArrayList<Node> astlist]:
 			LPAR {	ArrayList<Node> parTypes = new ArrayList<Node>();
 					int parOffset = 1;
 				}
-				(i=ID COLON fty=type
+				(i=ID COLON fty=hotype
 					{ /* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 						parTypes.add($fty.ast);
 						ParNode p1 = new ParNode($i.text,$fty.ast);
 						f.addPar(p1);
+						{if($fty.ast instanceof ArrowTypeNode) parOffset++;}
 						if (hmn.put($i.text, new STentry(nestingLevel,$fty.ast,parOffset++)) != null) {
 							/* Errore identificatore (parametro) già dichiarato*/
 							System.out.println("Par ID: " + $i.text + " at line " + $i.line + " already declared");
 							System.exit(0);
 						}
+						
 					}
-				(COMMA i=ID COLON ty=type
+				(COMMA i=ID COLON ty=hotype
 					{/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
 						parTypes.add($ty.ast);
 						ParNode p2 = new ParNode($i.text,$ty.ast);
 						f.addPar(p2);
+						{if($ty.ast instanceof ArrowTypeNode) parOffset++;}
 						if (hmn.put($i.text, new STentry(nestingLevel,$ty.ast,parOffset++)) != null){
 							/* Errore identificatore (parametro) già dichiarato */
 							System.out.println("Par ID: " + $i.text + " at line " + $i.line + " already declared");
 							System.exit(0);
 						}
+						
 					}
 				)*
 			)?
@@ -125,13 +130,14 @@ hotype returns [Node ast] :
         
         
 arrow returns [Node ast]	: 
+			{ArrayList<Node> hotypeList = new ArrayList<>();}
 		  LPAR (h=hotype 
-		  {ArrowNode arrNode = new ArrowNode($h.ast);
-		  	
-		  }
-		  	
-		  	(COMMA hotype)*
-		  )? RPAR ARROW type
+		  	{hotypeList.add($h.ast);}
+		  	(COMMA h1=hotype
+		  	{hotypeList.add($h1.ast);}	
+		  	)*
+		  )? RPAR ARROW t=type
+		  {ArrowTypeNode arrNode = new ArrowTypeNode(hotypeList, $t.ast);}
 		  ;   
 
 type returns [Node ast]	: 

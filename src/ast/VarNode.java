@@ -10,7 +10,7 @@ import lib.FOOLlib;
  *
  */
 
-public class VarNode implements Node {
+public class VarNode implements Node, DecNode {
 
 	private String id;
 	private Node type;
@@ -41,6 +41,11 @@ public class VarNode implements Node {
 	@Override    
 	public String codeGeneration() {
 		return exp.codeGeneration();
+	}
+
+	@Override
+	public Node getSymType() {
+		return this.type;
 	}
 
 }  

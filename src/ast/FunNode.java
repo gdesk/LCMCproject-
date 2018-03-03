@@ -10,20 +10,23 @@ import lib.FOOLlib;
  * @author Giulia Lucchi
  *
  */
-public class FunNode implements Node {
+public class FunNode implements Node, DecNode {
 
 	private String id;
 	private Node type; 
-	private ArrayList<Node> parlist = new ArrayList<Node>(); 
-	private ArrayList<Node> declist = new ArrayList<Node>(); 
+	private ArrayList<ParNode> parlist; 
+	private ArrayList<DecNode> declist;
 	private Node exp;
+	private Node symType;
 
 	public FunNode (final String i, final Node t) {
-		id=i;
-		type=t;
+		this.id = i;
+		this.type = t;
+		this.declist = new ArrayList<>(); 
+		this.parlist = new ArrayList<>();
 	}
 
-	public void addDec (ArrayList<Node> d) {
+	public void addDec (ArrayList<DecNode> d) {
 		declist=d;
 	}  
 
@@ -31,14 +34,14 @@ public class FunNode implements Node {
 		exp=b;
 	}  
 
-	public void addPar (Node p) { 
+	public void addPar (ParNode p) { 
 		parlist.add(p);  
 	}  
 
 	@Override
 	public String toPrint(String indent) {
 		String parlstr="";
-		for (Node par:parlist){
+		for (ParNode par:parlist){
 			parlstr+=par.toPrint(indent+"  ");
 		};
 		String declstr="";
@@ -74,12 +77,20 @@ public class FunNode implements Node {
 		};
 
 		String popDecl="";
-		for (Node dec:declist){
+		for (DecNode dec:declist){
+			if(dec.getSymType() instanceof ArrowTypeNode) {
+				popDecl+="pop\n";
+			}
 			popDecl+="pop\n";
 		};
 
 		String popParl="";
-		for (Node par:parlist){popParl+="pop\n";};
+		for (ParNode par:parlist){
+			if(par.getSymType() instanceof ArrowTypeNode) {
+				popParl+="pop\n";
+			}
+			popParl+="pop\n";
+		};
 
 		FOOLlib.putCode(funl+":\n"+
 				"cfp\n"+ //setta $fp allo $sp
@@ -97,6 +108,11 @@ public class FunNode implements Node {
 				);	  	  
 
 		return "push "+funl+"\n";
+	}
+
+	@Override
+	public Node getSymType() {
+		return this.symType;
 	}
 
 }  

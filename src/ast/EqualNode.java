@@ -26,11 +26,15 @@ public class EqualNode implements Node {
 	@Override  
 	public Node typeCheck() {
 		Node l= left.typeCheck();  
-		Node r= right.typeCheck();  
+		Node r= right.typeCheck();
+		if(( l instanceof ArrowTypeNode) || ( r instanceof ArrowTypeNode)) {
+			System.out.println(" not ArrowTypeNode in equal");
+			System.exit(0);	
+		}
 		if ( !(FOOLlib.isSubtype(l, r) || FOOLlib.isSubtype(r, l)) ) {
 			System.out.println("Incompatible types in equal");
 			System.exit(0);	
-		}  
+		}
 		return new BoolTypeNode();
 	}
 	@Override
