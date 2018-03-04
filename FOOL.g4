@@ -74,6 +74,7 @@ declist	returns [ArrayList<DecNode> astlist]:
 				HashMap<String,STentry> hm = symTable.get(nestingLevel);
 				/* Verificare che nello scope attuale (il fronte della tabella), la funzione sia già stata dichiarata. "put" sostituisce, ma se la chiave era già occupata restituisce la coppia vecchia, altrimenti null.*/
 				STentry entry = new STentry(nestingLevel,offset--);
+				offset--;
 				if(hm.put($i.text, entry) != null) {
 					System.out.println("Fun id" + $i.text + " at line " + $i.line + " already declared.");
 					System.exit(0);

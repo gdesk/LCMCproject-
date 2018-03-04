@@ -538,6 +538,7 @@ public class FOOLParser extends Parser {
 									HashMap<String,STentry> hm = symTable.get(nestingLevel);
 									/* Verificare che nello scope attuale (il fronte della tabella), la funzione sia gi� stata dichiarata. "put" sostituisce, ma se la chiave era gi� occupata restituisce la coppia vecchia, altrimenti null.*/
 									STentry entry = new STentry(nestingLevel,offset--);
+									offset--;
 									if(hm.put((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null), entry) != null) {
 										System.out.println("Fun id" + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null) + " at line " + (((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getLine():0) + " already declared.");
 										System.exit(0);

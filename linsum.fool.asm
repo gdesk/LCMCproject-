@@ -6,11 +6,11 @@ push function1
 lfp
 push 2
 lfp
-push -3
+push -4
 add
 lw
 lfp
-push -4
+push -5
 add
 lw
 js
