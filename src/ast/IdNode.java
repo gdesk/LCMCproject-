@@ -20,9 +20,9 @@ public class IdNode implements Node {
 	}
 
 	@Override
-	public String toPrint(String s) {
-		return s+"Id:" + id + " at nestinglevel "+nestingLevel+"\n" + 
-				entry.toPrint(s+"  ") ;  
+	public String toPrint(String indent) {
+		return indent+"Id:" + id + " at nestinglevel "+nestingLevel+"\n" + 
+				entry.toPrint(indent+"  ") ;  
 	}
 
 	@Override
@@ -40,17 +40,20 @@ public class IdNode implements Node {
 		
 		if(!(entry.getType() instanceof ArrowTypeNode)) {	
 			return 	"push "+entry.getOffset()+"\n"+ //metto l'offset sullo stack
-					"lfp\n"+getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile	 
+					"lfp\n"+
+					getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile	 
 					"add\n"+
 					"lw\n"; //carico sullo stack il valore all'indirizzo ottenuto
 		}else {
 
 			return  "push "+entry.getOffset()+"\n"+ 
-					"lfp\n"+getAR+ 	 
+					"lfp\n"+
+					getAR+ 	 
 					"add\n"+
 					"lw\n"+
 					"push "+(entry.getOffset()-1)+"\n"+ 
-					"lfp\n"+getAR+ 	 
+					"lfp\n"+
+					getAR+ 	 
 					"add\n"+
 					"lw\n"; 
 		}

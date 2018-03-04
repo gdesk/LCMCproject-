@@ -47,11 +47,12 @@ public class CallNode implements Node {
 			System.out.println("Wrong number of parameters in the invocation of "+id);
 			System.exit(0);
 		} 
-		for (int i=0; i<parList.size(); i++) 
+		for (int i=0; i<parList.size(); i++) {
 			if ( !(FOOLlib.isSubtype( (parList.get(i)).typeCheck(), p.get(i)) ) ) {
 				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);
 				System.exit(0);
 			} 
+		}
 		return t.getRet();
 	}
 
@@ -70,16 +71,17 @@ public class CallNode implements Node {
 		return //allocazione della mia parte dell'AR della funzione che sto chiamando
 				"lfp\n"+ //CL
 				parCode + //allocazione valori parametri
-				
 				//Recupera FP ad AR dichiarazione funzione (Per settare l'access link)
-				"lfp\n"+getAR+ //AL
+				"lfp\n"+
+				getAR+ //AL
 				//codice per recuperare l'inidirizzo a cui saltare (stesso delle variabili)
 				"push "+entry.getOffset()+"\n"+ //metto l'offset sullo stack
 				"add\n"+
 				"lw\n"+ 
 				
  				//Recupera indir funzione (Per saltare al codice della funzione)
-				"lfp\n"+getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile
+				"lfp\n"+
+ 				getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile
 				"push "+(entry.getOffset()-1)+"\n"+ //metto l'offset sullo stack
 				"add\n"+
 				"lw\n"+ //carico sullo stack l'indirizzo a cui saltare

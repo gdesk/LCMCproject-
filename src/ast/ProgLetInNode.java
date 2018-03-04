@@ -23,10 +23,11 @@ public class ProgLetInNode implements Node {
 	@Override
 	public String toPrint(String indent) {
 		String declstr="";
-		for (Node dec:declist){
-			declstr+=dec.toPrint(indent+"  ");
+		if(declist != null) {
+			for (Node dec:declist){
+				declstr+=dec.toPrint(indent+"  ");
+			}
 		}
-		System.out.println(declstr);
 		return indent+"ProgLetIn\n" + declstr + exp.toPrint(indent+"  ") ; 
 	}
 
@@ -45,7 +46,9 @@ public class ProgLetInNode implements Node {
 			declCode+=dec.codeGeneration();
 		}
 		return "push 0\n"+
-		declCode+
-		exp.codeGeneration()+"halt\n"+ FOOLlib.getCode();
+				declCode+
+				exp.codeGeneration()+
+				"halt\n"+ 
+				FOOLlib.getCode();
 	}
 }  

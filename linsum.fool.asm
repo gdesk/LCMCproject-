@@ -1,5 +1,7 @@
 push 0
+lfp
 push function0
+lfp
 push function1
 lfp
 push 2
@@ -15,6 +17,7 @@ js
 print
 halt
 
+g:
 function0:
 cfp
 lra
@@ -40,6 +43,7 @@ lrv
 lra
 js
 
+linsum:
 function2:
 cfp
 lra
@@ -68,9 +72,11 @@ lrv
 lra
 js
 
+f:
 function1:
 cfp
 lra
+lfp
 push function2
 lfp
 push -2

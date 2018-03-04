@@ -11,7 +11,10 @@ add
 lw
 lfp
 push -3
+add
+lw
 lfp
+push -4
 add
 lw
 js

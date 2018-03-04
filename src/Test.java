@@ -17,13 +17,13 @@ public class Test {
         
         Node ast = parser.prog().ast; //generazione AST con Id associate a relative entry symbol table
         
-        System.out.println("You had: "+lexer.lexicalErrors+" lexical errors and "+parser.getNumberOfSyntaxErrors()+" syntax errors.");
+        System.out.println("\nYou had: "+lexer.lexicalErrors+" lexical errors and "+parser.getNumberOfSyntaxErrors()+" syntax errors.\n");
 
         System.out.println("Visualizing AST...");
         System.out.print(ast.toPrint(""));
         
         Node type=ast.typeCheck(); //type-checking bottom-up
-        System.out.println(type.toPrint("Type checking ok! Type of the program is: "));  
+        System.out.println(type.toPrint("\nType checking ok! Type of the program is: "));  
         
         // CODE GENERATION  prova.fool.asm
         String code=ast.codeGeneration(); 

@@ -28,7 +28,7 @@ public class OrNode implements Node {
 	public Node typeCheck() {
 		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new BoolTypeNode()) &&
 				FOOLlib.isSubtype(right.typeCheck(), new BoolTypeNode()) ) ) {
-			System.out.println("Non integers in Or");
+			System.out.println("Non boolean in Or");
 			System.exit(0);	
 		}
 		return new BoolTypeNode();

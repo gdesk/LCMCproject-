@@ -41,20 +41,22 @@ public class FunNode implements Node, DecNode {
 	@Override
 	public String toPrint(String indent) {
 		String parlstr="";
-		for (ParNode par:parlist){
-			parlstr+=par.toPrint(indent+"  ");
-		};
+		if(parlist != null) {
+			for (ParNode par:parlist){
+				parlstr+=par.toPrint(indent+"  ");
+			}
+		}
 		String declstr="";
 		if(declist != null) {
 			for (Node dec:declist){
 				declstr+=dec.toPrint(indent+"  ");
-			};
+			}
 		}
 		return indent+"Fun:" + id +"\n"
-		+type.toPrint(indent+"  ")
-		+parlstr
-		+declstr
-		+exp.toPrint(indent+"  ") ; 
+				+type.toPrint(indent+"  ")
+				+parlstr
+				+declstr
+				+exp.toPrint(indent+"  ") ; 
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class FunNode implements Node, DecNode {
 			};
 		}
 		if (! FOOLlib.isSubtype(exp.typeCheck(),type)) {
-			System.out.println("Incompatible value for variable");
+			System.out.println("Incompatible value for function");
 			System.exit(0);
 		}
 		return null;
@@ -102,7 +104,8 @@ public class FunNode implements Node, DecNode {
 			};
 		}
 
-		FOOLlib.putCode(funl+":\n"+
+		FOOLlib.putCode(id + ":\n"+
+				funl+":\n"+
 				"cfp\n"+ //setta $fp allo $sp
 				"lra\n"+ //inserimento Return Address
 				declCode+
@@ -118,7 +121,7 @@ public class FunNode implements Node, DecNode {
 				"js\n" // salta a $ra
 				);	  	  
 
-		return "push "+funl+"\n";
+		return "lfp\n"+"push "+funl+"\n"; // la chiamata di una funzione e' una qualsiasi espressione, quindi deve valere l'invarianza
 	}
 
 	@Override
