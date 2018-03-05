@@ -1,24 +1,23 @@
-package ast.value;
+package ast.type;
 
 import ast.Node;
-import ast.type.NullTypeNode;
 
-public class NullNode implements Node {
+public class EmptyTypeNode implements Node{
 
 	@Override
 	public Node typeCheck() {
-		return new NullTypeNode();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		return "push -1\n";
+		return "";
 	}
 
 	@Override
 	public String toPrint(String indent) {
 		return indent
-				+ "Null\n";
+				+ "NullType\n";
 	}
 
 }

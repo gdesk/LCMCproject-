@@ -13,10 +13,12 @@ public class STentry {
 	private int nestingLevel;
 	private Node type;
 	private int offset;
+	private boolean isMethod;
 
 	public STentry (int nestingLevel, int offset) {
 		this.nestingLevel=nestingLevel;
 		this.offset=offset;
+		this.isMethod=false; //per distinguere id funzioni da id metodo
 	} 
 
 	public STentry (int nestingLevel, Node type, int offset) {

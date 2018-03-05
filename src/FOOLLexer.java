@@ -2,6 +2,15 @@
 
 	import java.util.HashMap;
 	import ast.*;
+	import ast.value.*;
+	import ast.exp.*;
+	import ast.type.*;
+	import ast.hotype.*;
+	import ast.prog.*;
+	import ast.term.*;
+	import ast.declist.*;
+	import ast.cllist.*;
+	import ast.factor.*;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

@@ -3,6 +3,15 @@ grammar FOOL;
 @header {
 	import java.util.HashMap;
 	import ast.*;
+	import ast.value.*;
+	import ast.exp.*;
+	import ast.type.*;
+	import ast.hotype.*;
+	import ast.prog.*;
+	import ast.term.*;
+	import ast.declist.*;
+	import ast.cllist.*;
+	import ast.factor.*;
 }
 
 @parser::members {
@@ -10,6 +19,7 @@ grammar FOOL;
 	/* Array di tabelle dove l'indice dell'array è il livello sintattico, ossia il livello di scope, indice 0 = dichiarazioni globali, indice 1 = dichiarazioni locali (mappano identificatori con i valori) */
 	ArrayList<HashMap<String,STentry>> symTable = new ArrayList<HashMap<String,STentry>>();
 	/* Il livello dell'ambiente con dichiarazioni più esterne è 0 (nelle slide è 1); il fronte della lista di tabelle è "symTable.get(nestingLevel)" */
+	HashMap<String, HashMap<String,STentry>> classTable = new HashMap<String, HashMap<String,STentry>>(); 
 }
 
 @lexer::members {
@@ -39,7 +49,32 @@ prog returns [Node ast]:
 	}  SEMIC ;
 
 //lista di funzioni 
-cllist  : ( CLASS ID (EXTENDS ID)? LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR    
+cllist returns [ArrayList<DecNode> astlist]:
+	{	$astlist = new ArrayList<DecNode>();
+		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */}
+		
+	 ( CLASS ic=ID 
+	 		{ClassNode classNode = new ClassNode($ic.text);
+	 		 boolean isExtends=false;	
+	 		 offset--; 		
+	 		}
+	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
+	 	{
+	 		if(isExtends == false){
+	 			STentry cstentry = new STentry(0, new ClassTypeNode(new ArrayList<Node>(),new ArrayList<Node>()),offset);
+	 		 	HashMap<String,STentry> hm = new HashMap<String,STentry>();
+	 		 	if(hm.put($ic.text,cstentry) != null) {
+					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
+					System.exit(0);
+				}; 
+	 		 	classTable.put($ic.text,hm);
+	 		}else{
+	 			HashMap<String,STentry> hm1 = classTable.get($ic1.text);
+				classTable.put($ic1.text,hm1);
+	 		}
+	 	}
+	 	
+	 	  LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR    
               CLPAR
                  ( FUN ID COLON type LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
 	                     (LET (VAR ID COLON type ASS exp SEMIC)* IN)? exp 
@@ -169,7 +204,7 @@ value returns [Node ast]	:
 	in = INTEGER	{$ast = new IntNode(Integer.parseInt($in.text));}
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
-	| NULL		{$ast = new NullNode();}
+	| NULL		{$ast = new EmptyNode();}
 	| NEW ID LPAR (exp (COMMA exp)* )? RPAR
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR

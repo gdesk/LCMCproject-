@@ -2,7 +2,13 @@ package ast.type;
 
 import ast.Node;
 
-public class NullTypeNode implements Node{
+public class RefTypeNode implements Node {
+	
+	private Node idClass;
+	
+	public RefTypeNode() {
+		
+	}
 
 	@Override
 	public Node typeCheck() {
@@ -16,8 +22,7 @@ public class NullTypeNode implements Node{
 
 	@Override
 	public String toPrint(String indent) {
-		return indent
-				+ "NullType\n";
+		return indent+"RefTypeNode\n";
 	}
 
 }
