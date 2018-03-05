@@ -1,5 +1,7 @@
-package ast;
+package ast.exp;
 
+import ast.Node;
+import ast.type.BoolTypeNode;
 import lib.FOOLlib;
 
 /**

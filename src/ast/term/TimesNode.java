@@ -1,27 +1,28 @@
-package ast;
-
+package ast.term;
+import ast.Node;
+import ast.type.IntTypeNode;
 import lib.*;
 
 /**
- * This class describes the sum expression.
+ * This class describes the multiplication expression.
  * 
  * @author Chiara Volonnino
  * @author Giulia Lucchi
  *
  */
-public class PlusNode implements Node {
+public class TimesNode implements Node {
 
 	private Node left;
 	private Node right;
 
-	public PlusNode (final Node left, final Node right) {
+	public TimesNode (final Node left, final Node right) {
 		this.left=left;
 		this.right=right;
 	}
 
 	@Override
 	public String toPrint(String indent) {
-		return indent+"Plus\n" + left.toPrint(indent+"  ")  
+		return indent+"Mult\n" + left.toPrint(indent+"  ")  
 		+ right.toPrint(indent+"  ") ; 
 	}
 
@@ -29,7 +30,7 @@ public class PlusNode implements Node {
 	public Node typeCheck() {
 		if ( ! ( FOOLlib.isSubtype(left.typeCheck(), new IntTypeNode()) &&
 				FOOLlib.isSubtype(right.typeCheck(), new IntTypeNode()) ) ) {
-			System.out.println("Non integers in sum");
+			System.out.println("Non integers in multiplication");
 			System.exit(0);	
 		}
 		return new IntTypeNode();
@@ -39,7 +40,7 @@ public class PlusNode implements Node {
 	public String codeGeneration() {
 		return 	  left.codeGeneration()
 				+ right.codeGeneration()
-				+ "add\n";
+				+ "mult\n";
 	}
 
 }  

@@ -1,6 +1,7 @@
 package ast;
 import java.util.ArrayList;
 
+import ast.hotype.ArrowTypeNode;
 import lib.FOOLlib;
 
 /**

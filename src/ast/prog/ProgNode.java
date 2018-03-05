@@ -1,23 +1,27 @@
-package ast;
+package ast.prog;
+
+import ast.Node;
 
 /**
- * This class describes print expression.
+ * This class describes the root node. 
  * 
  * @author Chiara Volonnino
  * @author Giulia Lucchi
  *
  */
-public class PrintNode implements Node {
+
+public class ProgNode implements Node {
 
 	private Node exp;
 
-	public PrintNode (final Node exp) {
+	public ProgNode (final Node exp) {
 		this.exp=exp;
 	}
 
 	@Override
 	public String toPrint(String indent) {
-		return indent+"Print\n" + exp.toPrint(indent+"  ") ;
+
+		return indent+"Prog\n" + exp.toPrint(indent+"  ") ;
 	}
 
 	@Override
@@ -25,9 +29,9 @@ public class PrintNode implements Node {
 		return exp.typeCheck();
 	}
 
-	@Override
+	@Override 
 	public String codeGeneration() {
-		return exp.codeGeneration()+"print\n";
+		return exp.codeGeneration()+"halt\n";
 	}
 
 }  

@@ -1,6 +1,11 @@
-package ast;
+package ast.declist;
 
 import java.util.ArrayList;
+
+import ast.DecNode;
+import ast.Node;
+import ast.ParNode;
+import ast.hotype.ArrowTypeNode;
 import lib.FOOLlib;
 
 /**

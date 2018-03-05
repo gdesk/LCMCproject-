@@ -1,5 +1,8 @@
-package ast;
+package ast.prog;
 import java.util.ArrayList;
+
+import ast.DecNode;
+import ast.Node;
 import lib.*;
 
 /**

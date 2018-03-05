@@ -1,4 +1,8 @@
-package ast;
+package ast.value;
+
+import ast.Node;
+import ast.STentry;
+import ast.hotype.ArrowTypeNode;
 
 /**
  * This class describes the declaration of variable.

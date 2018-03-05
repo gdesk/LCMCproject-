@@ -1,5 +1,7 @@
-package ast;
+package ast.hotype;
 import java.util.ArrayList;
+
+import ast.Node;
 
 /**
  * This class is used to describe the functional type.

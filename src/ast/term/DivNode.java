@@ -1,5 +1,7 @@
-package ast;
+package ast.term;
 
+import ast.Node;
+import ast.type.IntTypeNode;
 import lib.FOOLlib;
 
 /**

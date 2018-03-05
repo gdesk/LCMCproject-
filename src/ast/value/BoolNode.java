@@ -1,4 +1,7 @@
-package ast;
+package ast.value;
+
+import ast.Node;
+import ast.type.BoolTypeNode;
 
 /**
  * The class describes the boolean type of expression.

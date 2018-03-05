@@ -1,4 +1,6 @@
-package ast;
+package ast.type;
+
+import ast.Node;
 
 /**
  * This class describes the Integer type.

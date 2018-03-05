@@ -1,5 +1,7 @@
-package ast;
+package ast.factor;
 
+import ast.Node;
+import ast.type.BoolTypeNode;
 import lib.FOOLlib;
 
 public class LENode implements Node {

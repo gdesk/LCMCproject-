@@ -137,10 +137,8 @@ arrow returns [Node ast]	:
 		  	(COMMA h1=hotype
 		  	{hotypeList.add($h1.ast);}	
 		  	)*
-		  )? RPAR ARROW t=type
-		  //ArrowTypeNode arrNode = new ArrowTypeNode(hotypeList, $t.ast);}
-		  	{Node arrNode = $t.ast;}
-		  	{$ast = new ArrowTypeNode(hotypeList, arrNode);}
+		  )? RPAR ARROW t=type		
+		  	{$ast = new ArrowTypeNode(hotypeList, $t.ast);}
 		  ;
 		 
 type returns [Node ast]	: 

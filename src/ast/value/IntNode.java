@@ -1,4 +1,7 @@
-package ast;
+package ast.value;
+
+import ast.Node;
+import ast.type.IntTypeNode;
 
 /**
  * This class describes the integer expression.

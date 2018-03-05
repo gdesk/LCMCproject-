@@ -1,5 +1,7 @@
-package ast;
+package ast.value;
 
+import ast.Node;
+import ast.type.BoolTypeNode;
 import lib.FOOLlib;
 
 public class NotNode implements Node {

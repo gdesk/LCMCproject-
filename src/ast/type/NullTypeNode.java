@@ -1,4 +1,6 @@
-package ast;
+package ast.type;
+
+import ast.Node;
 
 public class NullTypeNode implements Node{
 
