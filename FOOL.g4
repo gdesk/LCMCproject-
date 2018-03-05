@@ -61,20 +61,45 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
 	 	{
 	 		if(isExtends == false){
-	 			STentry cstentry = new STentry(0, new ClassTypeNode(new ArrayList<Node>(),new ArrayList<Node>()),offset);
-	 		 	HashMap<String,STentry> hm = new HashMap<String,STentry>();
-	 		 	if(hm.put($ic.text,cstentry) != null) {
+	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
+	 			STentry cstentry = new STentry(nestingLevel, new ClassTypeNode(new ArrayList<Node>(),new ArrayList<Node>()),offset);
+	 		 	if(sym.put($ic.text,cstentry) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
-	 		 	classTable.put($ic.text,hm);
+				nestingLevel++;
+				HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
+				symTable.add(nestingLevel,virtualTable);
+				  if(classTable.put($ic.text, virtualTable) != null) {
+                   System.out.println("Class "+$ic.text+" at line "+$ic.line+" already declared");
+                   System.exit(0); 
+                } 
+	 		 	
 	 		}else{
 	 			HashMap<String,STentry> hm1 = classTable.get($ic1.text);
-				classTable.put($ic1.text,hm1);
+				symTable.add(hm1);
+				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 	 		}
 	 	}
 	 	
-	 	  LPAR (ID COLON type (COMMA ID COLON type)* )? RPAR    
+	 	  LPAR (campo=ID COLON t=type
+	 	  	{	
+	 	  		int offsetCampo=0;
+	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
+	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){
+	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
+	 	  			oldEntry.addType($t.ast);
+	 	  		}
+	 	  		
+	 	  	}
+	 	  	(COMMA campo1=ID COLON t1=type
+	 	  		{ STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
+	 	  		if( classTable.get($ic.text).put($campo1.text,entry) != null){
+	 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
+	 	  			oldEntry.addType($t1.ast);
+	 	  		}}
+	 	  	)*
+	 	  )? RPAR    
               CLPAR
                  ( FUN ID COLON type LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
 	                     (LET (VAR ID COLON type ASS exp SEMIC)* IN)? exp 

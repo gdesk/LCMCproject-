@@ -13,7 +13,15 @@ public class ClassTypeNode implements Node {
 		this.allFields = fields; // incluono quelli ereditati
 		this.allMethods = methods;
 	}
-
+	
+	public void addField(Node field) {
+		this.allFields.add(field);
+	}
+	
+	public void addMethod(Node method) {
+		this.allMethods.add(method);
+	}
+	
 	@Override
 	public Node typeCheck() {
 		return null;

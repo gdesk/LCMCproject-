@@ -25,6 +25,7 @@ public class STentry {
 		this.nestingLevel=nestingLevel;
 		this.type=type;
 		this.offset=offset;
+		this.isMethod=false; 
 	} 
 
 	public void addType(Node type) {
@@ -38,7 +39,7 @@ public class STentry {
 	public int getOffset() {
 		return offset;
 	}
-
+	
 	public int getNestinglevel() {
 		return nestingLevel;
 	}   
