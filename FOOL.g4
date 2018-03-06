@@ -76,7 +76,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 				}; 
 				nestingLevel++;
 				HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
-				symTable.add(nestingLevel,virtualTable);
+				symTable.add(nestingLevel,virtualTable); /* è vuota */
 				  if(classTable.put($ic.text, virtualTable) != null) {
                    System.out.println("Class "+$ic.text+" at line "+$ic.line+" already declared");
                    System.exit(0); 
@@ -92,10 +92,8 @@ cllist returns [ArrayList<DecNode> astlist]:
 					System.exit(0);
 				}; 
 	 		
-	 		/*	HashMap<String,STentry> hm1 = classTable.get($ic1.text); SECONDO ME è SBAGLIATO
-	 		 	
-				symTable.add(hm1);*/
 				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
+	 			nestingLevel++; /*Dichiarata la classe incrmeenento nestinglevel VA BENE????*/
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
@@ -108,18 +106,25 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditarietà */
 	 	  		}
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
-	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){
+	 	  		/* inserimento in symbol table CONTROLLAAAA */
+	 	  		symTable.get(nestingLevel).put($campo.text,entry);
+	 	  		/* inserimento in classTable*/
+	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
-	 	  		}
+	 	  		}	 	  		
 	 	  		
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
+	 	  			/* aggiorno ArrowTypeNode */
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
-		 	  		STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
-		 	  		if( classTable.get($ic.text).put($campo1.text,entry) != null){
+	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
+	 	  			/* inserimento in symbol table CONTROLLAAAA */
+	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
+		 	  		/* inserimento in classTable*/
+		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
 		 	  			oldEntry.addType($t1.ast);
 	 	  			}

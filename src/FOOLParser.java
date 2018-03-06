@@ -337,7 +337,7 @@ public class FOOLParser extends Parser {
 								}; 
 								nestingLevel++;
 								HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
-								symTable.add(nestingLevel,virtualTable);
+								symTable.add(nestingLevel,virtualTable); /* � vuota */
 								  if(classTable.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), virtualTable) != null) {
 				                   System.out.println("Class "+(((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)+" at line "+(((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0)+" already declared");
 				                   System.exit(0); 
@@ -353,10 +353,8 @@ public class FOOLParser extends Parser {
 									System.exit(0);
 								}; 
 					 		
-					 		/*	HashMap<String,STentry> hm1 = classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null)); SECONDO ME � SBAGLIATO
-					 		 	
-								symTable.add(hm1);*/
 								classTable.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
+					 			nestingLevel++; /*Dichiarata la classe incrmeenento nestinglevel VA BENE????*/
 					 		}
 					 	
 				ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).getType();
@@ -376,10 +374,13 @@ public class FOOLParser extends Parser {
 						 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditariet� */
 						 	  		}
 						 	  		STentry entry = new STentry(nestingLevel, ((CllistContext)_localctx).t.ast, offsetCampo--);
-						 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry) != null){
+						 	  		/* inserimento in symbol table CONTROLLAAAA */
+						 	  		symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry);
+						 	  		/* inserimento in classTable*/
+						 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry) != null){ /* overriding */
 						 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
 						 	  			oldEntry.addType(((CllistContext)_localctx).t.ast);
-						 	  		}
+						 	  		}	 	  		
 						 	  		
 						 	  	
 					setState(65);
@@ -393,10 +394,14 @@ public class FOOLParser extends Parser {
 						setState(59); match(COLON);
 						setState(60); ((CllistContext)_localctx).t1 = type();
 						 
+							 	  			/* aggiorno ArrowTypeNode */
 							 	  			FieldNode field1 = new FieldNode((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),((CllistContext)_localctx).t1.ast);
 							 	  			cTypeNode.addField(field1);	
-								 	  		STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
-								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry) != null){
+							 	  			STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
+							 	  			/* inserimento in symbol table CONTROLLAAAA */
+							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
+								 	  		/* inserimento in classTable*/
+								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */
 								 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null));
 								 	  			oldEntry.addType(((CllistContext)_localctx).t1.ast);
 							 	  			}
