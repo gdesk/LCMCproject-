@@ -304,7 +304,7 @@ public class FOOLParser extends Parser {
 			{
 				((CllistContext)_localctx).astlist =  new ArrayList<DecNode>();
 					int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
-					 boolean isExtends=false;
+					boolean isExtends=false;
 				
 			setState(119); 
 			_errHandler.sync(this);
@@ -353,8 +353,7 @@ public class FOOLParser extends Parser {
 									System.exit(0);
 								}; 
 					 		
-								classTable.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
-					 			nestingLevel++; /*Dichiarata la classe incrmeenento nestinglevel VA BENE????*/
+								classTable.put((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
 					 		}
 					 	
 				ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).getType();
@@ -374,7 +373,7 @@ public class FOOLParser extends Parser {
 						 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditariet� */
 						 	  		}
 						 	  		STentry entry = new STentry(nestingLevel, ((CllistContext)_localctx).t.ast, offsetCampo--);
-						 	  		/* inserimento in symbol table CONTROLLAAAA */
+						 	  		/* inserimento in symbol table */
 						 	  		symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry);
 						 	  		/* inserimento in classTable*/
 						 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry) != null){ /* overriding */
@@ -394,11 +393,10 @@ public class FOOLParser extends Parser {
 						setState(59); match(COLON);
 						setState(60); ((CllistContext)_localctx).t1 = type();
 						 
-							 	  			/* aggiorno ArrowTypeNode */
+							 	  			/* aggiorno ClassTypeNode */
 							 	  			FieldNode field1 = new FieldNode((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),((CllistContext)_localctx).t1.ast);
 							 	  			cTypeNode.addField(field1);	
 							 	  			STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
-							 	  			/* inserimento in symbol table CONTROLLAAAA */
 							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
 								 	  		/* inserimento in classTable*/
 								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */

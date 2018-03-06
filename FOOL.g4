@@ -54,11 +54,11 @@ prog returns [Node ast]:
 		symTable.remove(nestingLevel);
 	}  SEMIC ;
 
- 
+ /* lista delle classi */
 cllist returns [ArrayList<DecNode> astlist]:
 	{	$astlist = new ArrayList<DecNode>();
 		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
-		 boolean isExtends=false;
+		boolean isExtends=false;
 	}
 		
 	 ( CLASS ic=ID 
@@ -92,8 +92,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 					System.exit(0);
 				}; 
 	 		
-				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
-	 			nestingLevel++; /*Dichiarata la classe incrmeenento nestinglevel VA BENE????*/
+				classTable.put($ic1.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
@@ -106,7 +105,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditarietà */
 	 	  		}
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
-	 	  		/* inserimento in symbol table CONTROLLAAAA */
+	 	  		/* inserimento in symbol table */
 	 	  		symTable.get(nestingLevel).put($campo.text,entry);
 	 	  		/* inserimento in classTable*/
 	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
@@ -117,11 +116,10 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
-	 	  			/* aggiorno ArrowTypeNode */
+	 	  			/* aggiorno ClassTypeNode */
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
-	 	  			/* inserimento in symbol table CONTROLLAAAA */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
 		 	  		/* inserimento in classTable*/
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
@@ -133,7 +131,8 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  	
 	 	  )? RPAR    
               CLPAR
-                 ( FUN ID COLON type LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
+                 ( FUN ID COLON type 
+                 	LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
 	                     (LET (VAR ID COLON type ASS exp SEMIC)* IN)? exp 
         	       SEMIC
         	     )*                
