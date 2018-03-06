@@ -12,23 +12,22 @@ public class ClassNode implements DecNode {
 	private String id;
 	private DecNode symType;
 	
-	public ClassNode(String id) {
-		this.methods = new ArrayList<>();
-		this.fields = new ArrayList<>();
+	public ClassNode(final String id) {
+		this.methods = null;
+		this.fields = null;
 		this.id=id;
 	}
 	
-	private void addField(FieldNode field) {
-		this.fields.add(field);
+	private void addFields(final ArrayList<FieldNode> fields) {
+		this.fields = fields;
 	}
 	
-	private void addMethod(MethodNode method) {
-		this.methods.add(method);
+	private void addMethods( final ArrayList<MethodNode> methods) {
+		this.methods = methods;
 	}
 	
 	@Override
 	public Node typeCheck() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -40,7 +39,6 @@ public class ClassNode implements DecNode {
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

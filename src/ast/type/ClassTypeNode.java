@@ -3,23 +3,33 @@ package ast.type;
 import java.util.ArrayList;
 
 import ast.Node;
+import ast.cllist.FieldNode;
+import ast.cllist.MethodNode;
 
 public class ClassTypeNode implements Node {
 	
-	private ArrayList<Node> allFields;
-	private ArrayList<Node> allMethods;
+	private ArrayList<FieldNode> allFields;
+	private ArrayList<MethodNode> allMethods;
 	
-	public ClassTypeNode(ArrayList<Node> fields, ArrayList<Node> methods) {
+	public ClassTypeNode(ArrayList<FieldNode> fields, ArrayList<MethodNode> methods) {
 		this.allFields = fields; // incluono quelli ereditati
 		this.allMethods = methods;
 	}
 	
-	public void addField(Node field) {
+	public void addField(FieldNode field) {
 		this.allFields.add(field);
 	}
 	
-	public void addMethod(Node method) {
+	public void addMethod(MethodNode method) {
 		this.allMethods.add(method);
+	}
+	
+	public ArrayList<FieldNode> getFields(){
+		return allFields;
+	}
+	
+	public ArrayList<MethodNode> getMethods(){
+		return allMethods;
 	}
 	
 	@Override

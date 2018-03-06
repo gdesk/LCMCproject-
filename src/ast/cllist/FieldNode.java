@@ -4,29 +4,35 @@ import ast.DecNode;
 import ast.Node;
 
 public class FieldNode implements DecNode{
+	
+	private String fieldID;
+	private Node type;
+	
+	public FieldNode(String id, Node node) {
+		this.fieldID = id;
+		this.type = node;
+	}
 
 	@Override
 	public Node typeCheck() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		return "";
 	}
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		return    indent
+				+ "Field: " + this.fieldID + "\n"
+				+ this.type.toPrint(indent + "  ");
 	}
 
 	@Override
 	public Node getSymType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.type;
 	}
 
 }

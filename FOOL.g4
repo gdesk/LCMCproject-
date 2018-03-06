@@ -39,30 +39,37 @@ prog returns [Node ast]:
 		e=exp {
 			$ast = new ProgNode($e.ast);
 		}
-	|  LET (cllist (declist)? | d=declist) IN e=exp 
+	|  LET (c=cllist (cd=declist)? | d=declist
+	) IN e=exp 
 		{ 
-			$ast = new ProgLetInNode($d.astlist,$e.ast);
+			if($c.astlist == null){
+				$ast = new ProgLetInNode($d.astlist,$e.ast);
+			}else{
+				$ast = new ProgLetInNode($c.astlist, $cd.astlist, $e.ast);
+			}
+			
 		}
 	) 
 	{	
 		symTable.remove(nestingLevel);
 	}  SEMIC ;
 
-//lista di funzioni 
+ 
 cllist returns [ArrayList<DecNode> astlist]:
 	{	$astlist = new ArrayList<DecNode>();
-		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */}
+		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
+		 boolean isExtends=false;
+	}
 		
 	 ( CLASS ic=ID 
-	 		{ClassNode classNode = new ClassNode($ic.text);
-	 		 boolean isExtends=false;	
+	 		{ClassNode classNode = new ClassNode($ic.text);	/* a cosa ci serve? per ritornare? */
 	 		 offset--; 		
 	 		}
 	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
 	 	{
 	 		if(isExtends == false){
 	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
-	 			STentry cstentry = new STentry(nestingLevel, new ClassTypeNode(new ArrayList<Node>(),new ArrayList<Node>()),offset);
+	 			STentry cstentry = new STentry(nestingLevel, new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>()),offset);
 	 		 	if(sym.put($ic.text,cstentry) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
@@ -76,15 +83,30 @@ cllist returns [ArrayList<DecNode> astlist]:
                 } 
 	 		 	
 	 		}else{
-	 			HashMap<String,STentry> hm1 = classTable.get($ic1.text);
-				symTable.add(hm1);
+	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
+	 			STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
+	 			ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
+	 			STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
+	 			if(sym.put($ic.text,cstentry1) != null) {
+					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
+					System.exit(0);
+				}; 
+	 		
+	 		/*	HashMap<String,STentry> hm1 = classTable.get($ic1.text); SECONDO ME è SBAGLIATO
+	 		 	
+				symTable.add(hm1);*/
 				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 	 		}
 	 	}
-	 	
+	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
 	 	  LPAR (campo=ID COLON t=type
-	 	  	{	
+	 	  	{
+	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
+	 	  		cTypeNode.addField(field);
 	 	  		int offsetCampo=0;
+	 	  		if(isExtends){
+	 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditarietà */
+	 	  		}
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
 	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
@@ -93,12 +115,17 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  		
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
-	 	  		{ STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
-	 	  		if( classTable.get($ic.text).put($campo1.text,entry) != null){
-	 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
-	 	  			oldEntry.addType($t1.ast);
-	 	  		}}
+	 	  		{ 
+	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
+	 	  			cTypeNode.addField(field1);	
+		 	  		STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
+		 	  		if( classTable.get($ic.text).put($campo1.text,entry) != null){
+		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
+		 	  			oldEntry.addType($t1.ast);
+	 	  			}
+	 	  		}
 	 	  	)*
+	 	  	
 	 	  )? RPAR    
               CLPAR
                  ( FUN ID COLON type LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
@@ -106,7 +133,10 @@ cllist returns [ArrayList<DecNode> astlist]:
         	       SEMIC
         	     )*                
               CRPAR
+              /* si ritorna la classe come ClassNode forse */
+         {isExtends = false;}
           )+
+          
         ; 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
