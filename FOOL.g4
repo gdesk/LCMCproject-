@@ -91,8 +91,8 @@ cllist returns [ArrayList<DecNode> astlist]:
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
-	 		
 				classTable.put($ic1.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
+	 			nestingLevel++; /*perchè finita la dichiarazione classe*/
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
@@ -116,10 +116,10 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
-	 	  			/* aggiorno ClassTypeNode */
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
+	 	  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
 		 	  		/* inserimento in classTable*/
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
@@ -131,14 +131,16 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  	
 	 	  )? RPAR    
               CLPAR
-                 ( FUN ID COLON type 
-                 	LPAR (ID COLON hotype (COMMA ID COLON hotype)* )? RPAR
-	                     (LET (VAR ID COLON type ASS exp SEMIC)* IN)? exp 
+                 ( FUN fid=ID COLON ret=type 
+                 	LPAR (ID COLON fh=hotype (COMMA pid=ID COLON fh1=hotype)* )? RPAR
+	                     (LET (VAR vid=ID COLON vt=type ASS ex=exp SEMIC)* IN)? ex1=exp 
         	       SEMIC
         	     )*                
               CRPAR
               /* si ritorna la classe come ClassNode forse */
-         {isExtends = false;}
+         {	isExtends = false;
+         	nestingLevel = 0;
+         }
           )+
           
         ; 

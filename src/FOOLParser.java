@@ -203,6 +203,15 @@ public class FOOLParser extends Parser {
 		public TypeContext t;
 		public Token campo1;
 		public TypeContext t1;
+		public Token fid;
+		public TypeContext ret;
+		public HotypeContext fh;
+		public Token pid;
+		public HotypeContext fh1;
+		public Token vid;
+		public TypeContext vt;
+		public ExpContext ex;
+		public ExpContext ex1;
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
 		}
@@ -352,8 +361,8 @@ public class FOOLParser extends Parser {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
 									System.exit(0);
 								}; 
-					 		
 								classTable.put((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
+					 			nestingLevel++; /*perch� finita la dichiarazione classe*/
 					 		}
 					 	
 				ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).getType();
@@ -393,10 +402,10 @@ public class FOOLParser extends Parser {
 						setState(59); match(COLON);
 						setState(60); ((CllistContext)_localctx).t1 = type();
 						 
-							 	  			/* aggiorno ClassTypeNode */
 							 	  			FieldNode field1 = new FieldNode((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),((CllistContext)_localctx).t1.ast);
 							 	  			cTypeNode.addField(field1);	
 							 	  			STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
+							 	  			/* inserimento in symbol table */
 							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
 								 	  		/* inserimento in classTable*/
 								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */
@@ -422,9 +431,9 @@ public class FOOLParser extends Parser {
 					{
 					{
 					setState(72); match(FUN);
-					setState(73); match(ID);
+					setState(73); ((CllistContext)_localctx).fid = match(ID);
 					setState(74); match(COLON);
-					setState(75); type();
+					setState(75); ((CllistContext)_localctx).ret = type();
 					setState(76); match(LPAR);
 					setState(89);
 					_la = _input.LA(1);
@@ -432,7 +441,7 @@ public class FOOLParser extends Parser {
 						{
 						setState(77); match(ID);
 						setState(78); match(COLON);
-						setState(79); hotype();
+						setState(79); ((CllistContext)_localctx).fh = hotype();
 						setState(86);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
@@ -440,9 +449,9 @@ public class FOOLParser extends Parser {
 							{
 							{
 							setState(80); match(COMMA);
-							setState(81); match(ID);
+							setState(81); ((CllistContext)_localctx).pid = match(ID);
 							setState(82); match(COLON);
-							setState(83); hotype();
+							setState(83); ((CllistContext)_localctx).fh1 = hotype();
 							}
 							}
 							setState(88);
@@ -465,11 +474,11 @@ public class FOOLParser extends Parser {
 							{
 							{
 							setState(93); match(VAR);
-							setState(94); match(ID);
+							setState(94); ((CllistContext)_localctx).vid = match(ID);
 							setState(95); match(COLON);
-							setState(96); type();
+							setState(96); ((CllistContext)_localctx).vt = type();
 							setState(97); match(ASS);
-							setState(98); exp();
+							setState(98); ((CllistContext)_localctx).ex = exp();
 							setState(99); match(SEMIC);
 							}
 							}
@@ -481,7 +490,7 @@ public class FOOLParser extends Parser {
 						}
 					}
 
-					setState(109); exp();
+					setState(109); ((CllistContext)_localctx).ex1 = exp();
 					setState(110); match(SEMIC);
 					}
 					}
@@ -490,7 +499,9 @@ public class FOOLParser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(117); match(CRPAR);
-				isExtends = false;
+					isExtends = false;
+				         	nestingLevel = 0;
+				         
 				}
 				}
 				setState(121); 
