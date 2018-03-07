@@ -43,6 +43,10 @@ public class STentry {
 	public int getNestinglevel() {
 		return nestingLevel;
 	}   
+	
+	public void setNestingLevel(int n) {
+		this.nestingLevel = n;
+	}
 
 	public String toPrint(String indent) {
 		return indent+"STentry: nestlev " + Integer.toString(nestingLevel) +"\n"+

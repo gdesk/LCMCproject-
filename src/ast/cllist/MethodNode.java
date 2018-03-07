@@ -2,10 +2,25 @@ package ast.cllist;
 
 import ast.DecNode;
 import ast.Node;
+import ast.declist.VarNode;
+import ast.*;
+
+import java.util.ArrayList;
+
 
 public class MethodNode implements DecNode {
 	
+	private String id;
+	private Node retType;
+	private ArrayList<ParNode> parList;
+	private ArrayList<VarNode> varList;
+	private Node exp; 
 	private DecNode symType;
+	
+	public MethodNode(String id, Node retType) {
+		this.id = id;
+		this.retType = retType;
+	}
 
 	@Override
 	public Node typeCheck() {

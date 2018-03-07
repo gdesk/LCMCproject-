@@ -111,6 +111,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
+	 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  		}	 	  		
 	 	  		
 	 	  	}
@@ -125,13 +126,34 @@ cllist returns [ArrayList<DecNode> astlist]:
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
 		 	  			oldEntry.addType($t1.ast);
+		 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  			}
 	 	  		}
 	 	  	)*
 	 	  	
 	 	  )? RPAR    
               CLPAR
+              {int methodOffset = 0;
+              	if(isExtends){
+	 	  			methodOffset = (cTypeNode.getMethods().size()); /* sistemato offset per ereditarietà */
+	 	  		}
+              }
                  ( FUN fid=ID COLON ret=type 
+                {
+                	 MethodNode method = new MethodNode($fid.text, $ret.ast);
+                	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
+                	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
+                	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
+                	 msym.put($fid.text, mentry);
+                	              	 
+                	 if(classTable.get($ic.text).put($fid.text, mentry) != null ) {
+                	 	STentry oldEntry = classTable.get($ic.text).get($fid.text);
+                	 	oldEntry.addType($ret.ast);
+                	 	oldEntry.setNestingLevel(nestingLevel);
+                	 }
+                	 methodOffset++;
+                	 
+                }
                  	LPAR (ID COLON fh=hotype (COMMA pid=ID COLON fh1=hotype)* )? RPAR
 	                     (LET (VAR vid=ID COLON vt=type ASS ex=exp SEMIC)* IN)? ex1=exp 
         	       SEMIC
