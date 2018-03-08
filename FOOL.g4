@@ -152,16 +152,75 @@ cllist returns [ArrayList<DecNode> astlist]:
                 	 	oldEntry.setNestingLevel(nestingLevel);
                 	 }
                 	 methodOffset++;
+                	 /* Entro dentro un nuovo scope e aggiorno con una mappa vuota la symTable. */
+					nestingLevel++;  /* Aumento il livello perchè sono all'interno di una metodo (anche i parametri passati alla funzione rientrano nel livello interno)*/
+					HashMap<String,STentry> mhm = new HashMap<String,STentry>();
+					symTable.add(mhm);
                 	 
                 }
-                 	LPAR (ID COLON fh=hotype (COMMA pid=ID COLON fh1=hotype)* )? RPAR
-	                     (LET (VAR vid=ID COLON vt=type ASS ex=exp SEMIC)* IN)? ex1=exp 
+                 	LPAR {int boffset = -2;}(parid=ID COLON fh=hotype
+                 		{
+                 			ArrayList<ParNode> parlist = new ArrayList<>();
+                 			ParNode par = new ParNode($parid.text, $fh.ast);
+                 			parlist.add(par);
+                 			if($fh.ast instanceof ArrowTypeNode) boffset++; 
+                 			STentry mpentry = new STentry(nestingLevel, $fh.ast, boffset++);
+                 			if(mhm.put($parid.text, mpentry) != null){
+                 				/* Errore identificatore (parametro) già dichiarato*/
+								System.out.println("Par ID: " + $parid.text + " at line " + $parid.line + " already declared");
+								System.exit(0);
+	                 		}
+                 		}
+                 	   (COMMA parid1=ID COLON fh1=hotype
+                 	   	{
+                 	   		ParNode par1 = new ParNode($parid1.text, $fh1.ast);
+                 			parlist.add(par1);
+                 			if($fh1.ast instanceof ArrowTypeNode) boffset++; 
+                 			STentry mpentry1 = new STentry(nestingLevel, $fh1.ast, boffset++);
+                 			if(mhm.put($parid1.text, mpentry1) != null){
+                 				/* Errore identificatore (parametro) già dichiarato*/
+								System.out.println("Par ID: " + $parid1.text + " at line " + $parid1.line + " already declared");
+								System.exit(0);
+	                 		}
+                 	   	}
+                 	   )*
+                 	   {
+                 	   	method.addParList(parlist);
+                 	   }
+                 	)? RPAR
+                 		 {ArrayList<VarNode> varlist = new ArrayList<>();}
+                 	 (LET (VAR vid=ID COLON vt=type ASS ex=exp 
+	                     	{
+	                     		VarNode var = new VarNode($vid.text, $vt.ast, $ex.ast);
+	                     		varlist.add(var);
+	                     		STentry ventry = new STentry(nestingLevel, $vt.ast, offset--);
+	                     		if(mhm.put($vid.text,ventry) != null){
+	                     			/*Errore identificatore (variabile) già dichiarata*/
+									System.out.println("Var id" + $vid.text + " at line " + $vid.line + " already declared.");
+									System.exit(0);
+	                     		}
+	                     		if($vt.ast instanceof ArrowTypeNode) offset--;
+	                     	}                    	
+	                     		                     	
+	                     	SEMIC
+	                     )*
+	                     {
+	                     	method.addVarList(varlist);
+	                     } 
+	                     IN)? exp1=exp
+	                     {
+	                     	method.addExp($exp1.ast);
+	                     	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perchè esco dallo scope della funzione */
+	                     } 
         	       SEMIC
-        	     )*                
+        	     )* 
+        	                   
               CRPAR
-              /* si ritorna la classe come ClassNode forse */
+              /* si ritorna la classe come ClassNode false */
          {	isExtends = false;
-         	nestingLevel = 0;
+         	/* buttare dentro a classNode tutte le info dalla classTable */
+         	/* aggiugere il classNode all lista da ritornare   	*/
+         	/* diminuire nestingLevel */
          }
           )+
           

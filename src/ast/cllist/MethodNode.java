@@ -21,6 +21,18 @@ public class MethodNode implements DecNode {
 		this.id = id;
 		this.retType = retType;
 	}
+	
+	public void addParList(ArrayList<ParNode> parList){
+		this.parList = parList;
+	}
+	
+	public void addVarList(ArrayList<VarNode> varList) {
+		this.varList = varList;
+	}
+	
+	public void addExp(Node node) {
+		this.exp = node;
+	}
 
 	@Override
 	public Node typeCheck() {
