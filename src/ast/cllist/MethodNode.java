@@ -48,8 +48,22 @@ public class MethodNode implements DecNode {
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		String parstr = "";
+		String varstr = "";
+		
+		for(ParNode par: parList) {
+			parstr += par.toPrint(indent+"  ");
+		}
+		
+		if (varList != null) 
+			for(DecNode dec: varList) {
+				varstr += dec.toPrint(indent+"  ");
+			}
+	    return indent + "Method:" + id + "\n"
+			   + retType.toPrint(indent + "  ")
+			   + parstr
+		   	   + varstr
+	           + exp.toPrint(indent + "  ") ; 
 	}
 
 	@Override
