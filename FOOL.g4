@@ -74,7 +74,6 @@ cllist returns [ArrayList<ClassNode> astlist]:
 		
 	 ( CLASS ic=ID 
 	 		{ClassNode classNode = new ClassNode($ic.text);	
-	 			int classNestingLevel = nestingLevel;
 	 		 offset--; 		
 	 		}
 	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
@@ -108,6 +107,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
+	 		
 	 	  LPAR (campo=ID COLON t=type
 	 	  	{
 	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
@@ -119,7 +119,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
 	 	  		/* inserimento in symbol table */
 	 	  		symTable.get(nestingLevel).put($campo.text,entry);
-	 	  		/* inserimento in classTable*/
+	 	  		/* inserimento in classTable*/  		 
 	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
@@ -135,13 +135,11 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
 		 	  		/* inserimento in classTable*/
-		 	  		
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
 		 	  			oldEntry.addType($t1.ast);
 		 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  			}
-	 	  			
 	 	  		}
 	 	  	)*
 	 	  	

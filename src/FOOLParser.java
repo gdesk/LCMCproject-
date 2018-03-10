@@ -338,7 +338,6 @@ public class FOOLParser extends Parser {
 				setState(47); match(CLASS);
 				setState(48); ((CllistContext)_localctx).ic = match(ID);
 				ClassNode classNode = new ClassNode((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));	
-					 			int classNestingLevel = nestingLevel;
 					 		 offset--; 		
 					 		
 				setState(53);
@@ -399,7 +398,7 @@ public class FOOLParser extends Parser {
 						 	  		STentry entry = new STentry(nestingLevel, ((CllistContext)_localctx).t.ast, offsetCampo--);
 						 	  		/* inserimento in symbol table */
 						 	  		symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry);
-						 	  		/* inserimento in classTable*/
+						 	  		/* inserimento in classTable*/  		 
 						 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry) != null){ /* overriding */
 						 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
 						 	  			oldEntry.addType(((CllistContext)_localctx).t.ast);
@@ -424,13 +423,11 @@ public class FOOLParser extends Parser {
 							 	  			/* inserimento in symbol table */
 							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
 								 	  		/* inserimento in classTable*/
-								 	  		
 								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */
 								 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null));
 								 	  			oldEntry.addType(((CllistContext)_localctx).t1.ast);
 								 	  			oldEntry.setNestingLevel(nestingLevel);
 							 	  			}
-							 	  			
 							 	  		
 						}
 						}
