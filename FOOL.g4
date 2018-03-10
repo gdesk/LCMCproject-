@@ -63,6 +63,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 		
 	 ( CLASS ic=ID 
 	 		{ClassNode classNode = new ClassNode($ic.text);	
+	 			int classNestingLevel = nestingLevel;
 	 		 offset--; 		
 	 		}
 	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
@@ -91,7 +92,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
-				classTable.put($ic1.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
+				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 	 			nestingLevel++; /*perchè finita la dichiarazione classe*/
 	 		}
 	 	}
@@ -112,7 +113,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
 	 	  			oldEntry.setNestingLevel(nestingLevel);
-	 	  		}	 	  		
+	 	  		}	 		
 	 	  		
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
@@ -123,11 +124,13 @@ cllist returns [ArrayList<DecNode> astlist]:
 	 	  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
 		 	  		/* inserimento in classTable*/
+		 	  		
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
 		 	  			oldEntry.addType($t1.ast);
 		 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  			}
+	 	  			
 	 	  		}
 	 	  	)*
 	 	  	
@@ -210,24 +213,24 @@ cllist returns [ArrayList<DecNode> astlist]:
 	                     IN)? exp1=exp
 	                     {
 	                     	method.addExp($exp1.ast);
-	                     	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perchè esco dallo scope della funzione */
+                    	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perchè esco dallo scope della funzione */
 	                     } 
         	       SEMIC
         	     )* 
         	                   
               CRPAR
          {	isExtends = false;
+         
+         System.out.println("ARRIVATO");
          	/* buttare dentro a classNode tutte le info dalla classTable */
-         	STentry classEntry = classTable.get($ic.text).get($ic.text);
-         	System.out.println(" classEntri:"+classEntry+" \nclassType??? "+ classEntry.getType());
-         	ClassTypeNode classType = (ClassTypeNode) classEntry.getType();
          	
-         	classNode.addFields(classType.getFields());
-         	classNode.addMethods(classType.getMethods());
+         	classNode.addFields(cTypeNode.getFields());
+         	classNode.addMethods(cTypeNode.getMethods());
          	/* aggiugere il classNode all lista da ritornare   	*/
+         	 System.out.println($astlist);
          	$astlist.add(classNode); 
-         	/* diminuire nestingLevel */
-         	  	symTable.remove(nestingLevel--);
+         	System.out.println($astlist);
+         	nestingLevel--;
          }
           )+
           

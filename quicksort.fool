@@ -4,8 +4,7 @@ let
   }
   
   class TradingAcc extends Account (invested:int) {
-  }
-	
+  }	
 	
 in
 

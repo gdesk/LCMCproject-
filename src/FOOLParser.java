@@ -325,6 +325,7 @@ public class FOOLParser extends Parser {
 				setState(42); match(CLASS);
 				setState(43); ((CllistContext)_localctx).ic = match(ID);
 				ClassNode classNode = new ClassNode((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));	
+					 			int classNestingLevel = nestingLevel;
 					 		 offset--; 		
 					 		
 				setState(48);
@@ -362,7 +363,7 @@ public class FOOLParser extends Parser {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
 									System.exit(0);
 								}; 
-								classTable.put((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
+								classTable.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
 					 			nestingLevel++; /*perch� finita la dichiarazione classe*/
 					 		}
 					 	
@@ -390,7 +391,7 @@ public class FOOLParser extends Parser {
 						 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
 						 	  			oldEntry.addType(((CllistContext)_localctx).t.ast);
 						 	  			oldEntry.setNestingLevel(nestingLevel);
-						 	  		}	 	  		
+						 	  		}	 		
 						 	  		
 						 	  	
 					setState(65);
@@ -410,11 +411,13 @@ public class FOOLParser extends Parser {
 							 	  			/* inserimento in symbol table */
 							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
 								 	  		/* inserimento in classTable*/
+								 	  		
 								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */
 								 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null));
 								 	  			oldEntry.addType(((CllistContext)_localctx).t1.ast);
 								 	  			oldEntry.setNestingLevel(nestingLevel);
 							 	  			}
+							 	  			
 							 	  		
 						}
 						}
@@ -562,7 +565,7 @@ public class FOOLParser extends Parser {
 					setState(120); ((CllistContext)_localctx).exp1 = exp();
 
 						                     	method.addExp(((CllistContext)_localctx).exp1.ast);
-						                     	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perch� esco dallo scope della funzione */
+					                    	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perch� esco dallo scope della funzione */
 						                     
 					setState(122); match(SEMIC);
 					}
@@ -573,17 +576,17 @@ public class FOOLParser extends Parser {
 				}
 				setState(129); match(CRPAR);
 					isExtends = false;
+				         
+				         System.out.println("ARRIVATO");
 				         	/* buttare dentro a classNode tutte le info dalla classTable */
-				         	STentry classEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));
-				         	System.out.println(" classEntri:"+classEntry+" \nclassType??? "+ classEntry.getType());
-				         	ClassTypeNode classType = (ClassTypeNode) classEntry.getType();
 				         	
-				         	classNode.addFields(classType.getFields());
-				         	classNode.addMethods(classType.getMethods());
+				         	classNode.addFields(cTypeNode.getFields());
+				         	classNode.addMethods(cTypeNode.getMethods());
 				         	/* aggiugere il classNode all lista da ritornare   	*/
+				         	 System.out.println(_localctx.astlist);
 				         	_localctx.astlist.add(classNode); 
-				         	/* diminuire nestingLevel */
-				         	  	symTable.remove(nestingLevel--);
+				         	System.out.println(_localctx.astlist);
+				         	nestingLevel--;
 				         
 				}
 				}
