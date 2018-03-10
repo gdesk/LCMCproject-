@@ -12,6 +12,10 @@ public class FieldNode implements DecNode{
 		this.fieldID = id;
 		this.type = node;
 	}
+	
+	public String getID() {
+		return fieldID;
+	}
 
 	@Override
 	public Node typeCheck() {

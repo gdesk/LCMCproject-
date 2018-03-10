@@ -404,8 +404,8 @@ public class FOOLParser extends Parser {
 						 	  			STentry oldEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
 						 	  			oldEntry.addType(((CllistContext)_localctx).t.ast);
 						 	  			oldEntry.setNestingLevel(nestingLevel);
-						 	  		}	 		
-						 	  		
+						 	  		}
+						 	  			 		
 						 	  	
 					setState(70);
 					_errHandler.sync(this);
@@ -589,16 +589,11 @@ public class FOOLParser extends Parser {
 				}
 				setState(134); match(CRPAR);
 					isExtends = false;
-				         
-				         System.out.println("ARRIVATO");
 				         	/* buttare dentro a classNode tutte le info dalla classTable */
-				         	
 				         	classNode.addFields(cTypeNode.getFields());
 				         	classNode.addMethods(cTypeNode.getMethods());
 				         	/* aggiugere il classNode all lista da ritornare   	*/
-				         	 System.out.println(_localctx.astlist);
 				         	_localctx.astlist.add(classNode); 
-				         	System.out.println(_localctx.astlist);
 				         	nestingLevel--;
 				         
 				}

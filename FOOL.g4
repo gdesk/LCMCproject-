@@ -124,8 +124,8 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
 	 	  			oldEntry.setNestingLevel(nestingLevel);
-	 	  		}	 		
-	 	  		
+	 	  		}
+	 	  			 		
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
@@ -231,19 +231,14 @@ cllist returns [ArrayList<ClassNode> astlist]:
         	                   
               CRPAR
          {	isExtends = false;
-         
-         System.out.println("ARRIVATO");
          	/* buttare dentro a classNode tutte le info dalla classTable */
-         	
          	classNode.addFields(cTypeNode.getFields());
          	classNode.addMethods(cTypeNode.getMethods());
          	/* aggiugere il classNode all lista da ritornare   	*/
-         	 System.out.println($astlist);
          	$astlist.add(classNode); 
-         	System.out.println($astlist);
          	nestingLevel--;
          }
-          )+; 
+          )+ ; 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<DecNode> astlist]:
