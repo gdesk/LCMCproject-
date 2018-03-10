@@ -18,13 +18,14 @@ public class ClassNode implements DecNode {
 		this.id=id;
 	}
 	
-	private void addFields(final ArrayList<FieldNode> fields) {
+	public void addFields(final ArrayList<FieldNode> fields) {
 		this.fields = fields;
 	}
 	
-	private void addMethods( final ArrayList<MethodNode> methods) {
+	public void addMethods( final ArrayList<MethodNode> methods) {
 		this.methods = methods;
 	}
+	
 	
 	@Override
 	public Node typeCheck() {

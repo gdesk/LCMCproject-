@@ -35,11 +35,9 @@ public class ProgLetInNode implements Node {
 		
 		String cllstr="";
 		if(cllist != null) {
-			if(declist != null) {
 				for (DecNode dec:cllist){
 					cllstr+=dec.toPrint(indent+"  ");
 				}
-			}
 		}
 
 		String declstr="";

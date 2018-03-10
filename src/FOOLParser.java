@@ -324,7 +324,7 @@ public class FOOLParser extends Parser {
 				{
 				setState(42); match(CLASS);
 				setState(43); ((CllistContext)_localctx).ic = match(ID);
-				ClassNode classNode = new ClassNode((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));	/* a cosa ci serve? per ritornare? */
+				ClassNode classNode = new ClassNode((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));	
 					 		 offset--; 		
 					 		
 				setState(48);
@@ -574,8 +574,16 @@ public class FOOLParser extends Parser {
 				setState(129); match(CRPAR);
 					isExtends = false;
 				         	/* buttare dentro a classNode tutte le info dalla classTable */
+				         	STentry classEntry = classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));
+				         	System.out.println(" classEntri:"+classEntry+" \nclassType??? "+ classEntry.getType());
+				         	ClassTypeNode classType = (ClassTypeNode) classEntry.getType();
+				         	
+				         	classNode.addFields(classType.getFields());
+				         	classNode.addMethods(classType.getMethods());
 				         	/* aggiugere il classNode all lista da ritornare   	*/
+				         	_localctx.astlist.add(classNode); 
 				         	/* diminuire nestingLevel */
+				         	  	symTable.remove(nestingLevel--);
 				         
 				}
 				}

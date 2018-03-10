@@ -62,7 +62,7 @@ cllist returns [ArrayList<DecNode> astlist]:
 	}
 		
 	 ( CLASS ic=ID 
-	 		{ClassNode classNode = new ClassNode($ic.text);	/* a cosa ci serve? per ritornare? */
+	 		{ClassNode classNode = new ClassNode($ic.text);	
 	 		 offset--; 		
 	 		}
 	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
@@ -216,11 +216,18 @@ cllist returns [ArrayList<DecNode> astlist]:
         	     )* 
         	                   
               CRPAR
-              /* si ritorna la classe come ClassNode false */
          {	isExtends = false;
          	/* buttare dentro a classNode tutte le info dalla classTable */
+         	STentry classEntry = classTable.get($ic.text).get($ic.text);
+         	System.out.println(" classEntri:"+classEntry+" \nclassType??? "+ classEntry.getType());
+         	ClassTypeNode classType = (ClassTypeNode) classEntry.getType();
+         	
+         	classNode.addFields(classType.getFields());
+         	classNode.addMethods(classType.getMethods());
          	/* aggiugere il classNode all lista da ritornare   	*/
+         	$astlist.add(classNode); 
          	/* diminuire nestingLevel */
+         	  	symTable.remove(nestingLevel--);
          }
           )+
           
