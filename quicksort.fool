@@ -5,10 +5,11 @@ let
   
   class TradingAcc extends Account (invested:int) {
   }	
-	
+  
 in
 
 	print(5);
+	
 /*let
 
   class List (f:int, r:List) {

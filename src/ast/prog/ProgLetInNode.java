@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 import ast.DecNode;
 import ast.Node;
+import ast.cllist.ClassNode;
 import lib.*;
 
 /**
@@ -15,7 +16,7 @@ import lib.*;
 
 public class ProgLetInNode implements Node {
 
-	private ArrayList<DecNode> cllist;
+	private ArrayList<ClassNode> cllist;
 	private ArrayList<DecNode> declist;
 	private Node exp;
 
@@ -24,7 +25,7 @@ public class ProgLetInNode implements Node {
 		this.exp=exp;
 	}
 
-	public ProgLetInNode( final ArrayList<DecNode> cllist, final ArrayList<DecNode> declist, final Node exp){
+	public ProgLetInNode( final ArrayList<ClassNode> cllist, final ArrayList<DecNode> declist, final Node exp){
 		this.cllist = cllist;
 		this.declist = declist;
 		this.exp = exp;
@@ -32,20 +33,22 @@ public class ProgLetInNode implements Node {
 
 	@Override
 	public String toPrint(String indent) {
-		
+
 		String cllstr="";
+		String declstr="";
+		
 		if(cllist != null) {
-				for (DecNode dec:cllist){
-					cllstr+=dec.toPrint(indent+"  ");
-				}
+			for (ClassNode cl:cllist){
+				cllstr+=cl.toPrint(indent+"  ");
+			}
 		}
 
-		String declstr="";
 		if(declist != null) {
 			for (Node dec:declist){
 				declstr+=dec.toPrint(indent+"  ");
 			}
 		}
+
 		return indent+"ProgLetIn\n" + cllstr + declstr + exp.toPrint(indent+"  ") ; 
 	}
 

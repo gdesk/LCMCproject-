@@ -34,29 +34,40 @@ grammar FOOL;
 prog returns [Node ast]:
 	{	HashMap<String,STentry> hm = new HashMap<String,STentry> ();
 		symTable.add(hm);
+		boolean isCl = false;
+		boolean isDec = false;
+		boolean isOnlyDec = false;
 	}
 	( 
 		e=exp {
 			$ast = new ProgNode($e.ast);
 		}
-	|  LET (c=cllist (cd=declist)? | d=declist
+	|  LET (c=cllist {isCl = true;}
+		 (cd=declist {isDec = true;})? | d=declist {isOnlyDec = true;}
 	) IN e=exp 
 		{ 
-			if($c.astlist == null){
+			if(isOnlyDec){
 				$ast = new ProgLetInNode($d.astlist,$e.ast);
-			}else{
+			}
+			if(isCl && isDec){
 				$ast = new ProgLetInNode($c.astlist, $cd.astlist, $e.ast);
 			}
-			
+			if(isCl && !isDec){
+				$ast = new ProgLetInNode($c.astlist, new ArrayList<DecNode>(), $e.ast);
+			}
+				
 		}
 	) 
 	{	
 		symTable.remove(nestingLevel);
+		isCl = false;
+		isDec = false;
+		isOnlyDec = false;
 	}  SEMIC ;
 
  /* lista delle classi */
-cllist returns [ArrayList<DecNode> astlist]:
-	{	$astlist = new ArrayList<DecNode>();
+cllist returns [ArrayList<ClassNode> astlist]:
+	{	$astlist = new ArrayList<ClassNode>();
 		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
 		boolean isExtends=false;
 	}
@@ -232,9 +243,7 @@ cllist returns [ArrayList<DecNode> astlist]:
          	System.out.println($astlist);
          	nestingLevel--;
          }
-          )+
-          
-        ; 
+          )+; 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<DecNode> astlist]:
