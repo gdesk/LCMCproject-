@@ -60,10 +60,10 @@ public class ClassNode implements DecNode {
 		}
 
 		if(methods != null) 
-			for(DecNode m: methods) {
+			for(MethodNode m: methods) {
 				methstr += m.toPrint(indent + "  ");
 			}
-		return indent + "Class:" + id + "\n" + fieldstr  + methstr; 
+		return indent + "Class:" + id + "\n" + fieldstr+ methstr+"\n"; 
 	}
 
 	@Override
