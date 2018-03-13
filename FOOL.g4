@@ -86,7 +86,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 				HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
 				symTable.add(nestingLevel,virtualTable); /* è vuota */
 				  if(classTable.put($ic.text, virtualTable) != null) {
-                   System.out.println("Class "+$ic.text+" at line "+$ic.line+" already declared");
+                   System.out.println("Class id  "+$ic.text+" at line "+$ic.line+" already declared");
                    System.exit(0); 
                 } 
 	 		 	
@@ -106,7 +106,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 					classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 		 			nestingLevel++; /*perchè finita la dichiarazione classe*/
 	 			 }else{
-	 			 	System.out.println("Extended class" + $ic1.text + " at line " + $ic1.line + " never declarated.");
+	 			 	System.out.println("Extended class id" + $ic1.text + " at line " + $ic1.line + " never declarated.");
 					System.exit(0);
 	 			 }
 	 		}
@@ -263,6 +263,7 @@ declist	returns [ArrayList<DecNode> astlist]:
 			}
 		| FUN i=ID COLON t=type 
 			{	
+			System.out.println("funzione "+ $i.text);
 				FunNode f = new FunNode($i.text,$t.ast);
 				$astlist.add(f);
 				HashMap<String,STentry> hm = symTable.get(nestingLevel);
@@ -310,7 +311,7 @@ declist	returns [ArrayList<DecNode> astlist]:
 				)*
 			)?
 			RPAR { entry.addType(new ArrowTypeNode(parTypes,$t.ast)); }
-			(LET d=declist IN {f.addDec($d.astlist);})? e=exp
+			(LET d=declist  {f.addDec($d.astlist);} IN)? e=exp
 				{	
 					symTable.remove(nestingLevel--); /* Diminuisco nestingLevel perchè esco dallo scope della funzione */
 					f.addBody($e.ast);
@@ -364,10 +365,22 @@ value returns [Node ast]	:
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
 	| NULL		{$ast = new EmptyNode();}
-	| NEW ID LPAR (exp (COMMA exp)* )? RPAR 
+	| NEW nid=ID LPAR 
 		{	/* new ID()*/
-			
+			NewNode newNode = null;
+			/*controllo che ID deve essee in classTable */
+			if(classTable.keySet().contains($nid.text)){
+				/* STentry della classe*/
+				STentry entry = symTable.get(0).get($nid.text);
+				newNode = new NewNode($nid.text,entry);
+			}else{
+				System.out.println("Class id" + $nid.text + " at line " + $nid.line + " not declared.");
+				System.exit(0);
+			}
 		}
+		(e1=exp {newNode.addArg($e1.ast);} 
+			(COMMA e2=exp {newNode.addArg($e2.ast);})*
+		)? RPAR 
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
@@ -381,7 +394,7 @@ value returns [Node ast]	:
 				entry = symTable.get(j--).get($i.text);
 			}
 			if(entry==null) { /* Dichiarazione non presente nella symbol table quindi variabile non dichiarata*/
-				System.out.println("Id" + $i.text + " at line " + $i.line + " not declared.");
+				System.out.println("Var id " + $i.text + " at line " + $i.line + " not declared.");
 				System.exit(0);
 			}
 			$ast = new IdNode($i.text, entry, nestingLevel); /* Inserito il nestinglevel per verifiche sullo scope della variabile */
@@ -407,7 +420,7 @@ value returns [Node ast]	:
 				/* Istanzio la ClassCallNode*/
 				clCallNode = new ClassCallNode($i.text, $mid.text, classEntry, methodEntry, nestingLevel);		
 			}else{
-				System.out.println("Method" + $mid.text + " at line " + $i.line + " not declared.");
+				System.out.println("Method id" + $mid.text + " at line " + $i.line + " not declared.");
 				System.exit(0);
 			}
 						

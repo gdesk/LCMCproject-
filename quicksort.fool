@@ -1,4 +1,4 @@
-let
+/*let
 
   class Account (money:int) {
   	  fun f : bool (n:int, m:int)
@@ -17,9 +17,9 @@ let
   
 in
 
-	print(5);
+	print(5);*/
 	
-/*let
+let
 
   class List (f:int, r:List) {
     fun first:int() f;
@@ -74,4 +74,3 @@ in
 
 in printList(quicksort(l));
 
-*/
