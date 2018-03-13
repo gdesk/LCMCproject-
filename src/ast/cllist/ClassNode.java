@@ -28,6 +28,10 @@ public class ClassNode implements DecNode {
 		this.methods.addAll(methods);
 	}
 	
+	public void setSuperEntry(STentry superEntry) {
+		this.superEntry = superEntry;
+	}
+	
 	public ArrayList<FieldNode> getFields(){
 		return this.fields;
 	}

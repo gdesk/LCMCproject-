@@ -94,16 +94,24 @@ cllist returns [ArrayList<ClassNode> astlist]:
                 } 
 	 		 	
 	 		}else{
-	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
-	 			STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
-	 			ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-	 			STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
-	 			if(sym.put($ic.text,cstentry1) != null) {
-					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
+	 			/* controllo se è contenuta in classTable altrimenti errore perchè mai dichiarata come classe */
+	 			if(classTable.keySet().contains($ic1.text)){
+		 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
+		 			STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
+		 			/* settare superEntry di classNode */
+		 			classNode.setSuperEntry(erhm1);
+		 			ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
+		 			STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
+		 			if(sym.put($ic.text,cstentry1) != null) {
+						System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
+						System.exit(0);
+					}; 
+					classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
+		 			nestingLevel++; /*perchè finita la dichiarazione classe*/
+	 			 }else{
+	 			 	System.out.println("Extended class" + $ic1.text + " at line " + $ic1.line + " never declarated.");
 					System.exit(0);
-				}; 
-				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
-	 			nestingLevel++; /*perchè finita la dichiarazione classe*/
+	 			 }
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
@@ -359,7 +367,10 @@ value returns [Node ast]	:
 	| TRUE		{$ast = new BoolNode(true);}
 	| FALSE		{$ast = new BoolNode(false);}
 	| NULL		{$ast = new EmptyNode();}
-	| NEW ID LPAR (exp (COMMA exp)* )? RPAR
+	| NEW ID LPAR (exp (COMMA exp)* )? RPAR 
+		{
+			/* new ID()*/
+		}
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
@@ -384,10 +395,30 @@ value returns [Node ast]	:
 			(COMMA a1=exp { arglist.add($a1.ast); }
 			)*
 		)? RPAR { $ast = new CallNode($i.text,entry,arglist,nestingLevel); } // Inserito il nestinglevel per verifiche sullo scope della funzione chiamata
-	// | ID ( LPAR (exp (COMMA exp)* )? RPAR già fatto ELIMINARE
-	
-	| DOT ID LPAR (exp (COMMA exp)* )? RPAR 
-	         )?	 
+		
+		| DOT mid=ID
+			{ 
+				ClassCallNode clCallNode = null;
+			/* controllo che esista il metodo di quella classe  */
+			if(classTable.get($i.text).keySet().contains($mid.text)){
+				/* STentry della classe */
+				STentry classEntry = symTable.get(0).get($i.text);
+				/* STentry del metodo */
+				STentry methodEntry = classTable.get($i.text).get($mid.text);
+				/* modifico il tipo del'STentry precedente con RefTypeNode'*/
+				methodEntry.addType(new RefTypeNode($i.text));
+				/* Istanzio la ClassCallNode*/
+				clCallNode = new ClassCallNode($i.text, $mid.text, classEntry, methodEntry, nestingLevel);		
+			}else{
+				System.out.println("Method" + $mid.text + " at line " + $i.line + " not declared.");
+				System.exit(0);
+			}
+						
+			} LPAR
+			 (e=exp { clCallNode.addArg($e.ast);} 
+				 (COMMA e1=exp 	{ clCallNode.addArg($e1.ast); })* 
+			  )? RPAR 
+		    )?	 
 	         	;
 
 /*------------------------------------------------------------------

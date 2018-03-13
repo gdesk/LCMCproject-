@@ -4,11 +4,12 @@ import ast.Node;
 
 public class RefTypeNode implements Node {
 	
-	private Node idClass;
+	private String idClass;
 	
-	public RefTypeNode() {
-		
+	public RefTypeNode(String idClass) {
+		this.idClass = idClass;
 	}
+
 
 	@Override
 	public Node typeCheck() {
@@ -22,7 +23,7 @@ public class RefTypeNode implements Node {
 
 	@Override
 	public String toPrint(String indent) {
-		return indent+"RefTypeNode\n";
+		return indent+"RefTypeNode: "+ this.idClass+"\n";
 	}
 
 }
