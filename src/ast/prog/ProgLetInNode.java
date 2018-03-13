@@ -1,9 +1,9 @@
 package ast.prog;
 import java.util.ArrayList;
 
+import ast.ClassNode;
 import ast.DecNode;
 import ast.Node;
-import ast.cllist.ClassNode;
 import lib.*;
 
 /**

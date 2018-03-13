@@ -1,7 +1,5 @@
-package ast.declist;
+package ast;
 
-import ast.DecNode;
-import ast.Node;
 import lib.FOOLlib;
 
 /**

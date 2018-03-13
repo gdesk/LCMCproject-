@@ -6,11 +6,8 @@ grammar FOOL;
 	import ast.value.*;
 	import ast.exp.*;
 	import ast.type.*;
-	import ast.hotype.*;
 	import ast.prog.*;
 	import ast.term.*;
-	import ast.declist.*;
-	import ast.cllist.*;
 	import ast.factor.*;
 }
 
@@ -368,8 +365,8 @@ value returns [Node ast]	:
 	| FALSE		{$ast = new BoolNode(false);}
 	| NULL		{$ast = new EmptyNode();}
 	| NEW ID LPAR (exp (COMMA exp)* )? RPAR 
-		{
-			/* new ID()*/
+		{	/* new ID()*/
+			
 		}
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR

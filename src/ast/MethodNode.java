@@ -1,8 +1,5 @@
-package ast.cllist;
+package ast;
 
-import ast.DecNode;
-import ast.Node;
-import ast.declist.VarNode;
 import ast.*;
 
 import java.util.ArrayList;

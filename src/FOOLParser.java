@@ -5,11 +5,8 @@
 	import ast.value.*;
 	import ast.exp.*;
 	import ast.type.*;
-	import ast.hotype.*;
 	import ast.prog.*;
 	import ast.term.*;
-	import ast.declist.*;
-	import ast.cllist.*;
 	import ast.factor.*;
 
 import org.antlr.v4.runtime.atn.*;
@@ -1490,8 +1487,8 @@ public class FOOLParser extends Parser {
 				}
 
 				setState(307); match(RPAR);
-
-							/* new ID()*/
+					/* new ID()*/
+							
 						
 				}
 				break;

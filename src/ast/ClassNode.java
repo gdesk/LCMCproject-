@@ -1,10 +1,6 @@
-package ast.cllist;
+package ast;
 
 import java.util.ArrayList;
-
-import ast.DecNode;
-import ast.Node;
-import ast.STentry;
 
 public class ClassNode implements DecNode {
 

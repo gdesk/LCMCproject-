@@ -2,9 +2,9 @@ package ast.type;
 
 import java.util.ArrayList;
 
+import ast.FieldNode;
+import ast.MethodNode;
 import ast.Node;
-import ast.cllist.FieldNode;
-import ast.cllist.MethodNode;
 
 public class ClassTypeNode implements Node {
 	

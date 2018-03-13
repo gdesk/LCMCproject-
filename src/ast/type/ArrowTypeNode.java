@@ -1,4 +1,4 @@
-package ast.hotype;
+package ast.type;
 import java.util.ArrayList;
 
 import ast.Node;

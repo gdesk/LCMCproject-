@@ -5,11 +5,8 @@
 	import ast.value.*;
 	import ast.exp.*;
 	import ast.type.*;
-	import ast.hotype.*;
 	import ast.prog.*;
 	import ast.term.*;
-	import ast.declist.*;
-	import ast.cllist.*;
 	import ast.factor.*;
 
 

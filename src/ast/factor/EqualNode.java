@@ -1,7 +1,7 @@
 package ast.factor;
 
 import ast.Node;
-import ast.hotype.ArrowTypeNode;
+import ast.type.ArrowTypeNode;
 import ast.type.BoolTypeNode;
 import lib.FOOLlib;
 

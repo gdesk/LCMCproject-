@@ -1,7 +1,4 @@
-package ast.cllist;
-
-import ast.DecNode;
-import ast.Node;
+package ast;
 
 public class FieldNode implements DecNode{
 	

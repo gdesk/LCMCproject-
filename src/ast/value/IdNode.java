@@ -2,7 +2,7 @@ package ast.value;
 
 import ast.Node;
 import ast.STentry;
-import ast.hotype.ArrowTypeNode;
+import ast.type.ArrowTypeNode;
 
 /**
  * This class describes the declaration of variable.
