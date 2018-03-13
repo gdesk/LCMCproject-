@@ -92,23 +92,23 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		 	
 	 		}else{
 	 			/* controllo se è contenuta in classTable altrimenti errore perchè mai dichiarata come classe */
-	 			if(classTable.keySet().contains($ic1.text)){
-		 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
-		 			STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
-		 			/* settare superEntry di classNode */
-		 			classNode.setSuperEntry(erhm1);
-		 			ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-		 			STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
-		 			if(sym.put($ic.text,cstentry1) != null) {
-						System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
-						System.exit(0);
-					}; 
-					classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
-		 			nestingLevel++; /*perchè finita la dichiarazione classe*/
-	 			 }else{
+	 			if(!classTable.keySet().contains($ic1.text)){
 	 			 	System.out.println("Extended class id" + $ic1.text + " at line " + $ic1.line + " never declarated.");
 					System.exit(0);
 	 			 }
+		 		HashMap<String,STentry> sym = symTable.get(nestingLevel);
+		 		STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
+		 		/* settare superEntry di classNode */
+		 		classNode.setSuperEntry(erhm1);
+		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
+		 		STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
+		 		if(sym.put($ic.text,cstentry1) != null) {
+					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
+					System.exit(0);
+				}; 
+				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
+		 		nestingLevel++; /*perchè finita la dichiarazione classe*/
+	 			
 	 		}
 	 	}
 	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
@@ -160,6 +160,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
                 	 MethodNode method = new MethodNode($fid.text, $ret.ast);
                 	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
                 	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
+                	 mentry.isMethod();
                 	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
                 	 msym.put($fid.text, mentry);
                 	              	 
@@ -239,7 +240,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
          	classNode.addMethods(cTypeNode.getMethods());
          	/* aggiugere il classNode all lista da ritornare   	*/
          	$astlist.add(classNode); 
-         	nestingLevel--;
+         	symTable.remove(nestingLevel--);
          }
           )+ ; 
 
@@ -263,7 +264,6 @@ declist	returns [ArrayList<DecNode> astlist]:
 			}
 		| FUN i=ID COLON t=type 
 			{	
-			System.out.println("funzione "+ $i.text);
 				FunNode f = new FunNode($i.text,$t.ast);
 				$astlist.add(f);
 				HashMap<String,STentry> hm = symTable.get(nestingLevel);
@@ -283,17 +283,18 @@ declist	returns [ArrayList<DecNode> astlist]:
 					int parOffset = 1;
 				}
 				(i1=ID COLON fty=hotype
-					{ /* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
+				
+					{ 
+						/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 						parTypes.add($fty.ast);
 						ParNode p1 = new ParNode($i1.text,$fty.ast);
 						f.addPar(p1);
-						{if($fty.ast instanceof ArrowTypeNode) parOffset++;}
+						if($fty.ast instanceof ArrowTypeNode) parOffset++;
 						if (hmn.put($i1.text, new STentry(nestingLevel,$fty.ast,parOffset++)) != null) {
 							/* Errore identificatore (parametro) già dichiarato*/
 							System.out.println("Par ID: " + $i1.text + " at line " + $i1.line + " already declared");
 							System.exit(0);
 						}
-						
 					}
 				(COMMA i2=ID COLON ty=hotype
 					{/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
@@ -339,7 +340,7 @@ arrow returns [Node ast]	:
 type returns [Node ast]	: 
 	  	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
 		| BOOL	{$ast = new BoolTypeNode();}
-		| ID	{$ast = new IdTypeNode();}
+		| id=ID	{$ast = new RefTypeNode($id.text);}
 		  ;
 
 exp	returns [Node ast]: t=term {$ast = $t.ast;}
@@ -366,21 +367,19 @@ value returns [Node ast]	:
 	| FALSE		{$ast = new BoolNode(false);}
 	| NULL		{$ast = new EmptyNode();}
 	| NEW nid=ID LPAR 
-		{	/* new ID()*/
-			NewNode newNode = null;
-			/*controllo che ID deve essee in classTable */
-			if(classTable.keySet().contains($nid.text)){
-				/* STentry della classe*/
-				STentry entry = symTable.get(0).get($nid.text);
-				newNode = new NewNode($nid.text,entry);
-			}else{
+		{	/* new ID()*/ 
+			/*controllo che ID deve essere in classTable */
+			if(!classTable.keySet().contains($nid.text)){
 				System.out.println("Class id" + $nid.text + " at line " + $nid.line + " not declared.");
 				System.exit(0);
 			}
+			 /* STentry della classe*/
+				STentry entry = symTable.get(0).get($nid.text);
+				NewNode newNode = new NewNode($nid.text,entry);
 		}
 		(e1=exp {newNode.addArg($e1.ast);} 
 			(COMMA e2=exp {newNode.addArg($e2.ast);})*
-		)? RPAR 
+		)? {$ast= newNode;}RPAR 
 	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
@@ -408,22 +407,23 @@ value returns [Node ast]	:
 		
 		| DOT mid=ID
 			{ 
-				ClassCallNode clCallNode = null;
-			/* controllo che esista il metodo di quella classe  */
-			if(classTable.get($i.text).keySet().contains($mid.text)){
-				/* STentry della classe */
-				STentry classEntry = symTable.get(0).get($i.text);
+			  	/* Controllo se è un oggetto/classe */              
+             	if (! (entry.getType() instanceof RefTypeNode)) {
+               		System.out.println("id " + $i.text + " is not a objects ");
+               		System.exit(0);
+             	}
+             	RefTypeNode ref = (RefTypeNode)entry.getType();
+             	String objectID = ref.getID();
+				/* controllo che esista il metodo di quella classe  */
+				if(!classTable.get(objectID).containsKey($mid.text)){
+					System.out.println("Method id" + $mid.text + " at line " + $i.line + " not declared.");
+					System.exit(0);
+				}
+				/* STentry della classe è entry */
 				/* STentry del metodo */
-				STentry methodEntry = classTable.get($i.text).get($mid.text);
-				/* modifico il tipo del'STentry precedente con RefTypeNode'*/
-				methodEntry.addType(new RefTypeNode($i.text));
+				STentry methodEntry = classTable.get(ref.getID()).get($mid.text);
 				/* Istanzio la ClassCallNode*/
-				clCallNode = new ClassCallNode($i.text, $mid.text, classEntry, methodEntry, nestingLevel);		
-			}else{
-				System.out.println("Method id" + $mid.text + " at line " + $i.line + " not declared.");
-				System.exit(0);
-			}
-						
+				ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, entry, methodEntry, nestingLevel);				
 			} LPAR
 			 (e=exp { clCallNode.addArg($e.ast);} 
 				 (COMMA e1=exp 	{ clCallNode.addArg($e1.ast); })* 

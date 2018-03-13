@@ -9,6 +9,10 @@ public class RefTypeNode implements Node {
 	public RefTypeNode(String idClass) {
 		this.idClass = idClass;
 	}
+	
+	public String getID() {
+		return this.idClass;
+	}
 
 
 	@Override

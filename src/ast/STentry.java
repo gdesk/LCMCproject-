@@ -27,6 +27,10 @@ public class STentry {
 		this.offset=offset;
 		this.isMethod=false; 
 	} 
+	
+	public void isMethod() {
+		this.isMethod = true;
+	}
 
 	public void addType(Node type) {
 		this.type=type;

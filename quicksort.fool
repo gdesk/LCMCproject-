@@ -26,13 +26,13 @@ let
     fun rest:List() r;
   }
 
-  fun printList:List (l:List)
+  fun printList:List (l:List, i:int)
       let
         fun makeList:List (l:List, i:int) new List (i,l);
       in
          if (l == null)
            then {null}
-           else {makeList(printList(l.rest()),print(l.first()))};
+         	  else {makeList(printList(l.rest()),print(l.first()))};
 
   fun append:List (l1:List, l2:List)
       if (l1 == null)
