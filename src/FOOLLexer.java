@@ -8,6 +8,7 @@
 	import ast.prog.*;
 	import ast.term.*;
 	import ast.factor.*;
+	import lib.*;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

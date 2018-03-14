@@ -8,7 +8,7 @@ public class ClassNode implements DecNode {
 	private ArrayList<FieldNode> fields;
 	private String id;
 	private DecNode symType;
-	private STentry superEntry; // STentry della classe ID2 (extends ID2) - istanziarlo in altri modo
+	private STentry superEntry; 
 
 	public ClassNode(final String id) {
 		this.methods = new ArrayList<MethodNode>();

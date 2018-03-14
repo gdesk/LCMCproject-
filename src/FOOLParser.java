@@ -8,6 +8,7 @@
 	import ast.prog.*;
 	import ast.term.*;
 	import ast.factor.*;
+	import lib.*;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -343,7 +344,11 @@ public class FOOLParser extends Parser {
 					{
 					setState(50); match(EXTENDS);
 					setState(51); ((CllistContext)_localctx).ic1 = match(ID);
-					isExtends = true;
+
+						 			isExtends = true;
+						 			FOOLlib.addSuperType((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), (((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null));
+						 			
+						 		
 					}
 				}
 
@@ -371,7 +376,7 @@ public class FOOLParser extends Parser {
 					 			 }
 						 		HashMap<String,STentry> sym = symTable.get(nestingLevel);
 						 		STentry erhm1 = sym.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null)); /*stetry della classe ereditata*/
-						 		/* settare superEntry di classNode */
+					 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 						 		classNode.setSuperEntry(erhm1);
 						 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
 						 		STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
@@ -580,6 +585,7 @@ public class FOOLParser extends Parser {
 
 					setState(125); ((CllistContext)_localctx).exp1 = exp();
 
+						                     	
 						                     	method.addExp(((CllistContext)_localctx).exp1.ast);
 					                    	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perch� esco dallo scope della funzione */
 						                     

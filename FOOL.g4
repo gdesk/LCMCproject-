@@ -9,6 +9,7 @@ grammar FOOL;
 	import ast.prog.*;
 	import ast.term.*;
 	import ast.factor.*;
+	import lib.*;
 }
 
 @parser::members {
@@ -73,7 +74,13 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		{ClassNode classNode = new ClassNode($ic.text);	
 	 		 offset--; 		
 	 		}
-	 	(EXTENDS ic1=ID {isExtends = true;}	)? 
+	 	(EXTENDS ic1=ID 
+	 		{
+	 			isExtends = true;
+	 			FOOLlib.addSuperType($ic.text, $ic1.text);
+	 			
+	 		}
+	 	)? 
 	 	{
 	 		if(isExtends == false){
 	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
@@ -98,7 +105,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 			 }
 		 		HashMap<String,STentry> sym = symTable.get(nestingLevel);
 		 		STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
-		 		/* settare superEntry di classNode */
+	 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 		 		classNode.setSuperEntry(erhm1);
 		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
 		 		STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
@@ -227,6 +234,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	                     } 
 	                     IN)? exp1=exp
 	                     {
+	                     	
 	                     	method.addExp($exp1.ast);
                     	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perchè esco dallo scope della funzione */
 	                     } 
