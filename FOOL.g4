@@ -171,6 +171,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
                 	 MethodNode method = new MethodNode($fid.text, $ret.ast);
                 	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
                 	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
+                	 method.setSymType($ret.ast);
                 	 mentry.setIsMethod();
                 	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
                 	 msym.put($fid.text, mentry);

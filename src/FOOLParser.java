@@ -473,6 +473,7 @@ public class FOOLParser extends Parser {
 					                	 MethodNode method = new MethodNode((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), ((CllistContext)_localctx).ret.ast);
 					                	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
 					                	 STentry mentry = new STentry(nestingLevel, ((CllistContext)_localctx).ret.ast, methodOffset);
+					                	 method.setSymType(((CllistContext)_localctx).ret.ast);
 					                	 mentry.setIsMethod();
 					                	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
 					                	 msym.put((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), mentry);

@@ -13,7 +13,7 @@ public class MethodNode implements DecNode {
 	private ArrayList<ParNode> parList;
 	private ArrayList<VarNode> varList;
 	private Node exp; 
-	private DecNode symType;
+	private Node symType;
 
 	public MethodNode(String id, Node retType) {
 		this.id = id;
@@ -31,6 +31,10 @@ public class MethodNode implements DecNode {
 	public void addExp(Node node) {
 		this.exp = node;
 	}
+	
+	public void setSymType(Node ast) {
+		this.symType = ast;
+	}
 
 	@Override
 	public Node typeCheck() {
@@ -39,12 +43,11 @@ public class MethodNode implements DecNode {
 				var.typeCheck();
 			};
 		}
-		System.out.println("aaaaaaaaaaaaaaaaa"+exp.typeCheck()+" "+ retType);
-		
-		if ( !FOOLlib.isSubtype(exp.typeCheck(), retType)) {
-			System.out.println("Incompatible value for method");
-			System.exit(0);
-		}
+			
+		if(!(FOOLlib.isSubtype(symType,retType))) {
+			System.out.println("Wrong return type for method "+id);
+		    System.exit(0);
+		}  
 		return null;
 	}
 
