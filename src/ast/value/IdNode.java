@@ -3,6 +3,7 @@ package ast.value;
 import ast.Node;
 import ast.STentry;
 import ast.type.ArrowTypeNode;
+import ast.type.ClassTypeNode;
 
 /**
  * This class describes the declaration of variable.
@@ -31,6 +32,14 @@ public class IdNode implements Node {
 
 	@Override
 	public Node typeCheck() {
+		if(this.entry.isMethod()) {
+			System.out.println("Incompatible type: it's a method");
+			System.exit(0);
+		}
+		if(this.entry.getType() instanceof ClassTypeNode) {
+			System.out.println("Incompatible type of id (ClassTypeNode)");
+			System.exit(0);
+		}
 		return entry.getType();
 	}
 

@@ -28,8 +28,12 @@ public class STentry {
 		this.isMethod=false; 
 	} 
 	
-	public void isMethod() {
+	public void setIsMethod() {
 		this.isMethod = true;
+	}
+	
+	public boolean isMethod() {
+		return this.isMethod;
 	}
 
 	public void addType(Node type) {

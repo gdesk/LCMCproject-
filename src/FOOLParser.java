@@ -355,11 +355,13 @@ public class FOOLParser extends Parser {
 
 					 		if(isExtends == false){
 					 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
-					 			STentry cstentry = new STentry(nestingLevel, new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>()),offset);
+					 			ClassTypeNode symType = new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>());
+					 			STentry cstentry = new STentry(nestingLevel,symType ,offset);
 					 		 	if(sym.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null),cstentry) != null) {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
 									System.exit(0);
 								}; 
+								classNode.setSymType(symType);
 								nestingLevel++;
 								HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
 								symTable.add(nestingLevel,virtualTable); /* � vuota */
@@ -379,11 +381,13 @@ public class FOOLParser extends Parser {
 					 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 						 		classNode.setSuperEntry(erhm1);
 						 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-						 		STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
+						 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
+						 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 						 		if(sym.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null),cstentry1) != null) {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
 									System.exit(0);
 								}; 
+								classNode.setSymType(symType);
 								classTable.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), classTable.get((((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null))); /* copio vtable della classe ereditata*/
 						 		nestingLevel++; /*perch� finita la dichiarazione classe*/
 					 			
@@ -469,7 +473,7 @@ public class FOOLParser extends Parser {
 					                	 MethodNode method = new MethodNode((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), ((CllistContext)_localctx).ret.ast);
 					                	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
 					                	 STentry mentry = new STentry(nestingLevel, ((CllistContext)_localctx).ret.ast, methodOffset);
-					                	 mentry.isMethod();
+					                	 mentry.setIsMethod();
 					                	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
 					                	 msym.put((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), mentry);
 					                	              	 

@@ -1,6 +1,7 @@
 package ast;
 
 import ast.*;
+import lib.FOOLlib;
 
 import java.util.ArrayList;
 
@@ -33,7 +34,17 @@ public class MethodNode implements DecNode {
 
 	@Override
 	public Node typeCheck() {
-		// TODO Auto-generated method stub
+		if(varList != null) {
+			for (Node var:varList){
+				var.typeCheck();
+			};
+		}
+		System.out.println("aaaaaaaaaaaaaaaaa"+exp.typeCheck()+" "+ retType);
+		
+		if ( !FOOLlib.isSubtype(exp.typeCheck(), retType)) {
+			System.out.println("Incompatible value for method");
+			System.exit(0);
+		}
 		return null;
 	}
 

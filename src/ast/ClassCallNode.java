@@ -2,6 +2,9 @@ package ast;
 
 import java.util.ArrayList;
 
+import ast.type.ArrowTypeNode;
+import lib.FOOLlib;
+
 public class ClassCallNode implements Node {
 	
 	private String idClass;  // cercata per discesa di livelli (come IdNode e CallNode)
@@ -26,8 +29,26 @@ public class ClassCallNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrowTypeNode t=null;
+		if (classEntry.getType() instanceof ArrowTypeNode) t=(ArrowTypeNode) classEntry.getType(); 
+		else {
+			System.out.println("Invocation of a non-function "+idClass);
+			System.exit(0);
+		}
+		ArrayList<Node> p = t.getParList();
+		if ( !(p.size() == argList.size()) ) {
+			System.out.println("Wrong number of parameters in the invocation of "+idClass);
+			System.exit(0);
+		} 
+		for (int i=0; i<argList.size(); i++) {
+			Node parType = (argList.get(i)).typeCheck();
+	    	Node decType = p.get(i);
+			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (argList.get(i)).typeCheck(), p.get(i)) ) ) {
+				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+idClass);
+				System.exit(0);
+			} 
+		}
+		return t.getRet();
 	}
 
 	@Override

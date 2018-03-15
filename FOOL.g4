@@ -84,11 +84,13 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	{
 	 		if(isExtends == false){
 	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
-	 			STentry cstentry = new STentry(nestingLevel, new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>()),offset);
+	 			ClassTypeNode symType = new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>());
+	 			STentry cstentry = new STentry(nestingLevel,symType ,offset);
 	 		 	if(sym.put($ic.text,cstentry) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
+				classNode.setSymType(symType);
 				nestingLevel++;
 				HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
 				symTable.add(nestingLevel,virtualTable); /* è vuota */
@@ -108,11 +110,13 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 		 		classNode.setSuperEntry(erhm1);
 		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-		 		STentry cstentry1 = new STentry(nestingLevel, new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()),offset);/* mappa classe corrente */
+		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
+		 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 		 		if(sym.put($ic.text,cstentry1) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
+				classNode.setSymType(symType);
 				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
 		 		nestingLevel++; /*perchè finita la dichiarazione classe*/
 	 			
@@ -167,7 +171,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
                 	 MethodNode method = new MethodNode($fid.text, $ret.ast);
                 	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
                 	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
-                	 mentry.isMethod();
+                	 mentry.setIsMethod();
                 	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
                 	 msym.put($fid.text, mentry);
                 	              	 

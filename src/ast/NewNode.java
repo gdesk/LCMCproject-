@@ -2,8 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
+import ast.type.ArrowTypeNode;
 import ast.type.ClassTypeNode;
 import ast.type.RefTypeNode;
+import lib.FOOLlib;
 
 public class NewNode implements Node {
 	
@@ -25,6 +27,19 @@ public class NewNode implements Node {
 
 	@Override
 	public Node typeCheck() {
+		ArrayList<FieldNode> p = ((ClassTypeNode)entry.getType()).getFields();
+		if ( !(p.size() == argList.size()) ) {
+			System.out.println("Wrong number of parameters in the invocation of "+id);
+			System.exit(0);
+		} 
+		for (int i=0; i<argList.size(); i++) {
+			Node parType = (argList.get(i)).typeCheck();
+	    	Node decType = p.get(i);
+			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (argList.get(i)).typeCheck(), p.get(i)) ) ) {
+				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);
+				System.exit(0);
+			} 
+		}
 		return new RefTypeNode(id);
 	}
 

@@ -46,6 +46,10 @@ public class FOOLlib {
 			checkPar = checksize && parcontrovariance;
 		}
 		
+		if(nodeA instanceof RefTypeNode) {
+			
+		}
+		
 		boolean retType =  nodeA.getClass().equals(nodeB.getClass()) ||
 						 ((nodeA instanceof EmptyTypeNode) && (nodeB instanceof RefTypeNode)) ||
 						 ((nodeA instanceof BoolTypeNode) && (nodeB instanceof IntTypeNode));  
