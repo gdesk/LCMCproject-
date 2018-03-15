@@ -68,7 +68,6 @@ public class FunNode implements Node, DecNode {
 				dec.typeCheck();
 			};
 		}
-		
 		if (! FOOLlib.isSubtype(exp.typeCheck(),type)) {
 			System.out.println("Incompatible value for function");
 			System.exit(0);

@@ -2,6 +2,9 @@ package ast;
 
 import java.util.ArrayList;
 
+import ast.type.ClassTypeNode;
+import ast.type.RefTypeNode;
+
 public class NewNode implements Node {
 	
 	private String id;
@@ -22,7 +25,7 @@ public class NewNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		return null;
+		return new RefTypeNode(id);
 	}
 
 	@Override
