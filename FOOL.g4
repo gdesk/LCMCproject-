@@ -413,7 +413,7 @@ value returns [Node ast]	:
 		}
 		// Supporto alle chiamate a funzioni. Combinazioni possibili ID() (funzione vuota) - ID(exp) (funzione con variabili)
 		( LPAR { ArrayList<Node> arglist = new ArrayList<Node>(); }
-			( a=exp { arglist.add($a.ast); } //tutte volte che incontro un'espressione l'aggiungo alla lista dei parametri
+			( a=exp {arglist.add($a.ast); } //tutte volte che incontro un'espressione l'aggiungo alla lista dei parametri
 			(COMMA a1=exp { arglist.add($a1.ast); }
 			)*
 		)? RPAR { $ast = new CallNode($i.text,entry,arglist,nestingLevel); } // Inserito il nestinglevel per verifiche sullo scope della funzione chiamata
@@ -438,7 +438,7 @@ value returns [Node ast]	:
 				/* Istanzio la ClassCallNode*/
 				ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, entry, methodEntry, nestingLevel);				
 			} LPAR
-			 (e=exp { clCallNode.addArg($e.ast);} 
+			 (e=exp { System.out.println($e.ast); clCallNode.addArg($e.ast);} 
 				 (COMMA e1=exp 	{ clCallNode.addArg($e1.ast); })* 
 			  )? RPAR 
 		    )?	 

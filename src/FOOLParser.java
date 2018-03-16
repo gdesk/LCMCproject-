@@ -1588,7 +1588,7 @@ public class FOOLParser extends Parser {
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
 						setState(346); ((ValueContext)_localctx).a = exp();
-						 arglist.add(((ValueContext)_localctx).a.ast); 
+						arglist.add(((ValueContext)_localctx).a.ast); 
 						setState(354);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
@@ -1640,7 +1640,7 @@ public class FOOLParser extends Parser {
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
 						setState(365); ((ValueContext)_localctx).e = exp();
-						 clCallNode.addArg(((ValueContext)_localctx).e.ast);
+						 System.out.println(((ValueContext)_localctx).e.ast); clCallNode.addArg(((ValueContext)_localctx).e.ast);
 						setState(373);
 						_errHandler.sync(this);
 						_la = _input.LA(1);

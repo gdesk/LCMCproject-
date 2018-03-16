@@ -2,6 +2,8 @@ package ast;
 import java.util.ArrayList;
 
 import ast.type.ArrowTypeNode;
+import ast.type.RefTypeNode;
+import ast.value.IdNode;
 import lib.FOOLlib;
 
 /**
@@ -30,7 +32,7 @@ public class CallNode implements Node {
 		String parlstr="";
 		for (Node par:parList){
 			parlstr+=par.toPrint(indent+"  ");
-		};
+		}
 		return indent+"Call:" + id + " at nestinglevel " + nestingLevel+"\n"  +
 		entry.toPrint(indent+"  ") +  
 		parlstr;
@@ -38,12 +40,14 @@ public class CallNode implements Node {
 	@Override  
 	public Node typeCheck() {	 
 		ArrowTypeNode t=null;
-		if (entry.getType() instanceof ArrowTypeNode) t=(ArrowTypeNode) entry.getType(); 
-		else {
+		if (entry.getType() instanceof ArrowTypeNode) {
+		    t=(ArrowTypeNode) entry.getType(); 
+		}else {
 			System.out.println("Invocation of a non-function "+id);
 			System.exit(0);
 		}
 		ArrayList<Node> p = t.getParList();
+			
 		if ( !(p.size() == parList.size()) ) {
 			System.out.println("Wrong number of parameters in the invocation of "+id);
 			System.exit(0);
@@ -51,8 +55,11 @@ public class CallNode implements Node {
 		for (int i=0; i<parList.size(); i++) {
 			Node parType = (parList.get(i)).typeCheck();
 	    	Node decType = p.get(i);
-			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (parList.get(i)).typeCheck(), p.get(i)) ) ) {
-				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);
+	    			
+	    	System.out.println( (parType + "  " + decType));
+			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))
+					||!(FOOLlib.isSubtype( parType, p.get(i)) ) ) {
+				System.out.println("CallNode: Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);
 				System.exit(0);
 			} 
 		}

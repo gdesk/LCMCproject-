@@ -46,8 +46,14 @@ public class FOOLlib {
 			checkPar = checksize && parcontrovariance;
 		}
 		
-		if(nodeA instanceof RefTypeNode) {
-			
+		if(nodeA instanceof RefTypeNode && nodeB instanceof RefTypeNode) {
+			String refA = ((RefTypeNode)nodeA).getID();
+			String refB = ((RefTypeNode)nodeB).getID();
+			if(refA.equals(refB)) {
+				return true;
+			}else {
+				isSuperType(refA, refB);
+			}
 		}
 		
 		boolean retType =  nodeA.getClass().equals(nodeB.getClass()) ||
@@ -93,5 +99,18 @@ public class FOOLlib {
 			
 		}
 		return true;
+	}
+	
+	/* Per raggiungibilità multipla in base al superType*/
+	private static boolean isSuperType(String cl, String superCl){
+		if(superType.get(cl) != null) {
+			if( superType.get(cl).equals(superCl)){
+				return true;
+			} else {
+				return isSuperType(superCl, superType.get(cl));
+			}
+		}
+		return false;
+		
 	}
 }

@@ -35,8 +35,9 @@ public class NewNode implements Node {
 		for (int i=0; i<argList.size(); i++) {
 			Node parType = (argList.get(i)).typeCheck();
 	    	Node decType = p.get(i);
-			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (argList.get(i)).typeCheck(), p.get(i)) ) ) {
-				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);
+	    	
+			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype(parType, p.get(i).getSymType()))) {
+				System.out.println("NewNode :Wrong type for "+(i+1)+"-th parameter in the new "+id+"()");
 				System.exit(0);
 			} 
 		}

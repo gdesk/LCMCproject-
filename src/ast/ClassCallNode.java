@@ -44,10 +44,11 @@ public class ClassCallNode implements Node {
 			Node parType = (argList.get(i)).typeCheck();
 	    	Node decType = p.get(i);
 			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (argList.get(i)).typeCheck(), p.get(i)) ) ) {
-				System.out.println("Wrong type for "+(i+1)+"-th parameter in the invocation of "+idClass);
+				System.out.println("ClassCallNode: Wrong type for "+(i+1)+"-th parameter in the invocation of "+idClass);
 				System.exit(0);
 			} 
 		}
+		
 		return t.getRet();
 	}
 
