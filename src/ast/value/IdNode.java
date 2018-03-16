@@ -41,7 +41,6 @@ public class IdNode implements Node {
 			System.exit(0);
 		}
 		
-		System.out.println(entry.getType());
 		return entry.getType();
 	}
 

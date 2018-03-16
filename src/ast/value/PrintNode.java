@@ -24,7 +24,6 @@ public class PrintNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		System.out.println(exp);
 		return exp.typeCheck();
 	}
 

@@ -18,14 +18,24 @@ public class MethodNode implements DecNode {
 	public MethodNode(String id, Node retType) {
 		this.id = id;
 		this.retType = retType;
+		this.parList = new ArrayList<>();
+		this.varList = new ArrayList<>();
 	}
-
+	
+	public String getID() {
+		return this.id;
+	}
+	
+	public int getParSize() {
+		return parList.size();
+	}
+	
 	public void addParList(ArrayList<ParNode> parList){
-		this.parList = parList;
+		this.parList.addAll(parList);
 	}
 
 	public void addVarList(ArrayList<VarNode> varList) {
-		this.varList = varList;
+		this.varList.addAll(varList);
 	}
 
 	public void addExp(Node node) {

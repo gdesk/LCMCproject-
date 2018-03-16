@@ -1442,7 +1442,7 @@ public class FOOLParser extends Parser {
 		enterRule(_localctx, 18, RULE_value);
 		int _la;
 		try {
-			setState(381);
+			setState(382);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				enterOuterAlt(_localctx, 1);
@@ -1571,13 +1571,14 @@ public class FOOLParser extends Parser {
 							while(j>=0 && entry==null) {
 								entry = symTable.get(j--).get((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null));
 							}
+							
 							if(entry==null) { /* Dichiarazione non presente nella symbol table quindi variabile non dichiarata*/
 								System.out.println("Var id " + (((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null) + " at line " + (((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getLine():0) + " not declared.");
 								System.exit(0);
 							}
 							((ValueContext)_localctx).ast =  new IdNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null), entry, nestingLevel); /* Inserito il nestinglevel per verifiche sullo scope della variabile */
 						
-				setState(379);
+				setState(380);
 				switch (_input.LA(1)) {
 				case LPAR:
 					{
@@ -1616,6 +1617,7 @@ public class FOOLParser extends Parser {
 					setState(361); match(DOT);
 					setState(362); ((ValueContext)_localctx).mid = match(ID);
 					 
+								  	ArrayList<Node> argslist = new ArrayList<>();
 								  	/* Controllo se � un oggetto/classe */              
 					             	if (! (entry.getType() instanceof RefTypeNode)) {
 					               		System.out.println("id " + (((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null) + " is not a objects ");
@@ -1629,11 +1631,11 @@ public class FOOLParser extends Parser {
 										System.exit(0);
 									}
 									/* STentry della classe � entry */
+									STentry classEntry = symTable.get(0).get(ref.getID());
 									/* STentry del metodo */
 									STentry methodEntry = classTable.get(ref.getID()).get((((ValueContext)_localctx).mid!=null?((ValueContext)_localctx).mid.getText():null));
 									/* Istanzio la ClassCallNode*/
-									ClassCallNode clCallNode = new ClassCallNode(ref.getID(), (((ValueContext)_localctx).mid!=null?((ValueContext)_localctx).mid.getText():null), entry, methodEntry, nestingLevel);				
-									((ValueContext)_localctx).ast =  clCallNode;
+												
 								
 					setState(364); match(LPAR);
 					setState(376);
@@ -1641,7 +1643,7 @@ public class FOOLParser extends Parser {
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
 						setState(365); ((ValueContext)_localctx).e = exp();
-						 clCallNode.addArg(((ValueContext)_localctx).e.ast);
+						 argslist.add(((ValueContext)_localctx).e.ast);
 						setState(373);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
@@ -1650,7 +1652,7 @@ public class FOOLParser extends Parser {
 							{
 							setState(367); match(COMMA);
 							setState(368); ((ValueContext)_localctx).e1 = exp();
-							 clCallNode.addArg(((ValueContext)_localctx).e1.ast); 
+							 argslist.add(((ValueContext)_localctx).e1.ast); 
 							}
 							}
 							setState(375);
@@ -1661,6 +1663,11 @@ public class FOOLParser extends Parser {
 					}
 
 					setState(378); match(RPAR);
+					ClassCallNode clCallNode = new ClassCallNode(ref.getID(), (((ValueContext)_localctx).mid!=null?((ValueContext)_localctx).mid.getText():null), classEntry, methodEntry, nestingLevel);
+								     	clCallNode.addArgs(argslist);
+								     	
+								     ((ValueContext)_localctx).ast =  clCallNode;
+								     
 					}
 					break;
 				case PLUS:
@@ -1699,7 +1706,7 @@ public class FOOLParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3+\u0182\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3+\u0183\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2!\n\2\3\2\3\2\3\2\5\2&"+
 		"\n\2\3\2\3\2\3\2\3\2\5\2,\n\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
@@ -1726,16 +1733,16 @@ public class FOOLParser extends Parser {
 		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0163\n\13\f\13\16"+
 		"\13\u0166\13\13\5\13\u0168\n\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13"+
 		"\3\13\3\13\3\13\3\13\7\13\u0176\n\13\f\13\16\13\u0179\13\13\5\13\u017b"+
-		"\n\13\3\13\5\13\u017e\n\13\5\13\u0180\n\13\3\13\2\2\f\2\4\6\b\n\f\16\20"+
-		"\22\24\2\2\u01a7\2\26\3\2\2\2\4\60\3\2\2\2\6\u008e\3\2\2\2\b\u00c9\3\2"+
-		"\2\2\n\u00cb\3\2\2\2\f\u00e5\3\2\2\2\16\u00e7\3\2\2\2\20\u00fa\3\2\2\2"+
-		"\22\u010d\3\2\2\2\24\u017f\3\2\2\2\26+\b\2\1\2\27\30\5\16\b\2\30\31\b"+
-		"\2\1\2\31,\3\2\2\2\32%\7\34\2\2\33\34\5\4\3\2\34 \b\2\1\2\35\36\5\6\4"+
-		"\2\36\37\b\2\1\2\37!\3\2\2\2 \35\3\2\2\2 !\3\2\2\2!&\3\2\2\2\"#\5\6\4"+
-		"\2#$\b\2\1\2$&\3\2\2\2%\33\3\2\2\2%\"\3\2\2\2&\'\3\2\2\2\'(\7\35\2\2("+
-		")\5\16\b\2)*\b\2\1\2*,\3\2\2\2+\27\3\2\2\2+\32\3\2\2\2,-\3\2\2\2-.\b\2"+
-		"\1\2./\7\13\2\2/\3\3\2\2\2\60\u008a\b\3\1\2\61\62\7 \2\2\62\63\7(\2\2"+
-		"\63\67\b\3\1\2\64\65\7!\2\2\65\66\7(\2\2\668\b\3\1\2\67\64\3\2\2\2\67"+
+		"\n\13\3\13\3\13\5\13\u017f\n\13\5\13\u0181\n\13\3\13\2\2\f\2\4\6\b\n\f"+
+		"\16\20\22\24\2\2\u01a8\2\26\3\2\2\2\4\60\3\2\2\2\6\u008e\3\2\2\2\b\u00c9"+
+		"\3\2\2\2\n\u00cb\3\2\2\2\f\u00e5\3\2\2\2\16\u00e7\3\2\2\2\20\u00fa\3\2"+
+		"\2\2\22\u010d\3\2\2\2\24\u0180\3\2\2\2\26+\b\2\1\2\27\30\5\16\b\2\30\31"+
+		"\b\2\1\2\31,\3\2\2\2\32%\7\34\2\2\33\34\5\4\3\2\34 \b\2\1\2\35\36\5\6"+
+		"\4\2\36\37\b\2\1\2\37!\3\2\2\2 \35\3\2\2\2 !\3\2\2\2!&\3\2\2\2\"#\5\6"+
+		"\4\2#$\b\2\1\2$&\3\2\2\2%\33\3\2\2\2%\"\3\2\2\2&\'\3\2\2\2\'(\7\35\2\2"+
+		"()\5\16\b\2)*\b\2\1\2*,\3\2\2\2+\27\3\2\2\2+\32\3\2\2\2,-\3\2\2\2-.\b"+
+		"\2\1\2./\7\13\2\2/\3\3\2\2\2\60\u008a\b\3\1\2\61\62\7 \2\2\62\63\7(\2"+
+		"\2\63\67\b\3\1\2\64\65\7!\2\2\65\66\7(\2\2\668\b\3\1\2\67\64\3\2\2\2\67"+
 		"8\3\2\2\289\3\2\2\29:\b\3\1\2:;\b\3\1\2;K\7\7\2\2<=\7(\2\2=>\7\f\2\2>"+
 		"?\5\f\7\2?H\b\3\1\2@A\7\r\2\2AB\7(\2\2BC\7\f\2\2CD\5\f\7\2DE\b\3\1\2E"+
 		"G\3\2\2\2F@\3\2\2\2GJ\3\2\2\2HF\3\2\2\2HI\3\2\2\2IL\3\2\2\2JH\3\2\2\2"+
@@ -1799,41 +1806,41 @@ public class FOOLParser extends Parser {
 		"\u011a\b\n\1\2\u011a\u011c\3\2\2\2\u011b\u010f\3\2\2\2\u011b\u0113\3\2"+
 		"\2\2\u011b\u0117\3\2\2\2\u011c\u011f\3\2\2\2\u011d\u011b\3\2\2\2\u011d"+
 		"\u011e\3\2\2\2\u011e\23\3\2\2\2\u011f\u011d\3\2\2\2\u0120\u0121\7\'\2"+
-		"\2\u0121\u0180\b\13\1\2\u0122\u0123\7\26\2\2\u0123\u0180\b\13\1\2\u0124"+
-		"\u0125\7\27\2\2\u0125\u0180\b\13\1\2\u0126\u0127\7#\2\2\u0127\u0180\b"+
+		"\2\u0121\u0181\b\13\1\2\u0122\u0123\7\26\2\2\u0123\u0181\b\13\1\2\u0124"+
+		"\u0125\7\27\2\2\u0125\u0181\b\13\1\2\u0126\u0127\7#\2\2\u0127\u0181\b"+
 		"\13\1\2\u0128\u0129\7\"\2\2\u0129\u012a\7(\2\2\u012a\u012b\7\7\2\2\u012b"+
 		"\u0137\b\13\1\2\u012c\u012d\5\16\b\2\u012d\u0134\b\13\1\2\u012e\u012f"+
 		"\7\r\2\2\u012f\u0130\5\16\b\2\u0130\u0131\b\13\1\2\u0131\u0133\3\2\2\2"+
 		"\u0132\u012e\3\2\2\2\u0133\u0136\3\2\2\2\u0134\u0132\3\2\2\2\u0134\u0135"+
 		"\3\2\2\2\u0135\u0138\3\2\2\2\u0136\u0134\3\2\2\2\u0137\u012c\3\2\2\2\u0137"+
-		"\u0138\3\2\2\2\u0138\u0139\3\2\2\2\u0139\u013a\b\13\1\2\u013a\u0180\7"+
+		"\u0138\3\2\2\2\u0138\u0139\3\2\2\2\u0139\u013a\b\13\1\2\u013a\u0181\7"+
 		"\b\2\2\u013b\u013c\7\7\2\2\u013c\u013d\5\16\b\2\u013d\u013e\7\b\2\2\u013e"+
-		"\u013f\b\13\1\2\u013f\u0180\3\2\2\2\u0140\u0141\7\30\2\2\u0141\u0142\5"+
+		"\u013f\b\13\1\2\u013f\u0181\3\2\2\2\u0140\u0141\7\30\2\2\u0141\u0142\5"+
 		"\16\b\2\u0142\u0143\7\31\2\2\u0143\u0144\7\t\2\2\u0144\u0145\5\16\b\2"+
 		"\u0145\u0146\7\n\2\2\u0146\u0147\7\32\2\2\u0147\u0148\7\t\2\2\u0148\u0149"+
-		"\5\16\b\2\u0149\u014a\7\n\2\2\u014a\u014b\b\13\1\2\u014b\u0180\3\2\2\2"+
+		"\5\16\b\2\u0149\u014a\7\n\2\2\u014a\u014b\b\13\1\2\u014b\u0181\3\2\2\2"+
 		"\u014c\u014d\7\21\2\2\u014d\u014e\7\7\2\2\u014e\u014f\5\16\b\2\u014f\u0150"+
-		"\b\13\1\2\u0150\u0151\7\b\2\2\u0151\u0180\3\2\2\2\u0152\u0153\7\33\2\2"+
+		"\b\13\1\2\u0150\u0151\7\b\2\2\u0151\u0181\3\2\2\2\u0152\u0153\7\33\2\2"+
 		"\u0153\u0154\7\7\2\2\u0154\u0155\5\16\b\2\u0155\u0156\7\b\2\2\u0156\u0157"+
-		"\b\13\1\2\u0157\u0180\3\2\2\2\u0158\u0159\7(\2\2\u0159\u017d\b\13\1\2"+
+		"\b\13\1\2\u0157\u0181\3\2\2\2\u0158\u0159\7(\2\2\u0159\u017e\b\13\1\2"+
 		"\u015a\u015b\7\7\2\2\u015b\u0167\b\13\1\2\u015c\u015d\5\16\b\2\u015d\u0164"+
 		"\b\13\1\2\u015e\u015f\7\r\2\2\u015f\u0160\5\16\b\2\u0160\u0161\b\13\1"+
 		"\2\u0161\u0163\3\2\2\2\u0162\u015e\3\2\2\2\u0163\u0166\3\2\2\2\u0164\u0162"+
 		"\3\2\2\2\u0164\u0165\3\2\2\2\u0165\u0168\3\2\2\2\u0166\u0164\3\2\2\2\u0167"+
 		"\u015c\3\2\2\2\u0167\u0168\3\2\2\2\u0168\u0169\3\2\2\2\u0169\u016a\7\b"+
-		"\2\2\u016a\u017e\b\13\1\2\u016b\u016c\7\16\2\2\u016c\u016d\7(\2\2\u016d"+
+		"\2\2\u016a\u017f\b\13\1\2\u016b\u016c\7\16\2\2\u016c\u016d\7(\2\2\u016d"+
 		"\u016e\b\13\1\2\u016e\u017a\7\7\2\2\u016f\u0170\5\16\b\2\u0170\u0177\b"+
 		"\13\1\2\u0171\u0172\7\r\2\2\u0172\u0173\5\16\b\2\u0173\u0174\b\13\1\2"+
 		"\u0174\u0176\3\2\2\2\u0175\u0171\3\2\2\2\u0176\u0179\3\2\2\2\u0177\u0175"+
 		"\3\2\2\2\u0177\u0178\3\2\2\2\u0178\u017b\3\2\2\2\u0179\u0177\3\2\2\2\u017a"+
-		"\u016f\3\2\2\2\u017a\u017b\3\2\2\2\u017b\u017c\3\2\2\2\u017c\u017e\7\b"+
-		"\2\2\u017d\u015a\3\2\2\2\u017d\u016b\3\2\2\2\u017d\u017e\3\2\2\2\u017e"+
-		"\u0180\3\2\2\2\u017f\u0120\3\2\2\2\u017f\u0122\3\2\2\2\u017f\u0124\3\2"+
-		"\2\2\u017f\u0126\3\2\2\2\u017f\u0128\3\2\2\2\u017f\u013b\3\2\2\2\u017f"+
-		"\u0140\3\2\2\2\u017f\u014c\3\2\2\2\u017f\u0152\3\2\2\2\u017f\u0158\3\2"+
-		"\2\2\u0180\25\3\2\2\2% %+\67HKchx}\u0085\u008c\u00aa\u00ad\u00b6\u00bb"+
-		"\u00c1\u00c9\u00d5\u00d8\u00e5\u00f5\u00f7\u0108\u010a\u011b\u011d\u0134"+
-		"\u0137\u0164\u0167\u0177\u017a\u017d\u017f";
+		"\u016f\3\2\2\2\u017a\u017b\3\2\2\2\u017b\u017c\3\2\2\2\u017c\u017d\7\b"+
+		"\2\2\u017d\u017f\b\13\1\2\u017e\u015a\3\2\2\2\u017e\u016b\3\2\2\2\u017e"+
+		"\u017f\3\2\2\2\u017f\u0181\3\2\2\2\u0180\u0120\3\2\2\2\u0180\u0122\3\2"+
+		"\2\2\u0180\u0124\3\2\2\2\u0180\u0126\3\2\2\2\u0180\u0128\3\2\2\2\u0180"+
+		"\u013b\3\2\2\2\u0180\u0140\3\2\2\2\u0180\u014c\3\2\2\2\u0180\u0152\3\2"+
+		"\2\2\u0180\u0158\3\2\2\2\u0181\25\3\2\2\2% %+\67HKchx}\u0085\u008c\u00aa"+
+		"\u00ad\u00b6\u00bb\u00c1\u00c9\u00d5\u00d8\u00e5\u00f5\u00f7\u0108\u010a"+
+		"\u011b\u011d\u0134\u0137\u0164\u0167\u0177\u017a\u017e\u0180";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

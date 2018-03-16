@@ -55,8 +55,7 @@ public class CallNode implements Node {
 		for (int i=0; i<parList.size(); i++) {
 			Node parType = (parList.get(i)).typeCheck();
 	    	Node decType = p.get(i);
-	    			
-	    	System.out.println( (parType + "  " + decType));
+	    	
 			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))
 					||!(FOOLlib.isSubtype( parType, p.get(i)) ) ) {
 				System.out.println("CallNode: Wrong type for "+(i+1)+"-th parameter in the invocation of "+id);

@@ -3,6 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import ast.type.ArrowTypeNode;
+import ast.type.ClassTypeNode;
 import lib.FOOLlib;
 
 public class ClassCallNode implements Node {
@@ -23,21 +24,21 @@ public class ClassCallNode implements Node {
 		this.argList = new ArrayList<>() ; 
 	}
 	
-	public void addArg(Node arg) {
-		this.argList.add(arg);
+	public void addArgs(ArrayList<Node> arg) {
+		this.argList.addAll(arg);
 	}
 
 	@Override
 	public Node typeCheck() {
-		ArrowTypeNode t=null;
-		if (classEntry.getType() instanceof ArrowTypeNode) t=(ArrowTypeNode) classEntry.getType(); 
-		else {
-			System.out.println("Invocation of a non-function "+idClass);
-			System.exit(0);
+		ArrayList<MethodNode> p = ((ClassTypeNode) classEntry.getType()).getMethods();
+		int sizeOriginalMethod = -1;
+		for(MethodNode met : p) {
+			if(met.getID().equals(idMethod)) {
+				sizeOriginalMethod = met.getParSize();
+			}
 		}
-		ArrayList<Node> p = t.getParList();
-		if ( !(p.size() == argList.size()) ) {
-			System.out.println("Wrong number of parameters in the invocation of "+idClass);
+		if ( !(sizeOriginalMethod == argList.size()) ) {
+			System.out.println("ClassCallNode: Wrong number of parameters in the invocation of "+idClass);
 			System.exit(0);
 		} 
 		for (int i=0; i<argList.size(); i++) {
@@ -49,7 +50,7 @@ public class ClassCallNode implements Node {
 			} 
 		}
 		
-		return t.getRet();
+		return methodEntry.getType();
 	}
 
 	@Override

@@ -405,6 +405,7 @@ value returns [Node ast]	:
 			while(j>=0 && entry==null) {
 				entry = symTable.get(j--).get($i.text);
 			}
+			
 			if(entry==null) { /* Dichiarazione non presente nella symbol table quindi variabile non dichiarata*/
 				System.out.println("Var id " + $i.text + " at line " + $i.line + " not declared.");
 				System.exit(0);
@@ -420,6 +421,7 @@ value returns [Node ast]	:
 		
 		| DOT mid=ID
 			{ 
+			  	ArrayList<Node> argslist = new ArrayList<>();
 			  	/* Controllo se è un oggetto/classe */              
              	if (! (entry.getType() instanceof RefTypeNode)) {
                		System.out.println("id " + $i.text + " is not a objects ");
@@ -433,18 +435,24 @@ value returns [Node ast]	:
 					System.exit(0);
 				}
 				/* STentry della classe è entry */
+				STentry classEntry = symTable.get(0).get(ref.getID());
 				/* STentry del metodo */
 				STentry methodEntry = classTable.get(ref.getID()).get($mid.text);
 				/* Istanzio la ClassCallNode*/
-				ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, entry, methodEntry, nestingLevel);				
-				$ast = clCallNode;
+							
 			}
 			 LPAR
-			 (e=exp { clCallNode.addArg($e.ast);} 
-				 (COMMA e1=exp 	{ clCallNode.addArg($e1.ast); })* 
-			  )? RPAR 
+			 (e=exp { argslist.add($e.ast);} 
+				 (COMMA e1=exp 	{ argslist.add($e1.ast); })* 
+			 
+			   )?  RPAR 
+			     {ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, classEntry, methodEntry, nestingLevel);
+			     	clCallNode.addArgs(argslist);
+			     	
+			     $ast = clCallNode;
+			     }
 			  
-		    )?	
+		  )?	
 	         	;
 
 /*------------------------------------------------------------------
