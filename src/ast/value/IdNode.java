@@ -40,6 +40,8 @@ public class IdNode implements Node {
 			System.out.println("Incompatible type of id (ClassTypeNode)");
 			System.exit(0);
 		}
+		
+		System.out.println(entry.getType());
 		return entry.getType();
 	}
 
