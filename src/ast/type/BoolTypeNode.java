@@ -18,7 +18,7 @@ public class BoolTypeNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		return null;
+		return "";
 	}
 
 	@Override

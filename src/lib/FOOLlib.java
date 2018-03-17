@@ -14,7 +14,7 @@ import ast.type.RefTypeNode;
 public class FOOLlib {
 	
 	/* valore iniziale $fp (frame pointer) */
-	private final static int MEMSIZE = 0 ;
+	public static int MEMSIZE = 0 ;
 
 	private static int labCount=0; 
 
