@@ -4,14 +4,24 @@ public class FieldNode implements DecNode{
 	
 	private String fieldID;
 	private Node type;
+	private int offset;
 	
 	public FieldNode(String id, Node node) {
 		this.fieldID = id;
 		this.type = node;
+		this.offset = 0;
 	}
 	
 	public String getID() {
-		return fieldID;
+		return this.fieldID;
+	}
+	
+	public int getOffset() {
+		return this.offset;
+	}
+	
+	public void setOffset(final int offset) {
+		this.offset = offset;
 	}
 
 	@Override

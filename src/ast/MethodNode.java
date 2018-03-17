@@ -1,8 +1,7 @@
 package ast;
 
-import ast.*;
-import lib.FOOLlib;
 
+import lib.FOOLlib;
 import java.util.ArrayList;
 
 

@@ -1,6 +1,7 @@
 // Generated from FOOL.g4 by ANTLR 4.4
 
 	import java.util.HashMap;
+	import java.util.HashSet;
 	import ast.*;
 	import ast.value.*;
 	import ast.exp.*;

@@ -26,7 +26,7 @@ public class Test {
         System.out.println(type.toPrint("\nType checking ok! Type of the program is: "));  
         
         // CODE GENERATION  prova.fool.asm
-        String code=ast.codeGeneration(); 
+        /*String code=ast.codeGeneration(); 
         BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
         out.write(code);
         out.close(); 
@@ -46,7 +46,7 @@ public class Test {
 
         System.out.println("Starting Virtual Machine...");
         ExecuteVM vm = new ExecuteVM(parserASM.code);
-        vm.cpu();
+        vm.cpu();*/
         
     }
 }

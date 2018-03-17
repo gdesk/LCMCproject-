@@ -2,6 +2,7 @@ grammar FOOL;
 
 @header {
 	import java.util.HashMap;
+	import java.util.HashSet;
 	import ast.*;
 	import ast.value.*;
 	import ast.exp.*;
@@ -68,17 +69,20 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	{	$astlist = new ArrayList<ClassNode>();
 		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
 		boolean isExtends=false;
+		HashSet<String> localVariable; /*variabile locale che tiene contro della ridefinizione erronea di cammpi e metodi */
 	}
 		
 	 ( CLASS ic=ID 
-	 		{ClassNode classNode = new ClassNode($ic.text);	
-	 		 offset--; 		
+	 		{
+	 			ClassNode classNode = new ClassNode($ic.text);	
+	 		 	offset--; 		
+	 		 	localVariable = new HashSet<String>();
 	 		}
 	 	(EXTENDS ic1=ID 
 	 		{
 	 			isExtends = true;
 	 			FOOLlib.addSuperType($ic.text, $ic1.text);
-	 			
+	 			/*localVariable = new HashSet<String>();????? secondo me no, eredita quello della classe madre*/
 	 		}
 	 	)? 
 	 	{
@@ -126,6 +130,13 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		
 	 	  LPAR (campo=ID COLON t=type
 	 	  	{
+	 	  		/*Controllo che field non è presente all'interno dei localVariable*/
+	 	  		if(localVariable.contains($campo.text)) {
+	 	  			System.out.println("Field" + $campo.text + " at line " + $campo.line + " already created in localVariable(HashSet<String>).");
+					System.exit(0);
+	 	  		} else {
+	 	  			localVariable.add($campo.text);
+	 	  		}
 	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
 	 	  		cTypeNode.addField(field);
 	 	  		int offsetCampo=0;
@@ -135,6 +146,8 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
 	 	  		/* inserimento in symbol table */
 	 	  		symTable.get(nestingLevel).put($campo.text,entry);
+	 	  		/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cioè non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
+	 	  		field.setOffset(offsetCampo);
 	 	  		/* inserimento in classTable*/  		 
 	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
@@ -145,11 +158,20 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
+	 	  			/*Controllo che field non è presente all'interno dei localVariable*/
+	 	  			if(localVariable.contains($campo1.text)) {
+	 	  				System.out.println("Field" + $campo1.text + " at line " + $campo1.line + " already created in localVariable(HashSet<String>).");
+						System.exit(0);
+	 	  			} else {
+	 	  				localVariable.add($campo1.text);
+	 	  			}
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
 	 	  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
+	 	  			/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cioè non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
+	 	  			field.setOffset(offsetCampo);
 		 	  		/* inserimento in classTable*/
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
@@ -168,6 +190,13 @@ cllist returns [ArrayList<ClassNode> astlist]:
               }
                  ( FUN fid=ID COLON ret=type 
                 {
+                	 /*Controllo che method non è presente all'interno dei localVariable*/
+	 	  			if(localVariable.contains($fid.text)) {
+	 	  				System.out.println("Method" + $fid.text + " at line " + $fid.line + " already created in localVariable(HashSet<String>).");
+						System.exit(0);
+	 	  			} else {
+	 	  				localVariable.add($fid.text);
+	 	  			}
                 	 MethodNode method = new MethodNode($fid.text, $ret.ast);
                 	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
                 	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);

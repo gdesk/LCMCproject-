@@ -1,9 +1,7 @@
 package ast;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import ast.type.ArrowTypeNode;
-import ast.type.RefTypeNode;
-import ast.value.IdNode;
 import lib.FOOLlib;
 
 /**
