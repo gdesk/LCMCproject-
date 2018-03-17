@@ -72,8 +72,39 @@ public class ClassNode implements DecNode {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		/* Creazione della dispatch table della classe*/
+		ArrayList<String> dispatchTable = new ArrayList<>();
+		if(superEntry != null) {
+			int classOffset = superEntry.getOffset();
+			dispatchTable.addAll(FOOLlib.getDispatchTable(-classOffset-2));
+		}
+		
+		for(MethodNode met : this.methods) {
+			met.codeGeneration(); //non ritorna nulla, ma mette il codice del metodo nel segmento code.
+			if(met.getOffset() < dispatchTable.size()) {
+				//Override
+				dispatchTable.set(met.getOffset(), met.getLabel());
+			}else {
+				//Non Override
+				dispatchTable.add(met.getLabel());
+			}
+		}
+		FOOLlib.addDispatchTable(dispatchTable);
+		
+		String code = "lhp\n"; //salvo il valore di $hp sullo stack (Dispatch Pointer della classe)
+		
+		//Codice per mettere la dispatch table appena creata sullo heap
+		for(String s : dispatchTable) { 	//scorro per mettere label sullo heap
+			code += "push " + s + "\n" + 	//metto la label del metodo sullo stack
+					"lhp\n" + 				//carico il valore di $hp sullo stack
+					"sw\n" +				//metto all'indirizzo puntato da hp la label del metodo
+					"lhp" +					//carico il valore di hp sullo stack per incrementarlo di 1
+					"push 1\n" +			
+					"add\n"+
+					"shp\n";				//aggiorno hp
+		}
+		return code;
 	}
 
 	@Override

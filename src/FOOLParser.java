@@ -96,6 +96,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_prog; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterProg(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitProg(this);
+		}
 	}
 
 	public final ProgContext prog() throws RecognitionException {
@@ -299,6 +307,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_cllist; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterCllist(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitCllist(this);
+		}
 	}
 
 	public final CllistContext cllist() throws RecognitionException {
@@ -335,7 +351,6 @@ public class FOOLParser extends Parser {
 
 						 			isExtends = true;
 						 			FOOLlib.addSuperType((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null), (((CllistContext)_localctx).ic1!=null?((CllistContext)_localctx).ic1.getText():null));
-						 			/*localVariable = new HashSet<String>();????? secondo me no, eredita quello della classe madre*/
 						 		
 					}
 				}
@@ -370,6 +385,14 @@ public class FOOLParser extends Parser {
 						 		classNode.setSuperEntry(erhm1);
 						 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
 						 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
+						 		/* Aggiungo in local variable i metodi e campi ereditati per il controllo */
+						 		for(FieldNode field : erClassTypeNode.getFields() ){
+						 			localVariable.add(field.getID());	
+						 		}
+						 		for(MethodNode method : erClassTypeNode.getMethods() ){
+						 			localVariable.add(method.getID());	
+						 		}
+						 		
 						 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 						 		if(sym.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null),cstentry1) != null) {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
@@ -395,9 +418,9 @@ public class FOOLParser extends Parser {
 						 	  		if(localVariable.contains((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null))) {
 						 	  			System.out.println("Field" + (((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null) + " at line " + (((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getLine():0) + " already created in localVariable(HashSet<String>).");
 										System.exit(0);
-						 	  		} else {
-						 	  			localVariable.add((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
 						 	  		}
+						 	  		localVariable.add((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
+						 	  		
 						 	  		FieldNode field = new FieldNode((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),((CllistContext)_localctx).t.ast);
 						 	  		cTypeNode.addField(field);
 						 	  		int offsetCampo=0;
@@ -432,9 +455,9 @@ public class FOOLParser extends Parser {
 							 	  			if(localVariable.contains((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null))) {
 							 	  				System.out.println("Field" + (((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null) + " at line " + (((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getLine():0) + " already created in localVariable(HashSet<String>).");
 												System.exit(0);
-							 	  			} else {
-							 	  				localVariable.add((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null));
 							 	  			}
+							 	  			localVariable.add((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null));
+							 	  			
 							 	  			FieldNode field1 = new FieldNode((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),((CllistContext)_localctx).t1.ast);
 							 	  			cTypeNode.addField(field1);	
 							 	  			STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
@@ -480,10 +503,11 @@ public class FOOLParser extends Parser {
 						 	  			if(localVariable.contains((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null))) {
 						 	  				System.out.println("Method" + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null) + " at line " + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getLine():0) + " already created in localVariable(HashSet<String>).");
 											System.exit(0);
-						 	  			} else {
-						 	  				localVariable.add((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null));
 						 	  			}
+						 	  			localVariable.add((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null));
+						 	  			
 					                	 MethodNode method = new MethodNode((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), ((CllistContext)_localctx).ret.ast);
+					                	 method.setOffset(methodOffset);
 					                	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
 					                	 STentry mentry = new STentry(nestingLevel, ((CllistContext)_localctx).ret.ast, methodOffset);
 					                	 method.setSymType(((CllistContext)_localctx).ret.ast);
@@ -725,6 +749,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_declist; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterDeclist(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitDeclist(this);
+		}
 	}
 
 	public final DeclistContext declist() throws RecognitionException {
@@ -899,6 +931,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_hotype; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterHotype(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitHotype(this);
+		}
 	}
 
 	public final HotypeContext hotype() throws RecognitionException {
@@ -963,6 +1003,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_arrow; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterArrow(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitArrow(this);
+		}
 	}
 
 	public final ArrowContext arrow() throws RecognitionException {
@@ -1025,6 +1073,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterType(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitType(this);
+		}
 	}
 
 	public final TypeContext type() throws RecognitionException {
@@ -1097,6 +1153,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_exp; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitExp(this);
+		}
 	}
 
 	public final ExpContext exp() throws RecognitionException {
@@ -1185,6 +1249,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_term; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterTerm(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitTerm(this);
+		}
 	}
 
 	public final TermContext term() throws RecognitionException {
@@ -1273,6 +1345,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_factor; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterFactor(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitFactor(this);
+		}
 	}
 
 	public final FactorContext factor() throws RecognitionException {
@@ -1384,6 +1464,14 @@ public class FOOLParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_value; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).enterValue(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof FOOLListener ) ((FOOLListener)listener).exitValue(this);
+		}
 	}
 
 	public final ValueContext value() throws RecognitionException {

@@ -12,19 +12,30 @@ import ast.type.IntTypeNode;
 import ast.type.RefTypeNode;
 
 public class FOOLlib {
+	
+	/* valore iniziale $fp (frame pointer) */
+	private final static int MEMSIZE = 0 ;
 
 	private static int labCount=0; 
 
 	private static int funLabCount=0; 
 
-	private static String funCode="";
-
+	private static String funCode="";	
+	 
+	private static ArrayList<ArrayList<String>> dispatchTables = new ArrayList<>();
 	private static HashMap<String, String> superType = new HashMap<>(); //mappa l'id di classe nell' id della sua superclasse
 
 	public static void addSuperType( String classId, String superTypeId ) {
 		superType.put(classId, superTypeId);
 	}
+	
+	public static void addDispatchTable(ArrayList<String> dispatchtable) {
+		dispatchTables.add(dispatchtable);
+	}
 
+	public static ArrayList<String> getDispatchTable(int offset) {
+		return dispatchTables.get(offset);
+	}
 	//valuta se il tipo "a" è <= al tipo "b", dove "a" e "b" sono tipi di base: int o bool
 	public static boolean isSubtype (Node a, Node b) {
 		Node nodeA = a;

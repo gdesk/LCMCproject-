@@ -82,7 +82,6 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		{
 	 			isExtends = true;
 	 			FOOLlib.addSuperType($ic.text, $ic1.text);
-	 			/*localVariable = new HashSet<String>();????? secondo me no, eredita quello della classe madre*/
 	 		}
 	 	)? 
 	 	{
@@ -115,6 +114,14 @@ cllist returns [ArrayList<ClassNode> astlist]:
 		 		classNode.setSuperEntry(erhm1);
 		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
 		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
+		 		/* Aggiungo in local variable i metodi e campi ereditati per il controllo */
+		 		for(FieldNode field : erClassTypeNode.getFields() ){
+		 			localVariable.add(field.getID());	
+		 		}
+		 		for(MethodNode method : erClassTypeNode.getMethods() ){
+		 			localVariable.add(method.getID());	
+		 		}
+		 		
 		 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 		 		if(sym.put($ic.text,cstentry1) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
@@ -134,9 +141,9 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  		if(localVariable.contains($campo.text)) {
 	 	  			System.out.println("Field" + $campo.text + " at line " + $campo.line + " already created in localVariable(HashSet<String>).");
 					System.exit(0);
-	 	  		} else {
-	 	  			localVariable.add($campo.text);
 	 	  		}
+	 	  		localVariable.add($campo.text);
+	 	  		
 	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
 	 	  		cTypeNode.addField(field);
 	 	  		int offsetCampo=0;
@@ -162,9 +169,9 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			if(localVariable.contains($campo1.text)) {
 	 	  				System.out.println("Field" + $campo1.text + " at line " + $campo1.line + " already created in localVariable(HashSet<String>).");
 						System.exit(0);
-	 	  			} else {
-	 	  				localVariable.add($campo1.text);
 	 	  			}
+	 	  			localVariable.add($campo1.text);
+	 	  			
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
@@ -194,10 +201,11 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			if(localVariable.contains($fid.text)) {
 	 	  				System.out.println("Method" + $fid.text + " at line " + $fid.line + " already created in localVariable(HashSet<String>).");
 						System.exit(0);
-	 	  			} else {
-	 	  				localVariable.add($fid.text);
 	 	  			}
+	 	  			localVariable.add($fid.text);
+	 	  			
                 	 MethodNode method = new MethodNode($fid.text, $ret.ast);
+                	 method.setOffset(methodOffset);
                 	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
                 	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
                 	 method.setSymType($ret.ast);
