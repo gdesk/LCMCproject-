@@ -7,22 +7,145 @@ lfp
 push function5
 lfp
 push function7
-pop
-shp
+push 2
+push 1
+push 4
+push 3
+push 2
+push 5
+push -1
+lhp
+sw
 lhp
 push 1
 add
-lfp
--3lhp
+shp
+lhp
+sw
+lhp
 push 1
 add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
 lfp
 lfp
 push -10
 lfp
 add
 lw
-
 
 lfp
 push -8
@@ -33,7 +156,6 @@ push -9
 add
 lw
 js
-
 
 lfp
 push -2
@@ -50,15 +172,35 @@ makeList:
 function3:
 cfp
 lra
-pop
-shp
+push 2
+lfp
+add
+lw
+push 1
+lfp
+add
+lw
+lhp
+sw
 lhp
 push 1
 add
-lfp
--3lhp
+shp
+lhp
+sw
+lhp
 push 1
 add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
 srv
 sra
 pop
@@ -102,7 +244,6 @@ add
 lw
 js
 print
-
 lfp
 lfp
 lfp
@@ -117,7 +258,6 @@ add
 lw
 js
 
-
 lfp
 lw
 push -2
@@ -129,7 +269,6 @@ push -3
 add
 lw
 js
-
 
 lfp
 push -2
@@ -172,15 +311,68 @@ push 1
 label7: 
 push 1
 beq label4
-pop
-shp
+lfp
+lfp
+lw
+push -3
+add
+lw
+lfp
+lw
+push -1
+add
+lw
+js
+lfp
+push 2
+lfp
+add
+lw
+lfp
+lfp
+lw
+push -3
+add
+lw
+lfp
+lw
+push 0
+add
+lw
+js
+
+lfp
+lw
+push -4
+add
+lw
+lfp
+lw
+push -5
+add
+lw
+js
+lhp
+sw
 lhp
 push 1
 add
-lfp
--3lhp
+shp
+lhp
+sw
+lhp
 push 1
 add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
 b label5
 label4: 
 push 2
@@ -279,7 +471,6 @@ label18:
 push 1
 label19:
 
-
 lfp
 push -2
 add
@@ -296,12 +487,10 @@ push 3
 lfp
 add
 lw
-
 push 2
 lfp
 add
 lw
-
 lfp
 lfp
 lw
@@ -314,7 +503,6 @@ push 0
 add
 lw
 js
-
 
 lfp
 lw
@@ -329,15 +517,72 @@ lw
 js
 b label17
 label16: 
-pop
-shp
+lfp
+lfp
+lw
+push -3
+add
+lw
+lfp
+lw
+push -1
+add
+lw
+js
+lfp
+push 3
+lfp
+add
+lw
+push 2
+lfp
+add
+lw
+lfp
+lfp
+lw
+push -3
+add
+lw
+lfp
+lw
+push 0
+add
+lw
+js
+
+lfp
+lw
+push -6
+add
+lw
+lfp
+lw
+push -7
+add
+lw
+js
+lhp
+sw
 lhp
 push 1
 add
-lfp
--3lhp
+shp
+lhp
+sw
+lhp
 push 1
 add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
 label17: 
 b label13
 label12: 
@@ -403,25 +648,17 @@ label27:
 push 1
 beq label24
 lfp
-pop
-shp
-lhp
-push 1
-add
-lfp
--3lhp
-push 1
-add
-
-lfp
-lfp
-push 1
-
 push -2
 lfp
 add
 lw
-
+lfp
+lfp
+push 0
+push -2
+lfp
+add
+lw
 lfp
 lfp
 lw
@@ -435,6 +672,69 @@ add
 lw
 js
 
+lfp
+lw
+push -6
+add
+lw
+lfp
+lw
+push -7
+add
+lw
+js
+
+lfp
+lw
+push -8
+add
+lw
+lfp
+lw
+push -9
+add
+lw
+js
+lhp
+sw
+lhp
+push 1
+add
+shp
+lhp
+sw
+lhp
+push 1
+add
+shp
+push 19997
+lw
+lhp
+sw
+lhp
+lhp
+push 1
+add
+shp
+lfp
+lfp
+push 1
+push -2
+lfp
+add
+lw
+lfp
+lfp
+lw
+push -3
+add
+lw
+lfp
+lw
+push 0
+add
+lw
+js
 
 lfp
 lw
@@ -448,7 +748,6 @@ add
 lw
 js
 
-
 lfp
 lw
 push -8
@@ -460,7 +759,6 @@ push -9
 add
 lw
 js
-
 
 lfp
 lw

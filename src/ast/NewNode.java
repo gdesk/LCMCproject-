@@ -46,28 +46,33 @@ public class NewNode implements Node {
 
 	@Override
 	public String codeGeneration() {
+		/* Mettiamo il valore di tutti i parametri sullo stack (in ordine di apparizione) */
 		String code = "";
 		if(this.argList != null) {
-
 			for(Node argNode : this.argList) {
-				code += "push "+ argNode.codeGeneration() + "\n";
-			}
-
-			for(Node argNode : this.argList) {
-				code = "pop\n"+
-						"shp\n" +
-						"lhp\n" +				
-						"push 1\n" +			
-						"add\n"+
-						//Recupera indir funzione (Per saltare al codice della funzione)
-						"lfp\n"+
-						(FOOLlib.MEMSIZE +entry.getOffset())+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile
-						"lhp\n"+ //metto l'offset sullo stack
-						"push 1\n" +			
-						"add\n";
-
+				code += argNode.codeGeneration();
 			}
 		}
+		
+		/* Prendo i valori dei parametri uno per volta e lo carico sullo heap, incrementando hp ogni volta*/
+		for(Node argNode : this.argList) {
+			code += "lhp\n" +		//carico il valore di hp sullo stack
+					"sw\n"+			//metto all'indirizzo di hp (sullo heap) il parametro caricato sullo stack (dall'ultimo al primo)
+					"lhp\n"+		//carico il valore di hp sullo stack per aggiornarlo
+					"push 1\n" +			
+					"add\n"+		//incremento
+					"shp\n";		//aggiorno hp
+		}
+
+		code += "push " + (FOOLlib.MEMSIZE+entry.getOffset()) + "\n"+ //carico sullo stack l'indirizzo al quale era stata dichiarata la classe
+				"lw\n" +		//carico sullo stack in dispatch pointer
+				"lhp\n" +		//carico sullo stack il valore di hp (diventerà 'object pointer della classe a cui faccio la new)
+				"sw\n"+			//metto all'indirizzo puntato da hp il dispatch pointer
+				"lhp\n"+		//lascio sullo stack il valore di hp
+				"lhp\n"+		//carico il valore di hp sullo stack per aggiornarlo
+				"push 1\n"+
+				"add\n"+		//incremento
+				"shp\n";		//aggiorno
 
 		return code;
 	}
