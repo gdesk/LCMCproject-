@@ -26,7 +26,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -47,7 +47,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -68,7 +68,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -89,7 +89,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -110,7 +110,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -131,7 +131,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -192,7 +192,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -234,7 +234,7 @@ lfp
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -248,7 +248,7 @@ lfp
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -314,7 +314,7 @@ beq label4
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -331,7 +331,7 @@ lw
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -364,7 +364,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -451,7 +451,7 @@ lfp
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -494,7 +494,7 @@ lw
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -520,7 +520,7 @@ label16:
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -541,7 +541,7 @@ lw
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -574,7 +574,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -621,7 +621,7 @@ beq label20
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -662,7 +662,7 @@ lw
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp
@@ -707,7 +707,7 @@ lhp
 push 1
 add
 shp
-push 19997
+push 9998
 lw
 lhp
 sw
@@ -726,7 +726,7 @@ lw
 lfp
 lfp
 lw
-push -3
+push -2
 add
 lw
 lfp

@@ -75,7 +75,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 ( CLASS ic=ID 
 	 		{
 	 			ClassNode classNode = new ClassNode($ic.text);	
-	 		 	offset--; 		
+	 		 /*	offset--; 	BISOGNA METTERLO IN FONDO*/	
 	 		 	localVariable = new HashSet<String>();
 	 		}
 	 	(EXTENDS ic1=ID 
@@ -148,7 +148,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  		cTypeNode.addField(field);
 	 	  		int offsetCampo=0;
 	 	  		if(isExtends){
-	 	  			offsetCampo = (cTypeNode.getFields().size()+1)*(-1); /* sistemato offset per ereditarietà */
+	 	  			offsetCampo = -cTypeNode.getFields().size()-1; /* sistemato offset per ereditarietà */
 	 	  		}
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
 	 	  		/* inserimento in symbol table */
@@ -175,10 +175,10 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
 	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
-	 	  			/* inserimento in symbol table */
+		  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
 	 	  			/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cioè non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
-	 	  			field.setOffset(offsetCampo);
+	 	  			field1.setOffset(offsetCampo);
 		 	  		/* inserimento in classTable*/
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
@@ -186,7 +186,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 		 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  			}
 	 	  		}
-	 	  	)*
+	 	  	)* {cTypeNode.refreshFields();}
 	 	  	
 	 	  )? RPAR    
               CLPAR
@@ -255,7 +255,10 @@ cllist returns [ArrayList<ClassNode> astlist]:
                  	   	method.addParList(parlist);
                  	   }
                  	)? RPAR
-                 		 {ArrayList<VarNode> varlist = new ArrayList<>();}
+                 		 {
+                 		 	cTypeNode.refreshMethods();
+                 		 	ArrayList<VarNode> varlist = new ArrayList<>();
+                 		 }
                  	 (LET (VAR vid=ID COLON vt=type ASS ex=exp 
 	                     	{
 	                     		VarNode var = new VarNode($vid.text, $vt.ast, $ex.ast);
@@ -292,7 +295,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
          	$astlist.add(classNode); 
          	symTable.remove(nestingLevel--);
          }
-          )+ ; 
+           {offset--;})+ ; 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<DecNode> astlist]:

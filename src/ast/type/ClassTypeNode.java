@@ -16,6 +16,29 @@ public class ClassTypeNode implements Node {
 		this.allMethods = methods;
 	}
 	
+	public void refreshFields() {
+		ArrayList<FieldNode> refrFields = new ArrayList<>();
+		refrFields.addAll(this.allFields);
+		
+		for(FieldNode field: this.allFields) {
+			System.out.println("da  "+ field.toString()+" "+field.getOffset());
+			refrFields.add(-field.getOffset()-1, field);
+		}
+		this.allFields.removeAll(this.allFields);
+		this.allFields.addAll(refrFields);
+	}
+	
+	public void refreshMethods() {
+		ArrayList<MethodNode> refrMethod = new ArrayList<>();
+		refrMethod.addAll(this.allMethods);
+		
+		for(MethodNode method: this.allMethods) {
+			refrMethod.add(method.getOffset(), method);
+		}
+		this.allMethods.removeAll(allMethods);
+		this.allMethods.addAll(refrMethod);
+	}
+	
 	public void addField(FieldNode field) {
 		this.allFields.add(field);
 	}
