@@ -21,7 +21,6 @@ public class ClassTypeNode implements Node {
 		refrFields.addAll(this.allFields);
 		
 		for(FieldNode field: this.allFields) {
-			System.out.println("da  "+ field.toString()+" "+field.getOffset());
 			refrFields.add(-field.getOffset()-1, field);
 		}
 		this.allFields.removeAll(this.allFields);

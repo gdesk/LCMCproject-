@@ -75,7 +75,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 ( CLASS ic=ID 
 	 		{
 	 			ClassNode classNode = new ClassNode($ic.text);	
-	 		 /*	offset--; 	BISOGNA METTERLO IN FONDO*/	
+	 		 	offset--; 	
 	 		 	localVariable = new HashSet<String>();
 	 		}
 	 	(EXTENDS ic1=ID 
@@ -113,15 +113,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 		 		classNode.setSuperEntry(erhm1);
 		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
-		 		/* Aggiungo in local variable i metodi e campi ereditati per il controllo */
-		 		for(FieldNode field : erClassTypeNode.getFields() ){
-		 			localVariable.add(field.getID());	
-		 		}
-		 		for(MethodNode method : erClassTypeNode.getMethods() ){
-		 			localVariable.add(method.getID());	
-		 		}
-		 		
+		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()); 		
 		 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 		 		if(sym.put($ic.text,cstentry1) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
@@ -142,7 +134,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			System.out.println("Field" + $campo.text + " at line " + $campo.line + " already created in localVariable(HashSet<String>).");
 					System.exit(0);
 	 	  		}
-	 	  		localVariable.add($campo.text);
+	 	  		
 	 	  		
 	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
 	 	  		cTypeNode.addField(field);
@@ -177,7 +169,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
 		  			/* inserimento in symbol table */
 	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
-	 	  			/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cioè non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
+	 	  			/* Setto campo offset della classe FieldNode */
 	 	  			field1.setOffset(offsetCampo);
 		 	  		/* inserimento in classTable*/
 		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
@@ -295,7 +287,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
          	$astlist.add(classNode); 
          	symTable.remove(nestingLevel--);
          }
-           {offset--;})+ ; 
+           )+ ; 
 
 // Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
 declist	returns [ArrayList<DecNode> astlist]:

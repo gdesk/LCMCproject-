@@ -329,7 +329,7 @@ public class FOOLParser extends Parser {
 					boolean isExtends=false;
 					HashSet<String> localVariable; /*variabile locale che tiene contro della ridefinizione erronea di cammpi e metodi */
 				
-			setState(139); 
+			setState(138); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
@@ -339,7 +339,7 @@ public class FOOLParser extends Parser {
 				setState(48); ((CllistContext)_localctx).ic = match(ID);
 
 					 			ClassNode classNode = new ClassNode((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null));	
-					 		 /*	offset--; 	BISOGNA METTERLO IN FONDO*/	
+					 		 	offset--; 	
 					 		 	localVariable = new HashSet<String>();
 					 		
 				setState(53);
@@ -384,15 +384,7 @@ public class FOOLParser extends Parser {
 					 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
 						 		classNode.setSuperEntry(erhm1);
 						 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-						 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods());
-						 		/* Aggiungo in local variable i metodi e campi ereditati per il controllo */
-						 		for(FieldNode field : erClassTypeNode.getFields() ){
-						 			localVariable.add(field.getID());	
-						 		}
-						 		for(MethodNode method : erClassTypeNode.getMethods() ){
-						 			localVariable.add(method.getID());	
-						 		}
-						 		
+						 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()); 		
 						 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
 						 		if(sym.put((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null),cstentry1) != null) {
 									System.out.println("Class id" + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null) + " at line " + (((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getLine():0) + " already created.");
@@ -419,7 +411,7 @@ public class FOOLParser extends Parser {
 						 	  			System.out.println("Field" + (((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null) + " at line " + (((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getLine():0) + " already created in localVariable(HashSet<String>).");
 										System.exit(0);
 						 	  		}
-						 	  		localVariable.add((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null));
+						 	  		
 						 	  		
 						 	  		FieldNode field = new FieldNode((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),((CllistContext)_localctx).t.ast);
 						 	  		cTypeNode.addField(field);
@@ -463,7 +455,7 @@ public class FOOLParser extends Parser {
 							 	  			STentry entry1 = new STentry(nestingLevel, ((CllistContext)_localctx).t1.ast, offsetCampo--);
 								  			/* inserimento in symbol table */
 							 	  			symTable.get(nestingLevel).put((((CllistContext)_localctx).campo!=null?((CllistContext)_localctx).campo.getText():null),entry1);
-							 	  			/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cio� non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
+							 	  			/* Setto campo offset della classe FieldNode */
 							 	  			field1.setOffset(offsetCampo);
 								 	  		/* inserimento in classTable*/
 								 	  		if( classTable.get((((CllistContext)_localctx).ic!=null?((CllistContext)_localctx).ic.getText():null)).put((((CllistContext)_localctx).campo1!=null?((CllistContext)_localctx).campo1.getText():null),entry1) != null){/* overriding */
@@ -651,10 +643,9 @@ public class FOOLParser extends Parser {
 				         	_localctx.astlist.add(classNode); 
 				         	symTable.remove(nestingLevel--);
 				         
-				offset--;
 				}
 				}
-				setState(141); 
+				setState(140); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==CLASS );
@@ -774,22 +765,22 @@ public class FOOLParser extends Parser {
 				((DeclistContext)_localctx).astlist =  new ArrayList<DecNode>();
 					int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */ 
 				
-			setState(192); 
+			setState(191); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(188);
+				setState(187);
 				switch (_input.LA(1)) {
 				case VAR:
 					{
-					setState(144); match(VAR);
-					setState(145); ((DeclistContext)_localctx).i = match(ID);
-					setState(146); match(COLON);
-					setState(147); ((DeclistContext)_localctx).h = hotype();
-					setState(148); match(ASS);
-					setState(149); ((DeclistContext)_localctx).e = exp();
+					setState(143); match(VAR);
+					setState(144); ((DeclistContext)_localctx).i = match(ID);
+					setState(145); match(COLON);
+					setState(146); ((DeclistContext)_localctx).h = hotype();
+					setState(147); match(ASS);
+					setState(148); ((DeclistContext)_localctx).e = exp();
 						VarNode v = new VarNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).h.ast,((DeclistContext)_localctx).e.ast);
 									_localctx.astlist.add(v);
 									HashMap<String,STentry> hm = symTable.get(nestingLevel); /* Tabella del livello corrente (detta tabella del fronte) */
@@ -805,10 +796,10 @@ public class FOOLParser extends Parser {
 					break;
 				case FUN:
 					{
-					setState(152); match(FUN);
-					setState(153); ((DeclistContext)_localctx).i = match(ID);
-					setState(154); match(COLON);
-					setState(155); ((DeclistContext)_localctx).t = type();
+					setState(151); match(FUN);
+					setState(152); ((DeclistContext)_localctx).i = match(ID);
+					setState(153); match(COLON);
+					setState(154); ((DeclistContext)_localctx).t = type();
 						
 									FunNode f = new FunNode((((DeclistContext)_localctx).i!=null?((DeclistContext)_localctx).i.getText():null),((DeclistContext)_localctx).t.ast);
 									_localctx.astlist.add(f);
@@ -825,17 +816,17 @@ public class FOOLParser extends Parser {
 									HashMap<String,STentry> hmn = new HashMap<String,STentry>();
 									symTable.add(hmn);
 								
-					setState(157); match(LPAR);
+					setState(156); match(LPAR);
 						ArrayList<Node> parTypes = new ArrayList<Node>();
 										int parOffset = 1;
 									
-					setState(174);
+					setState(173);
 					_la = _input.LA(1);
 					if (_la==ID) {
 						{
-						setState(159); ((DeclistContext)_localctx).i1 = match(ID);
-						setState(160); match(COLON);
-						setState(161); ((DeclistContext)_localctx).fty = hotype();
+						setState(158); ((DeclistContext)_localctx).i1 = match(ID);
+						setState(159); match(COLON);
+						setState(160); ((DeclistContext)_localctx).fty = hotype();
 						 
 												/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 												parTypes.add(((DeclistContext)_localctx).fty.ast);
@@ -848,16 +839,16 @@ public class FOOLParser extends Parser {
 													System.exit(0);
 												}
 											
-						setState(171);
+						setState(170);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						while (_la==COMMA) {
 							{
 							{
-							setState(163); match(COMMA);
-							setState(164); ((DeclistContext)_localctx).i2 = match(ID);
-							setState(165); match(COLON);
-							setState(166); ((DeclistContext)_localctx).ty = hotype();
+							setState(162); match(COMMA);
+							setState(163); ((DeclistContext)_localctx).i2 = match(ID);
+							setState(164); match(COLON);
+							setState(165); ((DeclistContext)_localctx).ty = hotype();
 							/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
 													parTypes.add(((DeclistContext)_localctx).ty.ast);
 													ParNode p2 = new ParNode((((DeclistContext)_localctx).i2!=null?((DeclistContext)_localctx).i2.getText():null),((DeclistContext)_localctx).ty.ast);
@@ -872,27 +863,27 @@ public class FOOLParser extends Parser {
 												
 							}
 							}
-							setState(173);
+							setState(172);
 							_errHandler.sync(this);
 							_la = _input.LA(1);
 						}
 						}
 					}
 
-					setState(176); match(RPAR);
+					setState(175); match(RPAR);
 					 entry.addType(new ArrowTypeNode(parTypes,((DeclistContext)_localctx).t.ast)); 
-					setState(183);
+					setState(182);
 					_la = _input.LA(1);
 					if (_la==LET) {
 						{
-						setState(178); match(LET);
-						setState(179); ((DeclistContext)_localctx).d = declist();
+						setState(177); match(LET);
+						setState(178); ((DeclistContext)_localctx).d = declist();
 						f.addDec(((DeclistContext)_localctx).d.astlist);
-						setState(181); match(IN);
+						setState(180); match(IN);
 						}
 					}
 
-					setState(185); ((DeclistContext)_localctx).e = exp();
+					setState(184); ((DeclistContext)_localctx).e = exp();
 						
 										symTable.remove(nestingLevel--); /* Diminuisco nestingLevel perch� esco dallo scope della funzione */
 										f.addBody(((DeclistContext)_localctx).e.ast);
@@ -902,10 +893,10 @@ public class FOOLParser extends Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				setState(190); match(SEMIC);
+				setState(189); match(SEMIC);
 				}
 				}
-				setState(194); 
+				setState(193); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==VAR || _la==FUN );
@@ -950,21 +941,21 @@ public class FOOLParser extends Parser {
 		HotypeContext _localctx = new HotypeContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_hotype);
 		try {
-			setState(202);
+			setState(201);
 			switch (_input.LA(1)) {
 			case INT:
 			case BOOL:
 			case ID:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(196); ((HotypeContext)_localctx).t = type();
+				setState(195); ((HotypeContext)_localctx).t = type();
 				((HotypeContext)_localctx).ast =  ((HotypeContext)_localctx).t.ast;
 				}
 				break;
 			case LPAR:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(199); ((HotypeContext)_localctx).a = arrow();
+				setState(198); ((HotypeContext)_localctx).a = arrow();
 				((HotypeContext)_localctx).ast =  ((HotypeContext)_localctx).a.ast;
 				}
 				break;
@@ -1026,34 +1017,34 @@ public class FOOLParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			ArrayList<Node> hotypeList = new ArrayList<>();
-			setState(205); match(LPAR);
-			setState(217);
+			setState(204); match(LPAR);
+			setState(216);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << INT) | (1L << BOOL) | (1L << ID))) != 0)) {
 				{
-				setState(206); ((ArrowContext)_localctx).h = hotype();
+				setState(205); ((ArrowContext)_localctx).h = hotype();
 				hotypeList.add(((ArrowContext)_localctx).h.ast);
-				setState(214);
+				setState(213);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==COMMA) {
 					{
 					{
-					setState(208); match(COMMA);
-					setState(209); ((ArrowContext)_localctx).h1 = hotype();
+					setState(207); match(COMMA);
+					setState(208); ((ArrowContext)_localctx).h1 = hotype();
 					hotypeList.add(((ArrowContext)_localctx).h1.ast);
 					}
 					}
-					setState(216);
+					setState(215);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
 			}
 
-			setState(219); match(RPAR);
-			setState(220); match(ARROW);
-			setState(221); ((ArrowContext)_localctx).t = type();
+			setState(218); match(RPAR);
+			setState(219); match(ARROW);
+			setState(220); ((ArrowContext)_localctx).t = type();
 			((ArrowContext)_localctx).ast =  new ArrowTypeNode(hotypeList, ((ArrowContext)_localctx).t.ast);
 			}
 		}
@@ -1092,26 +1083,26 @@ public class FOOLParser extends Parser {
 		TypeContext _localctx = new TypeContext(_ctx, getState());
 		enterRule(_localctx, 10, RULE_type);
 		try {
-			setState(230);
+			setState(229);
 			switch (_input.LA(1)) {
 			case INT:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(224); match(INT);
+				setState(223); match(INT);
 				((TypeContext)_localctx).ast =  new IntTypeNode();
 				}
 				break;
 			case BOOL:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(226); match(BOOL);
+				setState(225); match(BOOL);
 				((TypeContext)_localctx).ast =  new BoolTypeNode();
 				}
 				break;
 			case ID:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(228); ((TypeContext)_localctx).id = match(ID);
+				setState(227); ((TypeContext)_localctx).id = match(ID);
 				((TypeContext)_localctx).ast =  new RefTypeNode((((TypeContext)_localctx).id!=null?((TypeContext)_localctx).id.getText():null));
 				}
 				break;
@@ -1175,33 +1166,33 @@ public class FOOLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(232); ((ExpContext)_localctx).t = term();
+			setState(231); ((ExpContext)_localctx).t = term();
 			((ExpContext)_localctx).ast =  ((ExpContext)_localctx).t.ast;
-			setState(248);
+			setState(247);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PLUS) | (1L << MINUS) | (1L << OR))) != 0)) {
 				{
-				setState(246);
+				setState(245);
 				switch (_input.LA(1)) {
 				case PLUS:
 					{
-					setState(234); match(PLUS);
-					setState(235); ((ExpContext)_localctx).p = term();
+					setState(233); match(PLUS);
+					setState(234); ((ExpContext)_localctx).p = term();
 					((ExpContext)_localctx).ast =  new PlusNode(_localctx.ast,((ExpContext)_localctx).p.ast);
 					}
 					break;
 				case MINUS:
 					{
-					setState(238); match(MINUS);
-					setState(239); ((ExpContext)_localctx).m = term();
+					setState(237); match(MINUS);
+					setState(238); ((ExpContext)_localctx).m = term();
 					((ExpContext)_localctx).ast =  new MinusNode(_localctx.ast, ((ExpContext)_localctx).m.ast);
 					}
 					break;
 				case OR:
 					{
-					setState(242); match(OR);
-					setState(243); ((ExpContext)_localctx).o = term();
+					setState(241); match(OR);
+					setState(242); ((ExpContext)_localctx).o = term();
 					((ExpContext)_localctx).ast =  new OrNode(_localctx.ast, ((ExpContext)_localctx).o.ast);
 					}
 					break;
@@ -1209,7 +1200,7 @@ public class FOOLParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(250);
+				setState(249);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1271,33 +1262,33 @@ public class FOOLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(251); ((TermContext)_localctx).f = factor();
+			setState(250); ((TermContext)_localctx).f = factor();
 			((TermContext)_localctx).ast =  ((TermContext)_localctx).f.ast;
-			setState(267);
+			setState(266);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << TIMES) | (1L << DIV) | (1L << AND))) != 0)) {
 				{
-				setState(265);
+				setState(264);
 				switch (_input.LA(1)) {
 				case TIMES:
 					{
-					setState(253); match(TIMES);
-					setState(254); ((TermContext)_localctx).t = factor();
+					setState(252); match(TIMES);
+					setState(253); ((TermContext)_localctx).t = factor();
 					((TermContext)_localctx).ast =  new TimesNode(_localctx.ast,((TermContext)_localctx).t.ast);
 					}
 					break;
 				case DIV:
 					{
-					setState(257); match(DIV);
-					setState(258); ((TermContext)_localctx).d = factor();
+					setState(256); match(DIV);
+					setState(257); ((TermContext)_localctx).d = factor();
 					((TermContext)_localctx).ast =  new DivNode(_localctx.ast,((TermContext)_localctx).d.ast);
 					}
 					break;
 				case AND:
 					{
-					setState(261); match(AND);
-					setState(262); ((TermContext)_localctx).a = factor();
+					setState(260); match(AND);
+					setState(261); ((TermContext)_localctx).a = factor();
 					 ((TermContext)_localctx).ast =  new AndNode(_localctx.ast,((TermContext)_localctx).a.ast);
 					}
 					break;
@@ -1305,7 +1296,7 @@ public class FOOLParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(269);
+				setState(268);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1367,33 +1358,33 @@ public class FOOLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(270); ((FactorContext)_localctx).v = value();
+			setState(269); ((FactorContext)_localctx).v = value();
 			((FactorContext)_localctx).ast =  ((FactorContext)_localctx).v.ast;
-			setState(286);
+			setState(285);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << GE) | (1L << LE) | (1L << EQ))) != 0)) {
 				{
-				setState(284);
+				setState(283);
 				switch (_input.LA(1)) {
 				case EQ:
 					{
-					setState(272); match(EQ);
-					setState(273); ((FactorContext)_localctx).e = value();
+					setState(271); match(EQ);
+					setState(272); ((FactorContext)_localctx).e = value();
 					((FactorContext)_localctx).ast =  new EqualNode(_localctx.ast,((FactorContext)_localctx).e.ast);
 					}
 					break;
 				case GE:
 					{
-					setState(276); match(GE);
-					setState(277); ((FactorContext)_localctx).g = value();
+					setState(275); match(GE);
+					setState(276); ((FactorContext)_localctx).g = value();
 					((FactorContext)_localctx).ast =  new GENode(_localctx.ast,((FactorContext)_localctx).g.ast);
 					}
 					break;
 				case LE:
 					{
-					setState(280); match(LE);
-					setState(281); ((FactorContext)_localctx).l = value();
+					setState(279); match(LE);
+					setState(280); ((FactorContext)_localctx).l = value();
 					((FactorContext)_localctx).ast =  new LENode(_localctx.ast,((FactorContext)_localctx).l.ast);
 					}
 					break;
@@ -1401,7 +1392,7 @@ public class FOOLParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(288);
+				setState(287);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -1484,42 +1475,42 @@ public class FOOLParser extends Parser {
 		enterRule(_localctx, 18, RULE_value);
 		int _la;
 		try {
-			setState(385);
+			setState(384);
 			switch (_input.LA(1)) {
 			case INTEGER:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(289); ((ValueContext)_localctx).in = match(INTEGER);
+				setState(288); ((ValueContext)_localctx).in = match(INTEGER);
 				((ValueContext)_localctx).ast =  new IntNode(Integer.parseInt((((ValueContext)_localctx).in!=null?((ValueContext)_localctx).in.getText():null)));
 				}
 				break;
 			case TRUE:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(291); match(TRUE);
+				setState(290); match(TRUE);
 				((ValueContext)_localctx).ast =  new BoolNode(true);
 				}
 				break;
 			case FALSE:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(293); match(FALSE);
+				setState(292); match(FALSE);
 				((ValueContext)_localctx).ast =  new BoolNode(false);
 				}
 				break;
 			case NULL:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(295); match(NULL);
+				setState(294); match(NULL);
 				((ValueContext)_localctx).ast =  new EmptyNode();
 				}
 				break;
 			case NEW:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(297); match(NEW);
-				setState(298); ((ValueContext)_localctx).nid = match(ID);
-				setState(299); match(LPAR);
+				setState(296); match(NEW);
+				setState(297); ((ValueContext)_localctx).nid = match(ID);
+				setState(298); match(LPAR);
 					/* new ID()*/ 
 							/*controllo che ID deve essere in classTable */
 							if(!classTable.keySet().contains((((ValueContext)_localctx).nid!=null?((ValueContext)_localctx).nid.getText():null))){
@@ -1530,24 +1521,24 @@ public class FOOLParser extends Parser {
 								STentry entry = symTable.get(0).get((((ValueContext)_localctx).nid!=null?((ValueContext)_localctx).nid.getText():null));
 								NewNode newNode = new NewNode((((ValueContext)_localctx).nid!=null?((ValueContext)_localctx).nid.getText():null),entry);
 						
-				setState(312);
+				setState(311);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 					{
-					setState(301); ((ValueContext)_localctx).e1 = exp();
+					setState(300); ((ValueContext)_localctx).e1 = exp();
 					newNode.addArg(((ValueContext)_localctx).e1.ast);
-					setState(309);
+					setState(308);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==COMMA) {
 						{
 						{
-						setState(303); match(COMMA);
-						setState(304); ((ValueContext)_localctx).e2 = exp();
+						setState(302); match(COMMA);
+						setState(303); ((ValueContext)_localctx).e2 = exp();
 						newNode.addArg(((ValueContext)_localctx).e2.ast);
 						}
 						}
-						setState(311);
+						setState(310);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
@@ -1555,58 +1546,58 @@ public class FOOLParser extends Parser {
 				}
 
 				((ValueContext)_localctx).ast =  newNode;
-				setState(315); match(RPAR);
+				setState(314); match(RPAR);
 				}
 				break;
 			case LPAR:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(316); match(LPAR);
-				setState(317); ((ValueContext)_localctx).e = exp();
-				setState(318); match(RPAR);
+				setState(315); match(LPAR);
+				setState(316); ((ValueContext)_localctx).e = exp();
+				setState(317); match(RPAR);
 				((ValueContext)_localctx).ast =  ((ValueContext)_localctx).e.ast;
 				}
 				break;
 			case IF:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(321); match(IF);
-				setState(322); ((ValueContext)_localctx).e1 = exp();
-				setState(323); match(THEN);
-				setState(324); match(CLPAR);
-				setState(325); ((ValueContext)_localctx).e2 = exp();
-				setState(326); match(CRPAR);
-				setState(327); match(ELSE);
-				setState(328); match(CLPAR);
-				setState(329); ((ValueContext)_localctx).e3 = exp();
-				setState(330); match(CRPAR);
+				setState(320); match(IF);
+				setState(321); ((ValueContext)_localctx).e1 = exp();
+				setState(322); match(THEN);
+				setState(323); match(CLPAR);
+				setState(324); ((ValueContext)_localctx).e2 = exp();
+				setState(325); match(CRPAR);
+				setState(326); match(ELSE);
+				setState(327); match(CLPAR);
+				setState(328); ((ValueContext)_localctx).e3 = exp();
+				setState(329); match(CRPAR);
 				((ValueContext)_localctx).ast =  new IfNode(((ValueContext)_localctx).e1.ast,((ValueContext)_localctx).e2.ast,((ValueContext)_localctx).e3.ast);
 				}
 				break;
 			case NOT:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(333); match(NOT);
-				setState(334); match(LPAR);
-				setState(335); ((ValueContext)_localctx).e = exp();
+				setState(332); match(NOT);
+				setState(333); match(LPAR);
+				setState(334); ((ValueContext)_localctx).e = exp();
 				((ValueContext)_localctx).ast =  new NotNode(((ValueContext)_localctx).e.ast);
-				setState(337); match(RPAR);
+				setState(336); match(RPAR);
 				}
 				break;
 			case PRINT:
 				enterOuterAlt(_localctx, 9);
 				{
-				setState(339); match(PRINT);
-				setState(340); match(LPAR);
-				setState(341); ((ValueContext)_localctx).e = exp();
-				setState(342); match(RPAR);
+				setState(338); match(PRINT);
+				setState(339); match(LPAR);
+				setState(340); ((ValueContext)_localctx).e = exp();
+				setState(341); match(RPAR);
 				((ValueContext)_localctx).ast =  new PrintNode(((ValueContext)_localctx).e.ast);
 				}
 				break;
 			case ID:
 				enterOuterAlt(_localctx, 10);
 				{
-				setState(345); ((ValueContext)_localctx).i = match(ID);
+				setState(344); ((ValueContext)_localctx).i = match(ID);
 					/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/
 							int j = nestingLevel;
 							STentry entry = null;
@@ -1620,44 +1611,44 @@ public class FOOLParser extends Parser {
 							}
 							((ValueContext)_localctx).ast =  new IdNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null), entry, nestingLevel); /* Inserito il nestinglevel per verifiche sullo scope della variabile */
 						
-				setState(383);
+				setState(382);
 				switch (_input.LA(1)) {
 				case LPAR:
 					{
-					setState(347); match(LPAR);
+					setState(346); match(LPAR);
 					 ArrayList<Node> arglist = new ArrayList<Node>(); 
-					setState(360);
+					setState(359);
 					_la = _input.LA(1);
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
-						setState(349); ((ValueContext)_localctx).a = exp();
+						setState(348); ((ValueContext)_localctx).a = exp();
 						arglist.add(((ValueContext)_localctx).a.ast); 
-						setState(357);
+						setState(356);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						while (_la==COMMA) {
 							{
 							{
-							setState(351); match(COMMA);
-							setState(352); ((ValueContext)_localctx).a1 = exp();
+							setState(350); match(COMMA);
+							setState(351); ((ValueContext)_localctx).a1 = exp();
 							 arglist.add(((ValueContext)_localctx).a1.ast); 
 							}
 							}
-							setState(359);
+							setState(358);
 							_errHandler.sync(this);
 							_la = _input.LA(1);
 						}
 						}
 					}
 
-					setState(362); match(RPAR);
+					setState(361); match(RPAR);
 					 ((ValueContext)_localctx).ast =  new CallNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null),entry,arglist,nestingLevel); 
 					}
 					break;
 				case DOT:
 					{
-					setState(364); match(DOT);
-					setState(365); ((ValueContext)_localctx).mid = match(ID);
+					setState(363); match(DOT);
+					setState(364); ((ValueContext)_localctx).mid = match(ID);
 					 
 								  	ArrayList<Node> argslist = new ArrayList<>();
 								  	/* Controllo se � un oggetto/classe */              
@@ -1679,32 +1670,32 @@ public class FOOLParser extends Parser {
 									/* Istanzio la ClassCallNode*/
 												
 								
-					setState(367); match(LPAR);
-					setState(379);
+					setState(366); match(LPAR);
+					setState(378);
 					_la = _input.LA(1);
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
-						setState(368); ((ValueContext)_localctx).e = exp();
+						setState(367); ((ValueContext)_localctx).e = exp();
 						 argslist.add(((ValueContext)_localctx).e.ast);
-						setState(376);
+						setState(375);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 						while (_la==COMMA) {
 							{
 							{
-							setState(370); match(COMMA);
-							setState(371); ((ValueContext)_localctx).e1 = exp();
+							setState(369); match(COMMA);
+							setState(370); ((ValueContext)_localctx).e1 = exp();
 							 argslist.add(((ValueContext)_localctx).e1.ast); 
 							}
 							}
-							setState(378);
+							setState(377);
 							_errHandler.sync(this);
 							_la = _input.LA(1);
 						}
 						}
 					}
 
-					setState(381); match(RPAR);
+					setState(380); match(RPAR);
 					ClassCallNode clCallNode = new ClassCallNode(ref.getID(), (((ValueContext)_localctx).mid!=null?((ValueContext)_localctx).mid.getText():null), classEntry, methodEntry, nestingLevel);
 								     	clCallNode.addArgs(argslist);
 								     	
@@ -1748,7 +1739,7 @@ public class FOOLParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3+\u0186\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3+\u0185\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\5\2!\n\2\3\2\3\2\3\2\5\2&"+
 		"\n\2\3\2\3\2\3\2\3\2\5\2,\n\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
@@ -1757,33 +1748,33 @@ public class FOOLParser extends Parser {
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3d\n\3\f\3\16\3g\13\3\3\3"+
 		"\3\3\5\3k\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3y\n\3"+
 		"\f\3\16\3|\13\3\3\3\3\3\5\3\u0080\n\3\3\3\3\3\3\3\3\3\7\3\u0086\n\3\f"+
-		"\3\16\3\u0089\13\3\3\3\3\3\3\3\6\3\u008e\n\3\r\3\16\3\u008f\3\4\3\4\3"+
+		"\3\16\3\u0089\13\3\3\3\3\3\6\3\u008d\n\3\r\3\16\3\u008e\3\4\3\4\3\4\3"+
 		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\3\4\7\4\u00ac\n\4\f\4\16\4\u00af\13\4\5\4\u00b1\n"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\u00ba\n\4\3\4\3\4\3\4\5\4\u00bf\n\4"+
-		"\3\4\3\4\6\4\u00c3\n\4\r\4\16\4\u00c4\3\5\3\5\3\5\3\5\3\5\3\5\5\5\u00cd"+
-		"\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6\u00d7\n\6\f\6\16\6\u00da\13\6"+
-		"\5\6\u00dc\n\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\5\7\u00e9\n"+
-		"\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\7\b\u00f9\n"+
-		"\b\f\b\16\b\u00fc\13\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t"+
-		"\3\t\3\t\7\t\u010c\n\t\f\t\16\t\u010f\13\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n"+
-		"\3\n\3\n\3\n\3\n\3\n\3\n\3\n\7\n\u011f\n\n\f\n\16\n\u0122\13\n\3\13\3"+
-		"\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3"+
-		"\13\3\13\3\13\7\13\u0136\n\13\f\13\16\13\u0139\13\13\5\13\u013b\n\13\3"+
-		"\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3"+
-		"\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3"+
-		"\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0166"+
-		"\n\13\f\13\16\13\u0169\13\13\5\13\u016b\n\13\3\13\3\13\3\13\3\13\3\13"+
-		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0179\n\13\f\13\16\13\u017c\13"+
-		"\13\5\13\u017e\n\13\3\13\3\13\5\13\u0182\n\13\5\13\u0184\n\13\3\13\2\2"+
-		"\f\2\4\6\b\n\f\16\20\22\24\2\2\u01ab\2\26\3\2\2\2\4\60\3\2\2\2\6\u0091"+
-		"\3\2\2\2\b\u00cc\3\2\2\2\n\u00ce\3\2\2\2\f\u00e8\3\2\2\2\16\u00ea\3\2"+
-		"\2\2\20\u00fd\3\2\2\2\22\u0110\3\2\2\2\24\u0183\3\2\2\2\26+\b\2\1\2\27"+
+		"\3\4\3\4\3\4\3\4\3\4\7\4\u00ab\n\4\f\4\16\4\u00ae\13\4\5\4\u00b0\n\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\u00b9\n\4\3\4\3\4\3\4\5\4\u00be\n\4\3\4"+
+		"\3\4\6\4\u00c2\n\4\r\4\16\4\u00c3\3\5\3\5\3\5\3\5\3\5\3\5\5\5\u00cc\n"+
+		"\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6\u00d6\n\6\f\6\16\6\u00d9\13\6\5"+
+		"\6\u00db\n\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\5\7\u00e8\n\7"+
+		"\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\7\b\u00f8\n\b"+
+		"\f\b\16\b\u00fb\13\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3"+
+		"\t\3\t\7\t\u010b\n\t\f\t\16\t\u010e\13\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3"+
+		"\n\3\n\3\n\3\n\3\n\3\n\3\n\7\n\u011e\n\n\f\n\16\n\u0121\13\n\3\13\3\13"+
+		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13"+
+		"\3\13\3\13\7\13\u0135\n\13\f\13\16\13\u0138\13\13\5\13\u013a\n\13\3\13"+
+		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13"+
+		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13"+
+		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0165"+
+		"\n\13\f\13\16\13\u0168\13\13\5\13\u016a\n\13\3\13\3\13\3\13\3\13\3\13"+
+		"\3\13\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0178\n\13\f\13\16\13\u017b\13"+
+		"\13\5\13\u017d\n\13\3\13\3\13\5\13\u0181\n\13\5\13\u0183\n\13\3\13\2\2"+
+		"\f\2\4\6\b\n\f\16\20\22\24\2\2\u01aa\2\26\3\2\2\2\4\60\3\2\2\2\6\u0090"+
+		"\3\2\2\2\b\u00cb\3\2\2\2\n\u00cd\3\2\2\2\f\u00e7\3\2\2\2\16\u00e9\3\2"+
+		"\2\2\20\u00fc\3\2\2\2\22\u010f\3\2\2\2\24\u0182\3\2\2\2\26+\b\2\1\2\27"+
 		"\30\5\16\b\2\30\31\b\2\1\2\31,\3\2\2\2\32%\7\34\2\2\33\34\5\4\3\2\34 "+
 		"\b\2\1\2\35\36\5\6\4\2\36\37\b\2\1\2\37!\3\2\2\2 \35\3\2\2\2 !\3\2\2\2"+
 		"!&\3\2\2\2\"#\5\6\4\2#$\b\2\1\2$&\3\2\2\2%\33\3\2\2\2%\"\3\2\2\2&\'\3"+
 		"\2\2\2\'(\7\35\2\2()\5\16\b\2)*\b\2\1\2*,\3\2\2\2+\27\3\2\2\2+\32\3\2"+
-		"\2\2,-\3\2\2\2-.\b\2\1\2./\7\13\2\2/\3\3\2\2\2\60\u008d\b\3\1\2\61\62"+
+		"\2\2,-\3\2\2\2-.\b\2\1\2./\7\13\2\2/\3\3\2\2\2\60\u008c\b\3\1\2\61\62"+
 		"\7 \2\2\62\63\7(\2\2\63\67\b\3\1\2\64\65\7!\2\2\65\66\7(\2\2\668\b\3\1"+
 		"\2\67\64\3\2\2\2\678\3\2\2\289\3\2\2\29:\b\3\1\2:;\b\3\1\2;M\7\7\2\2<"+
 		"=\7(\2\2=>\7\f\2\2>?\5\f\7\2?H\b\3\1\2@A\7\r\2\2AB\7(\2\2BC\7\f\2\2CD"+
@@ -1800,90 +1791,90 @@ public class FOOLParser extends Parser {
 		"\2\2\2\u0080\u0081\3\2\2\2\u0081\u0082\5\16\b\2\u0082\u0083\b\3\1\2\u0083"+
 		"\u0084\7\13\2\2\u0084\u0086\3\2\2\2\u0085R\3\2\2\2\u0086\u0089\3\2\2\2"+
 		"\u0087\u0085\3\2\2\2\u0087\u0088\3\2\2\2\u0088\u008a\3\2\2\2\u0089\u0087"+
-		"\3\2\2\2\u008a\u008b\7\n\2\2\u008b\u008c\b\3\1\2\u008c\u008e\b\3\1\2\u008d"+
-		"\61\3\2\2\2\u008e\u008f\3\2\2\2\u008f\u008d\3\2\2\2\u008f\u0090\3\2\2"+
-		"\2\u0090\5\3\2\2\2\u0091\u00c2\b\4\1\2\u0092\u0093\7\36\2\2\u0093\u0094"+
-		"\7(\2\2\u0094\u0095\7\f\2\2\u0095\u0096\5\b\5\2\u0096\u0097\7\25\2\2\u0097"+
-		"\u0098\5\16\b\2\u0098\u0099\b\4\1\2\u0099\u00bf\3\2\2\2\u009a\u009b\7"+
-		"\37\2\2\u009b\u009c\7(\2\2\u009c\u009d\7\f\2\2\u009d\u009e\5\f\7\2\u009e"+
-		"\u009f\b\4\1\2\u009f\u00a0\7\7\2\2\u00a0\u00b0\b\4\1\2\u00a1\u00a2\7("+
-		"\2\2\u00a2\u00a3\7\f\2\2\u00a3\u00a4\5\b\5\2\u00a4\u00ad\b\4\1\2\u00a5"+
-		"\u00a6\7\r\2\2\u00a6\u00a7\7(\2\2\u00a7\u00a8\7\f\2\2\u00a8\u00a9\5\b"+
-		"\5\2\u00a9\u00aa\b\4\1\2\u00aa\u00ac\3\2\2\2\u00ab\u00a5\3\2\2\2\u00ac"+
-		"\u00af\3\2\2\2\u00ad\u00ab\3\2\2\2\u00ad\u00ae\3\2\2\2\u00ae\u00b1\3\2"+
-		"\2\2\u00af\u00ad\3\2\2\2\u00b0\u00a1\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1"+
-		"\u00b2\3\2\2\2\u00b2\u00b3\7\b\2\2\u00b3\u00b9\b\4\1\2\u00b4\u00b5\7\34"+
-		"\2\2\u00b5\u00b6\5\6\4\2\u00b6\u00b7\b\4\1\2\u00b7\u00b8\7\35\2\2\u00b8"+
-		"\u00ba\3\2\2\2\u00b9\u00b4\3\2\2\2\u00b9\u00ba\3\2\2\2\u00ba\u00bb\3\2"+
-		"\2\2\u00bb\u00bc\5\16\b\2\u00bc\u00bd\b\4\1\2\u00bd\u00bf\3\2\2\2\u00be"+
-		"\u0092\3\2\2\2\u00be\u009a\3\2\2\2\u00bf\u00c0\3\2\2\2\u00c0\u00c1\7\13"+
-		"\2\2\u00c1\u00c3\3\2\2\2\u00c2\u00be\3\2\2\2\u00c3\u00c4\3\2\2\2\u00c4"+
-		"\u00c2\3\2\2\2\u00c4\u00c5\3\2\2\2\u00c5\7\3\2\2\2\u00c6\u00c7\5\f\7\2"+
-		"\u00c7\u00c8\b\5\1\2\u00c8\u00cd\3\2\2\2\u00c9\u00ca\5\n\6\2\u00ca\u00cb"+
-		"\b\5\1\2\u00cb\u00cd\3\2\2\2\u00cc\u00c6\3\2\2\2\u00cc\u00c9\3\2\2\2\u00cd"+
-		"\t\3\2\2\2\u00ce\u00cf\b\6\1\2\u00cf\u00db\7\7\2\2\u00d0\u00d1\5\b\5\2"+
-		"\u00d1\u00d8\b\6\1\2\u00d2\u00d3\7\r\2\2\u00d3\u00d4\5\b\5\2\u00d4\u00d5"+
-		"\b\6\1\2\u00d5\u00d7\3\2\2\2\u00d6\u00d2\3\2\2\2\u00d7\u00da\3\2\2\2\u00d8"+
-		"\u00d6\3\2\2\2\u00d8\u00d9\3\2\2\2\u00d9\u00dc\3\2\2\2\u00da\u00d8\3\2"+
-		"\2\2\u00db\u00d0\3\2\2\2\u00db\u00dc\3\2\2\2\u00dc\u00dd\3\2\2\2\u00dd"+
-		"\u00de\7\b\2\2\u00de\u00df\7&\2\2\u00df\u00e0\5\f\7\2\u00e0\u00e1\b\6"+
-		"\1\2\u00e1\13\3\2\2\2\u00e2\u00e3\7$\2\2\u00e3\u00e9\b\7\1\2\u00e4\u00e5"+
-		"\7%\2\2\u00e5\u00e9\b\7\1\2\u00e6\u00e7\7(\2\2\u00e7\u00e9\b\7\1\2\u00e8"+
-		"\u00e2\3\2\2\2\u00e8\u00e4\3\2\2\2\u00e8\u00e6\3\2\2\2\u00e9\r\3\2\2\2"+
-		"\u00ea\u00eb\5\20\t\2\u00eb\u00fa\b\b\1\2\u00ec\u00ed\7\3\2\2\u00ed\u00ee"+
-		"\5\20\t\2\u00ee\u00ef\b\b\1\2\u00ef\u00f9\3\2\2\2\u00f0\u00f1\7\4\2\2"+
-		"\u00f1\u00f2\5\20\t\2\u00f2\u00f3\b\b\1\2\u00f3\u00f9\3\2\2\2\u00f4\u00f5"+
-		"\7\17\2\2\u00f5\u00f6\5\20\t\2\u00f6\u00f7\b\b\1\2\u00f7\u00f9\3\2\2\2"+
-		"\u00f8\u00ec\3\2\2\2\u00f8\u00f0\3\2\2\2\u00f8\u00f4\3\2\2\2\u00f9\u00fc"+
-		"\3\2\2\2\u00fa\u00f8\3\2\2\2\u00fa\u00fb\3\2\2\2\u00fb\17\3\2\2\2\u00fc"+
-		"\u00fa\3\2\2\2\u00fd\u00fe\5\22\n\2\u00fe\u010d\b\t\1\2\u00ff\u0100\7"+
-		"\5\2\2\u0100\u0101\5\22\n\2\u0101\u0102\b\t\1\2\u0102\u010c\3\2\2\2\u0103"+
-		"\u0104\7\6\2\2\u0104\u0105\5\22\n\2\u0105\u0106\b\t\1\2\u0106\u010c\3"+
-		"\2\2\2\u0107\u0108\7\20\2\2\u0108\u0109\5\22\n\2\u0109\u010a\b\t\1\2\u010a"+
-		"\u010c\3\2\2\2\u010b\u00ff\3\2\2\2\u010b\u0103\3\2\2\2\u010b\u0107\3\2"+
-		"\2\2\u010c\u010f\3\2\2\2\u010d\u010b\3\2\2\2\u010d\u010e\3\2\2\2\u010e"+
-		"\21\3\2\2\2\u010f\u010d\3\2\2\2\u0110\u0111\5\24\13\2\u0111\u0120\b\n"+
-		"\1\2\u0112\u0113\7\24\2\2\u0113\u0114\5\24\13\2\u0114\u0115\b\n\1\2\u0115"+
-		"\u011f\3\2\2\2\u0116\u0117\7\22\2\2\u0117\u0118\5\24\13\2\u0118\u0119"+
-		"\b\n\1\2\u0119\u011f\3\2\2\2\u011a\u011b\7\23\2\2\u011b\u011c\5\24\13"+
-		"\2\u011c\u011d\b\n\1\2\u011d\u011f\3\2\2\2\u011e\u0112\3\2\2\2\u011e\u0116"+
-		"\3\2\2\2\u011e\u011a\3\2\2\2\u011f\u0122\3\2\2\2\u0120\u011e\3\2\2\2\u0120"+
-		"\u0121\3\2\2\2\u0121\23\3\2\2\2\u0122\u0120\3\2\2\2\u0123\u0124\7\'\2"+
-		"\2\u0124\u0184\b\13\1\2\u0125\u0126\7\26\2\2\u0126\u0184\b\13\1\2\u0127"+
-		"\u0128\7\27\2\2\u0128\u0184\b\13\1\2\u0129\u012a\7#\2\2\u012a\u0184\b"+
-		"\13\1\2\u012b\u012c\7\"\2\2\u012c\u012d\7(\2\2\u012d\u012e\7\7\2\2\u012e"+
-		"\u013a\b\13\1\2\u012f\u0130\5\16\b\2\u0130\u0137\b\13\1\2\u0131\u0132"+
-		"\7\r\2\2\u0132\u0133\5\16\b\2\u0133\u0134\b\13\1\2\u0134\u0136\3\2\2\2"+
-		"\u0135\u0131\3\2\2\2\u0136\u0139\3\2\2\2\u0137\u0135\3\2\2\2\u0137\u0138"+
-		"\3\2\2\2\u0138\u013b\3\2\2\2\u0139\u0137\3\2\2\2\u013a\u012f\3\2\2\2\u013a"+
-		"\u013b\3\2\2\2\u013b\u013c\3\2\2\2\u013c\u013d\b\13\1\2\u013d\u0184\7"+
-		"\b\2\2\u013e\u013f\7\7\2\2\u013f\u0140\5\16\b\2\u0140\u0141\7\b\2\2\u0141"+
-		"\u0142\b\13\1\2\u0142\u0184\3\2\2\2\u0143\u0144\7\30\2\2\u0144\u0145\5"+
-		"\16\b\2\u0145\u0146\7\31\2\2\u0146\u0147\7\t\2\2\u0147\u0148\5\16\b\2"+
-		"\u0148\u0149\7\n\2\2\u0149\u014a\7\32\2\2\u014a\u014b\7\t\2\2\u014b\u014c"+
-		"\5\16\b\2\u014c\u014d\7\n\2\2\u014d\u014e\b\13\1\2\u014e\u0184\3\2\2\2"+
-		"\u014f\u0150\7\21\2\2\u0150\u0151\7\7\2\2\u0151\u0152\5\16\b\2\u0152\u0153"+
-		"\b\13\1\2\u0153\u0154\7\b\2\2\u0154\u0184\3\2\2\2\u0155\u0156\7\33\2\2"+
-		"\u0156\u0157\7\7\2\2\u0157\u0158\5\16\b\2\u0158\u0159\7\b\2\2\u0159\u015a"+
-		"\b\13\1\2\u015a\u0184\3\2\2\2\u015b\u015c\7(\2\2\u015c\u0181\b\13\1\2"+
-		"\u015d\u015e\7\7\2\2\u015e\u016a\b\13\1\2\u015f\u0160\5\16\b\2\u0160\u0167"+
-		"\b\13\1\2\u0161\u0162\7\r\2\2\u0162\u0163\5\16\b\2\u0163\u0164\b\13\1"+
-		"\2\u0164\u0166\3\2\2\2\u0165\u0161\3\2\2\2\u0166\u0169\3\2\2\2\u0167\u0165"+
-		"\3\2\2\2\u0167\u0168\3\2\2\2\u0168\u016b\3\2\2\2\u0169\u0167\3\2\2\2\u016a"+
-		"\u015f\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016c\3\2\2\2\u016c\u016d\7\b"+
-		"\2\2\u016d\u0182\b\13\1\2\u016e\u016f\7\16\2\2\u016f\u0170\7(\2\2\u0170"+
-		"\u0171\b\13\1\2\u0171\u017d\7\7\2\2\u0172\u0173\5\16\b\2\u0173\u017a\b"+
-		"\13\1\2\u0174\u0175\7\r\2\2\u0175\u0176\5\16\b\2\u0176\u0177\b\13\1\2"+
-		"\u0177\u0179\3\2\2\2\u0178\u0174\3\2\2\2\u0179\u017c\3\2\2\2\u017a\u0178"+
-		"\3\2\2\2\u017a\u017b\3\2\2\2\u017b\u017e\3\2\2\2\u017c\u017a\3\2\2\2\u017d"+
-		"\u0172\3\2\2\2\u017d\u017e\3\2\2\2\u017e\u017f\3\2\2\2\u017f\u0180\7\b"+
-		"\2\2\u0180\u0182\b\13\1\2\u0181\u015d\3\2\2\2\u0181\u016e\3\2\2\2\u0181"+
-		"\u0182\3\2\2\2\u0182\u0184\3\2\2\2\u0183\u0123\3\2\2\2\u0183\u0125\3\2"+
-		"\2\2\u0183\u0127\3\2\2\2\u0183\u0129\3\2\2\2\u0183\u012b\3\2\2\2\u0183"+
-		"\u013e\3\2\2\2\u0183\u0143\3\2\2\2\u0183\u014f\3\2\2\2\u0183\u0155\3\2"+
-		"\2\2\u0183\u015b\3\2\2\2\u0184\25\3\2\2\2% %+\67HMejz\177\u0087\u008f"+
-		"\u00ad\u00b0\u00b9\u00be\u00c4\u00cc\u00d8\u00db\u00e8\u00f8\u00fa\u010b"+
-		"\u010d\u011e\u0120\u0137\u013a\u0167\u016a\u017a\u017d\u0181\u0183";
+		"\3\2\2\2\u008a\u008b\7\n\2\2\u008b\u008d\b\3\1\2\u008c\61\3\2\2\2\u008d"+
+		"\u008e\3\2\2\2\u008e\u008c\3\2\2\2\u008e\u008f\3\2\2\2\u008f\5\3\2\2\2"+
+		"\u0090\u00c1\b\4\1\2\u0091\u0092\7\36\2\2\u0092\u0093\7(\2\2\u0093\u0094"+
+		"\7\f\2\2\u0094\u0095\5\b\5\2\u0095\u0096\7\25\2\2\u0096\u0097\5\16\b\2"+
+		"\u0097\u0098\b\4\1\2\u0098\u00be\3\2\2\2\u0099\u009a\7\37\2\2\u009a\u009b"+
+		"\7(\2\2\u009b\u009c\7\f\2\2\u009c\u009d\5\f\7\2\u009d\u009e\b\4\1\2\u009e"+
+		"\u009f\7\7\2\2\u009f\u00af\b\4\1\2\u00a0\u00a1\7(\2\2\u00a1\u00a2\7\f"+
+		"\2\2\u00a2\u00a3\5\b\5\2\u00a3\u00ac\b\4\1\2\u00a4\u00a5\7\r\2\2\u00a5"+
+		"\u00a6\7(\2\2\u00a6\u00a7\7\f\2\2\u00a7\u00a8\5\b\5\2\u00a8\u00a9\b\4"+
+		"\1\2\u00a9\u00ab\3\2\2\2\u00aa\u00a4\3\2\2\2\u00ab\u00ae\3\2\2\2\u00ac"+
+		"\u00aa\3\2\2\2\u00ac\u00ad\3\2\2\2\u00ad\u00b0\3\2\2\2\u00ae\u00ac\3\2"+
+		"\2\2\u00af\u00a0\3\2\2\2\u00af\u00b0\3\2\2\2\u00b0\u00b1\3\2\2\2\u00b1"+
+		"\u00b2\7\b\2\2\u00b2\u00b8\b\4\1\2\u00b3\u00b4\7\34\2\2\u00b4\u00b5\5"+
+		"\6\4\2\u00b5\u00b6\b\4\1\2\u00b6\u00b7\7\35\2\2\u00b7\u00b9\3\2\2\2\u00b8"+
+		"\u00b3\3\2\2\2\u00b8\u00b9\3\2\2\2\u00b9\u00ba\3\2\2\2\u00ba\u00bb\5\16"+
+		"\b\2\u00bb\u00bc\b\4\1\2\u00bc\u00be\3\2\2\2\u00bd\u0091\3\2\2\2\u00bd"+
+		"\u0099\3\2\2\2\u00be\u00bf\3\2\2\2\u00bf\u00c0\7\13\2\2\u00c0\u00c2\3"+
+		"\2\2\2\u00c1\u00bd\3\2\2\2\u00c2\u00c3\3\2\2\2\u00c3\u00c1\3\2\2\2\u00c3"+
+		"\u00c4\3\2\2\2\u00c4\7\3\2\2\2\u00c5\u00c6\5\f\7\2\u00c6\u00c7\b\5\1\2"+
+		"\u00c7\u00cc\3\2\2\2\u00c8\u00c9\5\n\6\2\u00c9\u00ca\b\5\1\2\u00ca\u00cc"+
+		"\3\2\2\2\u00cb\u00c5\3\2\2\2\u00cb\u00c8\3\2\2\2\u00cc\t\3\2\2\2\u00cd"+
+		"\u00ce\b\6\1\2\u00ce\u00da\7\7\2\2\u00cf\u00d0\5\b\5\2\u00d0\u00d7\b\6"+
+		"\1\2\u00d1\u00d2\7\r\2\2\u00d2\u00d3\5\b\5\2\u00d3\u00d4\b\6\1\2\u00d4"+
+		"\u00d6\3\2\2\2\u00d5\u00d1\3\2\2\2\u00d6\u00d9\3\2\2\2\u00d7\u00d5\3\2"+
+		"\2\2\u00d7\u00d8\3\2\2\2\u00d8\u00db\3\2\2\2\u00d9\u00d7\3\2\2\2\u00da"+
+		"\u00cf\3\2\2\2\u00da\u00db\3\2\2\2\u00db\u00dc\3\2\2\2\u00dc\u00dd\7\b"+
+		"\2\2\u00dd\u00de\7&\2\2\u00de\u00df\5\f\7\2\u00df\u00e0\b\6\1\2\u00e0"+
+		"\13\3\2\2\2\u00e1\u00e2\7$\2\2\u00e2\u00e8\b\7\1\2\u00e3\u00e4\7%\2\2"+
+		"\u00e4\u00e8\b\7\1\2\u00e5\u00e6\7(\2\2\u00e6\u00e8\b\7\1\2\u00e7\u00e1"+
+		"\3\2\2\2\u00e7\u00e3\3\2\2\2\u00e7\u00e5\3\2\2\2\u00e8\r\3\2\2\2\u00e9"+
+		"\u00ea\5\20\t\2\u00ea\u00f9\b\b\1\2\u00eb\u00ec\7\3\2\2\u00ec\u00ed\5"+
+		"\20\t\2\u00ed\u00ee\b\b\1\2\u00ee\u00f8\3\2\2\2\u00ef\u00f0\7\4\2\2\u00f0"+
+		"\u00f1\5\20\t\2\u00f1\u00f2\b\b\1\2\u00f2\u00f8\3\2\2\2\u00f3\u00f4\7"+
+		"\17\2\2\u00f4\u00f5\5\20\t\2\u00f5\u00f6\b\b\1\2\u00f6\u00f8\3\2\2\2\u00f7"+
+		"\u00eb\3\2\2\2\u00f7\u00ef\3\2\2\2\u00f7\u00f3\3\2\2\2\u00f8\u00fb\3\2"+
+		"\2\2\u00f9\u00f7\3\2\2\2\u00f9\u00fa\3\2\2\2\u00fa\17\3\2\2\2\u00fb\u00f9"+
+		"\3\2\2\2\u00fc\u00fd\5\22\n\2\u00fd\u010c\b\t\1\2\u00fe\u00ff\7\5\2\2"+
+		"\u00ff\u0100\5\22\n\2\u0100\u0101\b\t\1\2\u0101\u010b\3\2\2\2\u0102\u0103"+
+		"\7\6\2\2\u0103\u0104\5\22\n\2\u0104\u0105\b\t\1\2\u0105\u010b\3\2\2\2"+
+		"\u0106\u0107\7\20\2\2\u0107\u0108\5\22\n\2\u0108\u0109\b\t\1\2\u0109\u010b"+
+		"\3\2\2\2\u010a\u00fe\3\2\2\2\u010a\u0102\3\2\2\2\u010a\u0106\3\2\2\2\u010b"+
+		"\u010e\3\2\2\2\u010c\u010a\3\2\2\2\u010c\u010d\3\2\2\2\u010d\21\3\2\2"+
+		"\2\u010e\u010c\3\2\2\2\u010f\u0110\5\24\13\2\u0110\u011f\b\n\1\2\u0111"+
+		"\u0112\7\24\2\2\u0112\u0113\5\24\13\2\u0113\u0114\b\n\1\2\u0114\u011e"+
+		"\3\2\2\2\u0115\u0116\7\22\2\2\u0116\u0117\5\24\13\2\u0117\u0118\b\n\1"+
+		"\2\u0118\u011e\3\2\2\2\u0119\u011a\7\23\2\2\u011a\u011b\5\24\13\2\u011b"+
+		"\u011c\b\n\1\2\u011c\u011e\3\2\2\2\u011d\u0111\3\2\2\2\u011d\u0115\3\2"+
+		"\2\2\u011d\u0119\3\2\2\2\u011e\u0121\3\2\2\2\u011f\u011d\3\2\2\2\u011f"+
+		"\u0120\3\2\2\2\u0120\23\3\2\2\2\u0121\u011f\3\2\2\2\u0122\u0123\7\'\2"+
+		"\2\u0123\u0183\b\13\1\2\u0124\u0125\7\26\2\2\u0125\u0183\b\13\1\2\u0126"+
+		"\u0127\7\27\2\2\u0127\u0183\b\13\1\2\u0128\u0129\7#\2\2\u0129\u0183\b"+
+		"\13\1\2\u012a\u012b\7\"\2\2\u012b\u012c\7(\2\2\u012c\u012d\7\7\2\2\u012d"+
+		"\u0139\b\13\1\2\u012e\u012f\5\16\b\2\u012f\u0136\b\13\1\2\u0130\u0131"+
+		"\7\r\2\2\u0131\u0132\5\16\b\2\u0132\u0133\b\13\1\2\u0133\u0135\3\2\2\2"+
+		"\u0134\u0130\3\2\2\2\u0135\u0138\3\2\2\2\u0136\u0134\3\2\2\2\u0136\u0137"+
+		"\3\2\2\2\u0137\u013a\3\2\2\2\u0138\u0136\3\2\2\2\u0139\u012e\3\2\2\2\u0139"+
+		"\u013a\3\2\2\2\u013a\u013b\3\2\2\2\u013b\u013c\b\13\1\2\u013c\u0183\7"+
+		"\b\2\2\u013d\u013e\7\7\2\2\u013e\u013f\5\16\b\2\u013f\u0140\7\b\2\2\u0140"+
+		"\u0141\b\13\1\2\u0141\u0183\3\2\2\2\u0142\u0143\7\30\2\2\u0143\u0144\5"+
+		"\16\b\2\u0144\u0145\7\31\2\2\u0145\u0146\7\t\2\2\u0146\u0147\5\16\b\2"+
+		"\u0147\u0148\7\n\2\2\u0148\u0149\7\32\2\2\u0149\u014a\7\t\2\2\u014a\u014b"+
+		"\5\16\b\2\u014b\u014c\7\n\2\2\u014c\u014d\b\13\1\2\u014d\u0183\3\2\2\2"+
+		"\u014e\u014f\7\21\2\2\u014f\u0150\7\7\2\2\u0150\u0151\5\16\b\2\u0151\u0152"+
+		"\b\13\1\2\u0152\u0153\7\b\2\2\u0153\u0183\3\2\2\2\u0154\u0155\7\33\2\2"+
+		"\u0155\u0156\7\7\2\2\u0156\u0157\5\16\b\2\u0157\u0158\7\b\2\2\u0158\u0159"+
+		"\b\13\1\2\u0159\u0183\3\2\2\2\u015a\u015b\7(\2\2\u015b\u0180\b\13\1\2"+
+		"\u015c\u015d\7\7\2\2\u015d\u0169\b\13\1\2\u015e\u015f\5\16\b\2\u015f\u0166"+
+		"\b\13\1\2\u0160\u0161\7\r\2\2\u0161\u0162\5\16\b\2\u0162\u0163\b\13\1"+
+		"\2\u0163\u0165\3\2\2\2\u0164\u0160\3\2\2\2\u0165\u0168\3\2\2\2\u0166\u0164"+
+		"\3\2\2\2\u0166\u0167\3\2\2\2\u0167\u016a\3\2\2\2\u0168\u0166\3\2\2\2\u0169"+
+		"\u015e\3\2\2\2\u0169\u016a\3\2\2\2\u016a\u016b\3\2\2\2\u016b\u016c\7\b"+
+		"\2\2\u016c\u0181\b\13\1\2\u016d\u016e\7\16\2\2\u016e\u016f\7(\2\2\u016f"+
+		"\u0170\b\13\1\2\u0170\u017c\7\7\2\2\u0171\u0172\5\16\b\2\u0172\u0179\b"+
+		"\13\1\2\u0173\u0174\7\r\2\2\u0174\u0175\5\16\b\2\u0175\u0176\b\13\1\2"+
+		"\u0176\u0178\3\2\2\2\u0177\u0173\3\2\2\2\u0178\u017b\3\2\2\2\u0179\u0177"+
+		"\3\2\2\2\u0179\u017a\3\2\2\2\u017a\u017d\3\2\2\2\u017b\u0179\3\2\2\2\u017c"+
+		"\u0171\3\2\2\2\u017c\u017d\3\2\2\2\u017d\u017e\3\2\2\2\u017e\u017f\7\b"+
+		"\2\2\u017f\u0181\b\13\1\2\u0180\u015c\3\2\2\2\u0180\u016d\3\2\2\2\u0180"+
+		"\u0181\3\2\2\2\u0181\u0183\3\2\2\2\u0182\u0122\3\2\2\2\u0182\u0124\3\2"+
+		"\2\2\u0182\u0126\3\2\2\2\u0182\u0128\3\2\2\2\u0182\u012a\3\2\2\2\u0182"+
+		"\u013d\3\2\2\2\u0182\u0142\3\2\2\2\u0182\u014e\3\2\2\2\u0182\u0154\3\2"+
+		"\2\2\u0182\u015a\3\2\2\2\u0183\25\3\2\2\2% %+\67HMejz\177\u0087\u008e"+
+		"\u00ac\u00af\u00b8\u00bd\u00c3\u00cb\u00d7\u00da\u00e7\u00f7\u00f9\u010a"+
+		"\u010c\u011d\u011f\u0136\u0139\u0166\u0169\u0179\u017c\u0180\u0182";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

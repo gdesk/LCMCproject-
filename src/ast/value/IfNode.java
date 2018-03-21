@@ -37,15 +37,15 @@ public class IfNode implements Node {
 		}
 		Node t= then.typeCheck();  
 		Node e= el.typeCheck();  
-		if (FOOLlib.isSubtype(t, e)) {
-			return e;
+		
+		Node returnType = FOOLlib.lowestCommonAncestor(t,e);
+		
+		if( returnType == null) {
+			System.out.println("Incompatible types in then-else branches");
+			System.exit(0);
 		}
-		if (FOOLlib.isSubtype(e, t)) {
-			return t;
-		}
-		System.out.println("Incompatible types in then-else branches");
-		System.exit(0);
-		return null;
+		
+		return returnType;
 	}
 
 	@Override

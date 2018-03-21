@@ -52,19 +52,32 @@ public class ClassNode implements DecNode {
 			ArrayList<FieldNode> parentFields = ((ClassNode)this.superEntry.getType()).getFields();
 			ArrayList<MethodNode> parentMethods = ((ClassNode)this.superEntry.getType()).getMethods();
 			
-			for (int i = 0; i < parentFields.size(); i++) {
+			for(int i = 0; i < parentFields.size(); i++) {
 				FieldNode field = this.fields.get(i);
 				FieldNode parentField = parentFields.get(i);
 				
-				FOOLlib.isSubtype(field, parentField);
+				/* calcolo la posizione in base all'offset*/
+				int position = -parentField.getOffset()-1;
+			
+				/* Controllo di correttezza solo per i campi su cui è fatto overriding */
+				if(position < parentFields.size()) {
+					FOOLlib.isSubtype(field, parentField);
+				}
+				
 			}
 			
-			for (int i = 0; i < parentFields.size(); i++) {
+			for (int i = 0; i < parentMethods.size(); i++) {
 				MethodNode method = this.methods.get(i);
 				MethodNode parentMethod = parentMethods.get(i);
 				
-				FOOLlib.isSubtype(method, parentMethod);
-			}
+				/* calcolo la posizione in base all'offset*/
+				int position= parentMethod.getOffset();
+				
+				/* Controllo di correttezza solo per i metodi su cui è fatto overriding*/
+				if(position < parentMethods.size()) {
+					FOOLlib.isSubtype(method, parentMethod);
+				}
+			}		
 		}
 		
 		return null;
