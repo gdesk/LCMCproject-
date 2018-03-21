@@ -129,6 +129,7 @@ public class FOOLlib {
 			Node ret = lowestCommonAncestor(functionalA.getRet(), functionalB.getRet());
 			 if(ret != null) {
 				 ArrayList<Node> parlist = new ArrayList<Node>();
+				 
 					//Controllo sul tipo dei parametri
 					for(int i=0; i<parlistA.size(); i++) {
 						if(isSubtype(parlistA.get(i),parlistB.get(i))) {
@@ -145,8 +146,6 @@ public class FOOLlib {
 			 }
 		}
 	
-		
-		
 		return null;
 	}
 
