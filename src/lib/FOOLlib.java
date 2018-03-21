@@ -118,6 +118,35 @@ public class FOOLlib {
 		if(a instanceof BoolTypeNode && b instanceof BoolTypeNode) {
 			return new BoolTypeNode();
 		}
+		
+		if(a instanceof ArrowTypeNode && b instanceof ArrowTypeNode && checkSizeParameters(a, b)) {
+			ArrowTypeNode functionalA = (ArrowTypeNode) a;
+			ArrowTypeNode functionalB = (ArrowTypeNode) b;
+			
+			ArrayList<Node> parlistA = functionalA.getParList();
+			ArrayList<Node> parlistB = functionalB.getParList();
+			
+			Node ret = lowestCommonAncestor(functionalA.getRet(), functionalB.getRet());
+			 if(ret != null) {
+				 ArrayList<Node> parlist = new ArrayList<Node>();
+					//Controllo sul tipo dei parametri
+					for(int i=0; i<parlistA.size(); i++) {
+						if(isSubtype(parlistA.get(i),parlistB.get(i))) {
+							parlist.add(parlistA.get(i));
+						} else {
+							if(isSubtype(parlistB.get(i),parlistA.get(i))) {
+								parlist.add(parlistB.get(i));
+							} else {
+								return null;
+							}
+						}
+					}
+					return new ArrowTypeNode(parlist, ret);
+			 }
+		}
+	
+		
+		
 		return null;
 	}
 
