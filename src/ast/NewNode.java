@@ -29,7 +29,7 @@ public class NewNode implements Node {
 	public Node typeCheck() {
 		ArrayList<FieldNode> p = ((ClassTypeNode)entry.getType()).getFields();
 		if ( !(p.size() == argList.size()) ) {
-			System.out.println("Wrong number of parameters in the invocation of "+id);
+			System.out.println(" NewNode: Wrong number of parameters in the invocation of "+id);
 			System.exit(0);
 		} 
 		for (int i=0; i<argList.size(); i++) {
@@ -48,9 +48,14 @@ public class NewNode implements Node {
 	public String codeGeneration() {
 		/* Mettiamo il valore di tutti i parametri sullo stack (in ordine di apparizione) */
 		String code = "";
-		if(this.argList != null) {
+		/*if(this.argList != null) {
 			for(Node argNode : this.argList) {
 				code += argNode.codeGeneration();
+			}
+		}*/
+		if(!(this.argList.size() == 0)) {
+			for (int i = argList.size(); i <= 0 ; i--) {
+				code += argList.get(i).codeGeneration();
 			}
 		}
 		
@@ -63,7 +68,7 @@ public class NewNode implements Node {
 					"add\n"+		//incremento
 					"shp\n";		//aggiorno hp
 		}
-
+		
 		code += "push " + (FOOLlib.MEMSIZE+entry.getOffset()) + "\n"+ //carico sullo stack l'indirizzo al quale era stata dichiarata la classe
 				"lw\n" +		//carico sullo stack in dispatch pointer
 				"lhp\n" +		//carico sullo stack il valore di hp (diventerà 'object pointer della classe a cui faccio la new)

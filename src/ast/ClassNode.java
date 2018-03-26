@@ -49,8 +49,8 @@ public class ClassNode implements DecNode {
 		}
 		
 		if(this.superEntry != null) {
-			ArrayList<FieldNode> parentFields = ((ClassNode)this.superEntry.getType()).getFields();
-			ArrayList<MethodNode> parentMethods = ((ClassNode)this.superEntry.getType()).getMethods();
+			ArrayList<FieldNode> parentFields = ((ClassTypeNode)this.superEntry.getType()).getFields();
+			ArrayList<MethodNode> parentMethods = ((ClassTypeNode)this.superEntry.getType()).getMethods();
 			
 			for(int i = 0; i < parentFields.size(); i++) {
 				FieldNode field = this.fields.get(i);

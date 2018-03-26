@@ -49,10 +49,10 @@ public class FOOLlib {
 			nodeB = ((ArrowTypeNode)nodeB).getRet();
 
 			/* Controllo su parametri : stesso numero */
-			boolean checksize = checkSizeParameters(nodeA, nodeB);
+			boolean checksize = checkSizeParameters(a, b);
 
 			/* Controllo su parametri : controvarianza */
-			boolean parcontrovariance = contravarianceParameters(nodeA, nodeB);
+			boolean parcontrovariance = contravarianceParameters(a, b);
 
 			checkPar = checksize && parcontrovariance;
 		}
@@ -63,7 +63,7 @@ public class FOOLlib {
 			if(refA.equals(refB)) {
 				return true;
 			}else {
-				isSuperType(refA, refB);
+				isSuperType(refB, refA);
 			}
 		}
 
@@ -101,13 +101,15 @@ public class FOOLlib {
 			return a;
 		}
 
-		for(String classType : superType.keySet()) {
-			String superClass = superType.get(classType);
-
-			if(FOOLlib.isSubtype(b, a)) {
-				return new RefTypeNode(superClass);
-			}else {
-				return null;
+		// Verifichiamo che b sia sottotipo di a e tutti i suoi superType
+		if(a instanceof RefTypeNode && b instanceof RefTypeNode) {
+			String sa = ((RefTypeNode)a).getID();
+			while(sa != null) {
+				RefTypeNode ancestor = new RefTypeNode(sa); 
+				if(FOOLlib.isSubtype(b, ancestor)) {
+					return ancestor;
+				}
+				sa = superType.get(sa);
 			}
 		}
 

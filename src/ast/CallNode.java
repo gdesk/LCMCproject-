@@ -47,7 +47,7 @@ public class CallNode implements Node {
 		ArrayList<Node> p = t.getParList();
 
 		if ( !(p.size() == parList.size()) ) {
-			System.out.println("Wrong number of parameters in the invocation of "+id);
+			System.out.println("CallNode: Wrong number of parameters in the invocation of "+id);
 			System.exit(0);
 		} 
 		for (int i=0; i<parList.size(); i++) {
@@ -67,10 +67,8 @@ public class CallNode implements Node {
 	public String codeGeneration() {
 
 		String parCode=""; 
-		if(parList != null) {
-			for (int i=parList.size()-1; i>=0; i--) {
-				parCode+=parList.get(i).codeGeneration();
-			}
+		for (int i=parList.size()-1; i>=0; i--) {
+			parCode+=parList.get(i).codeGeneration();
 		}
 
 		String getAR=""; //recupero l'AR in cui è dichiarata la funzione che sto usando

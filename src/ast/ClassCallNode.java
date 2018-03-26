@@ -43,8 +43,8 @@ public class ClassCallNode implements Node {
 		} 
 		for (int i=0; i<argList.size(); i++) {
 			Node parType = (argList.get(i)).typeCheck();
-			Node decType = p.get(i);
-			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( (argList.get(i)).typeCheck(), p.get(i)) ) ) {
+			Node decType = p.get(i).getSymType();
+			if ( (decType instanceof ArrowTypeNode && !(parType instanceof ArrowTypeNode))||!(FOOLlib.isSubtype( parType, decType))) {
 				System.out.println("ClassCallNode: Wrong type for "+(i+1)+"-th parameter in the invocation of "+idClass);
 				System.exit(0);
 			} 
@@ -57,11 +57,12 @@ public class ClassCallNode implements Node {
 	public String codeGeneration() {
 
 		String argstr = "";
-		if(argList!=null) {
-			for (int i=argList.size()-1; i>=0; i--) {
+		if(!(argList.size() == 0)) {
+			for (int i=argList.size(); i<=0; i--) {
 				argstr += argList.get(i).codeGeneration();
 			}
 		}
+		
 
 		/* recupera id della classe  dall'AR*/
 		String getAR=""; //recupero l'AR in cui è dichiarata la variable che sto usando
@@ -96,7 +97,7 @@ public class ClassCallNode implements Node {
 			argstr += parType.toPrint(indent + " ");
 		}
 
-		return indent + "Class call" + this.idClass + "." + this.idMethod + " at nesting level " + this.nestingLevel + "\n" 
+		return indent + "Class call " + this.idClass + "." + this.idMethod + " at nesting level " + this.nestingLevel + "\n" 
 		+ this.classEntry.toPrint(indent + " ") 
 		+ this.methodEntry.toPrint(indent + " ")
 		+ argstr;

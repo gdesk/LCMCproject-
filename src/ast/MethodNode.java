@@ -107,7 +107,7 @@ public class MethodNode implements DecNode {
 			};
 		}
 
-		FOOLlib.putCode(id + ":\n"+
+		FOOLlib.putCode(
 				label+":\n"+
 				"cfp\n"+ //setta $fp allo $sp
 				"lra\n"+ //inserimento Return Address

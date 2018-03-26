@@ -5,6 +5,7 @@ lfp
 push function1
 lfp
 push 2
+
 lfp
 push -4
 add
@@ -24,6 +25,7 @@ lra
 lfp
 push 7
 push 5
+
 lfp
 push 2
 add
@@ -87,6 +89,7 @@ push -3
 lfp
 add
 lw
+
 lfp
 lw
 push -2

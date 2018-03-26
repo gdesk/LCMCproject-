@@ -41,7 +41,7 @@ prog returns [Node ast]:
 		e=exp {
 			$ast = new ProgNode($e.ast);
 		}
-	|  LET (c=cllist {isCl = true;}
+	| LET (c=cllist {isCl = true;}
 		 (cd=declist {isDec = true;})? | d=declist {isOnlyDec = true;}
 	) IN e=exp 
 		{ 
@@ -58,18 +58,23 @@ prog returns [Node ast]:
 		}
 	) 
 	{	
-		symTable.remove(nestingLevel);
+		
 		isCl = false;
 		isDec = false;
 		isOnlyDec = false;
-	}  SEMIC ;
+	}  SEMIC {symTable.remove(nestingLevel--); /* A che serve? */};
 
- /* lista delle classi */
+
+/*-----------------------------CLLIST-----------------------------*/
+
 cllist returns [ArrayList<ClassNode> astlist]:
-	{	$astlist = new ArrayList<ClassNode>();
-		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */
+	{	
+		$astlist = new ArrayList<ClassNode>();
+		/* Indice di convenzione di inizio  per le dichiarazioni delle classi (che viene decrementato) */
+		int offset = -2; 
 		boolean isExtends=false;
-		HashSet<String> localVariable; /*variabile locale che tiene contro della ridefinizione erronea di cammpi e metodi */
+		/* Variabile locale che tiene contro della ridefinizione erronea di cammpi e metodi (ottimizzazione) */
+		HashSet<String> localVariable; 
 	}
 		
 	 ( CLASS ic=ID 
@@ -88,7 +93,7 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 		if(isExtends == false){
 	 			HashMap<String,STentry> sym = symTable.get(nestingLevel);
 	 			ClassTypeNode symType = new ClassTypeNode(new ArrayList<FieldNode>(),new ArrayList<MethodNode>());
-	 			STentry cstentry = new STentry(nestingLevel,symType ,offset);
+	 			STentry cstentry = new STentry(nestingLevel, symType, offset);
 	 		 	if(sym.put($ic.text,cstentry) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
@@ -96,68 +101,75 @@ cllist returns [ArrayList<ClassNode> astlist]:
 				classNode.setSymType(symType);
 				nestingLevel++;
 				HashMap<String, STentry> virtualTable = new HashMap<String, STentry>();
-				symTable.add(nestingLevel,virtualTable); /* è vuota */
-				  if(classTable.put($ic.text, virtualTable) != null) {
+				symTable.add(nestingLevel,virtualTable); 
+				if(classTable.put($ic.text, virtualTable) != null) {
                    System.out.println("Class id  "+$ic.text+" at line "+$ic.line+" already declared");
                    System.exit(0); 
                 } 
 	 		 	
-	 		}else{
-	 			/* controllo se è contenuta in classTable altrimenti errore perchè mai dichiarata come classe */
+	 		} else {
+	 			/* Controllo che la classe ereditata sia stata dichiarata */
 	 			if(!classTable.keySet().contains($ic1.text)){
 	 			 	System.out.println("Extended class id" + $ic1.text + " at line " + $ic1.line + " never declarated.");
 					System.exit(0);
 	 			 }
 		 		HashMap<String,STentry> sym = symTable.get(nestingLevel);
-		 		STentry erhm1 = sym.get($ic1.text); /*stetry della classe ereditata*/
-	 			/* setto STentry della classe ID2, ossia quella da cui estendo. */
+		 		/* STetry della classe ereditata*/
+		 		STentry erhm1 = sym.get($ic1.text);
+	 			/* Setto STentry della classe ereditata */
 		 		classNode.setSuperEntry(erhm1);
 		 		ClassTypeNode erClassTypeNode = (ClassTypeNode) erhm1.getType();
-		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()); 		
-		 		STentry cstentry1 = new STentry(nestingLevel,symType ,offset);/* mappa classe corrente */
-		 		if(sym.put($ic.text,cstentry1) != null) {
+		 		ClassTypeNode symType = new ClassTypeNode(erClassTypeNode.getFields(),erClassTypeNode.getMethods()); 	
+		 		/* STentry della classe corrente */
+		 		STentry cstentry1 = new STentry(nestingLevel, symType ,offset);
+		 		if(sym.put($ic.text, cstentry1) != null) {
 					System.out.println("Class id" + $ic.text + " at line " + $ic.line + " already created.");
 					System.exit(0);
 				}; 
 				classNode.setSymType(symType);
-				classTable.put($ic.text, classTable.get($ic1.text)); /* copio vtable della classe ereditata*/
-		 		nestingLevel++; /*perchè finita la dichiarazione classe*/
-	 			
+				/* Copio la virtual table della classe ereditata */
+				classTable.put($ic.text, classTable.get($ic1.text));
+		 		nestingLevel++; 
+	 			HashMap<String,STentry> chm = new HashMap<String,STentry>();
+				symTable.add(chm);
 	 		}
 	 	}
-	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
 	 		
+	 		{ClassTypeNode cTypeNode = (ClassTypeNode)symTable.get(nestingLevel-1).get($ic.text).getType();}
+	 			
 	 	  LPAR (campo=ID COLON t=type
 	 	  	{
-	 	  		/*Controllo che field non è presente all'interno dei localVariable*/
+	 	  		/* Offset dei campi settato a 0, perchè decrementato al primo utilizzo. (Primo campo offset = -1) */
+	 	  		int offsetCampo=0;
+	 	  		if(isExtends) {
+	 	  			offsetCampo = -cTypeNode.getFields().size()-1;
+	 	  		}
+	 	  		
+	 	  		/* Controllo che il field non è presente all'interno dei localVariable */
 	 	  		if(localVariable.contains($campo.text)) {
 	 	  			System.out.println("Field" + $campo.text + " at line " + $campo.line + " already created in localVariable(HashSet<String>).");
 					System.exit(0);
 	 	  		}
-	 	  		
+	 	  		localVariable.add($campo.text);
 	 	  		
 	 	  		FieldNode field = new FieldNode($campo.text,$t.ast);
-	 	  		cTypeNode.addField(field);
-	 	  		int offsetCampo=0;
-	 	  		if(isExtends){
-	 	  			offsetCampo = -cTypeNode.getFields().size()-1; /* sistemato offset per ereditarietà */
-	 	  		}
 	 	  		STentry entry = new STentry(nestingLevel, $t.ast, offsetCampo--);
-	 	  		/* inserimento in symbol table */
 	 	  		symTable.get(nestingLevel).put($campo.text,entry);
-	 	  		/* Setto campo offset della classe FieldNode NOTA: L'ho tenuto separato, cioè non l'ho aggiunto alla "dichiarazione di un new" Field(non mi viene come si dice) */
-	 	  		field.setOffset(offsetCampo);
-	 	  		/* inserimento in classTable*/  		 
-	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null){ /* overriding */
+	 	  		field.setOffset(offsetCampo); 		 
+	 	  		if( classTable.get($ic.text).put($campo.text,entry) != null) {
+	 	  			/* Overriding: sostituisco il nuovo STentry alla vecchia STentry, preservando l'offset */
 	 	  			STentry oldEntry = classTable.get($ic.text).get($campo.text);
 	 	  			oldEntry.addType($t.ast);
 	 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  		}
-	 	  			 		
+	 	  		if(!(cTypeNode.getIDs().contains($campo.text))){
+	 	  			cTypeNode.addField(field);
+	 	  		}
+	 	  		 		
 	 	  	}
 	 	  	(COMMA campo1=ID COLON t1=type
 	 	  		{ 
-	 	  			/*Controllo che field non è presente all'interno dei localVariable*/
+	 	  			/* Controllo che il campo non è presente all'interno dei localVariable */
 	 	  			if(localVariable.contains($campo1.text)) {
 	 	  				System.out.println("Field" + $campo1.text + " at line " + $campo1.line + " already created in localVariable(HashSet<String>).");
 						System.exit(0);
@@ -165,67 +177,76 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	 	  			localVariable.add($campo1.text);
 	 	  			
 	 	  			FieldNode field1 = new FieldNode($campo1.text,$t1.ast);
-	 	  			cTypeNode.addField(field1);	
 	 	  			STentry entry1 = new STentry(nestingLevel, $t1.ast, offsetCampo--);
-		  			/* inserimento in symbol table */
-	 	  			symTable.get(nestingLevel).put($campo.text,entry1);
-	 	  			/* Setto campo offset della classe FieldNode */
+	 	  			symTable.get(nestingLevel).put($campo1.text,entry1);
 	 	  			field1.setOffset(offsetCampo);
-		 	  		/* inserimento in classTable*/
-		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null){/* overriding */
+		 	  		if( classTable.get($ic.text).put($campo1.text,entry1) != null) {
+		 	  			/* Overriding: sostituisco il nuovo STentry alla vecchia STentry, preservando l'offset */
 		 	  			STentry oldEntry = classTable.get($ic.text).get($campo1.text);
 		 	  			oldEntry.addType($t1.ast);
 		 	  			oldEntry.setNestingLevel(nestingLevel);
 	 	  			}
+	 	  			if(!(cTypeNode.getIDs().contains($campo1.text))){
+	 	  				cTypeNode.addField(field1);
+	 	  			}
 	 	  		}
-	 	  	)* {cTypeNode.refreshFields();}
+	 	  	)* 
+	 	  	
+	 	  	{
+	 	  		/* Aggiornamento classTypeNode: posizione = -offset-1 */
+	 	  		/*cTypeNode.refreshFields(); */
+	 	  	}
 	 	  	
 	 	  )? RPAR    
               CLPAR
-              {int methodOffset = 0;
-              	if(isExtends){
-	 	  			methodOffset = (cTypeNode.getMethods().size()); /* sistemato offset per ereditarietà */
-	 	  		}
+              { 
+	              	int methodOffset = 0;
+	              	if(isExtends) {
+		 	  			methodOffset = (cTypeNode.getMethods().size());
+		 	  		}
               }
                  ( FUN fid=ID COLON ret=type 
                 {
-                	 /*Controllo che method non è presente all'interno dei localVariable*/
+	 	  			/* Controllo che il metodo non è presente all'interno dei localVariable */
 	 	  			if(localVariable.contains($fid.text)) {
 	 	  				System.out.println("Method" + $fid.text + " at line " + $fid.line + " already created in localVariable(HashSet<String>).");
 						System.exit(0);
 	 	  			}
 	 	  			localVariable.add($fid.text);
 	 	  			
-                	 MethodNode method = new MethodNode($fid.text, $ret.ast);
-                	 method.setOffset(methodOffset);
-                	 cTypeNode.addMethod(method); /*Ricordati che vanno da m-1 a 0 */
-                	 STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
-                	 method.setSymType($ret.ast);
-                	 mentry.setIsMethod();
-                	 HashMap<String, STentry> msym = symTable.get(nestingLevel);
-                	 msym.put($fid.text, mentry);
-                	              	 
-                	 if(classTable.get($ic.text).put($fid.text, mentry) != null ) {
+                	MethodNode method = new MethodNode($fid.text, $ret.ast);
+                	method.setOffset(methodOffset);
+                	cTypeNode.addMethod(method);
+                	STentry mentry = new STentry(nestingLevel, $ret.ast, methodOffset);
+                	method.setSymType($ret.ast);
+                	mentry.setIsMethod();
+                	
+                	HashMap<String, STentry> msym = symTable.get(nestingLevel);
+                	msym.put($fid.text, mentry);
+                	       	 
+                	if(classTable.get($ic.text).put($fid.text, mentry) != null ) {
+                	 	/* Overriding: sostituisco il nuovo STentry alla vecchia STentry, preservando l'offset */
                 	 	STentry oldEntry = classTable.get($ic.text).get($fid.text);
                 	 	oldEntry.addType($ret.ast);
                 	 	oldEntry.setNestingLevel(nestingLevel);
-                	 }
-                	 methodOffset++;
-                	 /* Entro dentro un nuovo scope e aggiorno con una mappa vuota la symTable. */
-					nestingLevel++;  /* Aumento il livello perchè sono all'interno di una metodo (anche i parametri passati alla funzione rientrano nel livello interno)*/
+                	}
+                	
+                	methodOffset++;
+					/* Aumento il livello perchè sono all'interno di una metodo (anche i parametri passati alla funzione rientrano nel livello interno) */
+					nestingLevel++;
 					HashMap<String,STentry> mhm = new HashMap<String,STentry>();
 					symTable.add(mhm);
                 	 
                 }
-                 	LPAR {int boffset = -2;}(parid=ID COLON fh=hotype
+                 	LPAR (parid=ID COLON fh=hotype
                  		{
+                 			int parOffset = 1;
+
                  			ArrayList<ParNode> parlist = new ArrayList<>();
                  			ParNode par = new ParNode($parid.text, $fh.ast);
                  			parlist.add(par);
-                 			if($fh.ast instanceof ArrowTypeNode) boffset++; 
-                 			STentry mpentry = new STentry(nestingLevel, $fh.ast, boffset++);
-                 			if(mhm.put($parid.text, mpentry) != null){
-                 				/* Errore identificatore (parametro) già dichiarato*/
+                 			if($fh.ast instanceof ArrowTypeNode) parOffset++; 
+                 			if(mhm.put($parid.text, new STentry(nestingLevel, $fh.ast, parOffset++)) != null){
 								System.out.println("Par ID: " + $parid.text + " at line " + $parid.line + " already declared");
 								System.exit(0);
 	                 		}
@@ -234,10 +255,8 @@ cllist returns [ArrayList<ClassNode> astlist]:
                  	   	{
                  	   		ParNode par1 = new ParNode($parid1.text, $fh1.ast);
                  			parlist.add(par1);
-                 			if($fh1.ast instanceof ArrowTypeNode) boffset++; 
-                 			STentry mpentry1 = new STentry(nestingLevel, $fh1.ast, boffset++);
-                 			if(mhm.put($parid1.text, mpentry1) != null){
-                 				/* Errore identificatore (parametro) già dichiarato*/
+                 			if($fh1.ast instanceof ArrowTypeNode) parOffset++; 
+                 			if(mhm.put($parid1.text, new STentry(nestingLevel, $fh1.ast, parOffset++)) != null){
 								System.out.println("Par ID: " + $parid1.text + " at line " + $parid1.line + " already declared");
 								System.exit(0);
 	                 		}
@@ -246,18 +265,19 @@ cllist returns [ArrayList<ClassNode> astlist]:
                  	   {
                  	   	method.addParList(parlist);
                  	   }
-                 	)? RPAR
+                 	)? 
+                 	RPAR
                  		 {
-                 		 	cTypeNode.refreshMethods();
+                 		 	/* Aggiornamento classTypeNode: posizione = offset */
+                 		 	/*cTypeNode.refreshMethods();*/
                  		 	ArrayList<VarNode> varlist = new ArrayList<>();
                  		 }
-                 	 (LET (VAR vid=ID COLON vt=type ASS ex=exp 
+                 	 (LET 
+                 	 	(VAR vid=ID COLON vt=type ASS ex=exp 
 	                     	{
 	                     		VarNode var = new VarNode($vid.text, $vt.ast, $ex.ast);
 	                     		varlist.add(var);
-	                     		STentry ventry = new STentry(nestingLevel, $vt.ast, offset--);
-	                     		if(mhm.put($vid.text,ventry) != null){
-	                     			/*Errore identificatore (variabile) già dichiarata*/
+								if(mhm.put($vid.text,new STentry(nestingLevel, $vt.ast, offset--)) != null) {
 									System.out.println("Var id" + $vid.text + " at line " + $vid.line + " already declared.");
 									System.exit(0);
 	                     		}
@@ -271,95 +291,98 @@ cllist returns [ArrayList<ClassNode> astlist]:
 	                     } 
 	                     IN)? exp1=exp
 	                     {
-	                     	
 	                     	method.addExp($exp1.ast);
-                    	symTable.remove(nestingLevel--);/* Diminuisco nestingLevel perchè esco dallo scope della funzione */
+                    		symTable.remove(nestingLevel--);
 	                     } 
         	       SEMIC
         	     )* 
         	                   
               CRPAR
-         {	isExtends = false;
-         	/* buttare dentro a classNode tutte le info dalla classTable */
+         {	
+         	/* Inserisco i campi e metodi dentro l'istanza di ClassNode, prendendoli dal ClassTypeNode corrente */
          	classNode.addFields(cTypeNode.getFields());
          	classNode.addMethods(cTypeNode.getMethods());
-         	/* aggiugere il classNode all lista da ritornare   	*/
+    
+         	isExtends = false;
          	$astlist.add(classNode); 
          	symTable.remove(nestingLevel--);
          }
            )+ ; 
 
-// Lista di dichiarazioni (di variabili o funzioni). La chiusura "+" indica una o più volte.
+/*-----------------------------DECLIST-----------------------------*/
+
 declist	returns [ArrayList<DecNode> astlist]:
-	{	$astlist = new ArrayList<DecNode>();
-		int offset = -2; /* Indice di convenzione di inizio (che viene decrementato) */ 
+	{	
+		$astlist = new ArrayList<DecNode>();
+		int offset = -2; 
 	}
 	( 
 		(	VAR i=ID COLON h=hotype ASS e=exp
-			{	VarNode v = new VarNode($i.text,$h.ast,$e.ast);
+			{	
+				VarNode v = new VarNode($i.text,$h.ast,$e.ast);
 				$astlist.add(v);
-				HashMap<String,STentry> hm = symTable.get(nestingLevel); /* Tabella del livello corrente (detta tabella del fronte) */
-				/* Verificare che nello scope attuale (il fronte della tabella), la variabile sia già stata dichiarata. "put" sostituisce, ma se la chiave era già occupata restituisce la coppia vecchia, altrimenti null.*/ 
+				HashMap<String,STentry> hm = symTable.get(nestingLevel);
 				if(hm.put($i.text, new STentry(nestingLevel,$h.ast,offset--)) != null) {
-					/*Errore identificatore (variabile) già dichiarata*/
 					System.out.println("Var id" + $i.text + " at line " + $i.line + " already declared.");
 					System.exit(0);
 				}; 
-				{if($h.ast instanceof ArrowTypeNode) offset--;} /*offset doppio per tipi funzionali*/
+				/* Offset doppio per tipi funzionali */
+				if($h.ast instanceof ArrowTypeNode) offset--; 
 			}
 		| FUN i=ID COLON t=type 
 			{	
 				FunNode f = new FunNode($i.text,$t.ast);
 				$astlist.add(f);
 				HashMap<String,STentry> hm = symTable.get(nestingLevel);
-				/* Verificare che nello scope attuale (il fronte della tabella), la funzione sia già stata dichiarata. "put" sostituisce, ma se la chiave era già occupata restituisce la coppia vecchia, altrimenti null.*/
 				STentry entry = new STentry(nestingLevel,offset--);
 				offset--;
 				if(hm.put($i.text, entry) != null) {
 					System.out.println("Fun id" + $i.text + " at line " + $i.line + " already declared.");
 					System.exit(0);
 				}
-				/* Entro dentro un nuovo scope. */
-				nestingLevel++;  /* Aumento il livello perchè sono all'interno di una funzione (anche i parametri passati alla funzione rientrano nel livello interno)*/
+				nestingLevel++;  
 				HashMap<String,STentry> hmn = new HashMap<String,STentry>();
 				symTable.add(hmn);
 			}
-			LPAR {	ArrayList<Node> parTypes = new ArrayList<Node>();
-					int parOffset = 1;
-				}
+			LPAR 
+			{	
+				ArrayList<Node> parTypes = new ArrayList<Node>();
+				int parOffset = 1;
+			}
 				(i1=ID COLON fty=hotype
 				
 					{ 
-						/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn*/
 						parTypes.add($fty.ast);
 						ParNode p1 = new ParNode($i1.text,$fty.ast);
 						f.addPar(p1);
+						/* Offset doppio per tipi funzionali */
 						if($fty.ast instanceof ArrowTypeNode) parOffset++;
 						if (hmn.put($i1.text, new STentry(nestingLevel,$fty.ast,parOffset++)) != null) {
-							/* Errore identificatore (parametro) già dichiarato*/
 							System.out.println("Par ID: " + $i1.text + " at line " + $i1.line + " already declared");
 							System.exit(0);
 						}
 					}
 				(COMMA i2=ID COLON ty=hotype
-					{/* Creare il ParNode, lo attacco al FunNode invocando addPar, aggiungo una STentry alla hashmap hmn */
+					{
 						parTypes.add($ty.ast);
 						ParNode p2 = new ParNode($i2.text,$ty.ast);
 						f.addPar(p2);
-						{if($ty.ast instanceof ArrowTypeNode) parOffset++;}
+						/* Offset doppio per tipi funzionali */
+						if($ty.ast instanceof ArrowTypeNode) parOffset++;
 						if (hmn.put($i2.text, new STentry(nestingLevel,$ty.ast,parOffset++)) != null){
-							/* Errore identificatore (parametro) già dichiarato */
 							System.out.println("Par ID: " + $i2.text + " at line " + $i2.line + " already declared");
 							System.exit(0);
 						}
-						
 					}
 				)*
 			)?
-			RPAR { entry.addType(new ArrowTypeNode(parTypes,$t.ast)); }
+			RPAR 
+				{ 
+					entry.addType(new ArrowTypeNode(parTypes,$t.ast));
+				}
 			(LET d=declist  {f.addDec($d.astlist);} IN)? e=exp
 				{	
-					symTable.remove(nestingLevel--); /* Diminuisco nestingLevel perchè esco dallo scope della funzione */
+					symTable.remove(nestingLevel--); 
 					f.addBody($e.ast);
 				}
 		) SEMIC 
@@ -372,32 +395,40 @@ hotype returns [Node ast] :
         
         
 arrow returns [Node ast]	: 
-			{ArrayList<Node> hotypeList = new ArrayList<>();}
+				{
+					ArrayList<Node> hotypeList = new ArrayList<>();
+				}
 		  LPAR (h=hotype 
-		  	{hotypeList.add($h.ast);}
+		  		{
+		  			hotypeList.add($h.ast);
+		  		}
 		  	(COMMA h1=hotype
-		  	{hotypeList.add($h1.ast);}	
+		  		{
+		  			hotypeList.add($h1.ast);
+		  		}	
 		  	)*
 		  )? RPAR ARROW t=type		
-		  	{$ast = new ArrowTypeNode(hotypeList, $t.ast);}
+		  	{
+		  		$ast = new ArrowTypeNode(hotypeList, $t.ast);
+		  	}
 		  ;
 		 
 type returns [Node ast]	: 
-	  	  INT	{$ast = new IntTypeNode();} // Rappresenta l'elemento sintattico del tipo int e non il valore.
+	  	  INT	{$ast = new IntTypeNode();} 
 		| BOOL	{$ast = new BoolTypeNode();}
 		| id=ID	{$ast = new RefTypeNode($id.text);}
 		  ;
 
 exp	returns [Node ast]: t=term {$ast = $t.ast;}
-		(  PLUS p=term {$ast = new PlusNode($ast,$p.ast);}
+		(  PLUS p=term 	{$ast = new PlusNode($ast,$p.ast);}
 		 | MINUS m=term {$ast = new MinusNode($ast, $m.ast);}
-		 | OR o=term {$ast = new OrNode($ast, $o.ast);}
+		 | OR o=term 	{$ast = new OrNode($ast, $o.ast);}
 		)* ;
 
 term returns [Node ast]: f=factor {$ast = $f.ast;} 
-		(  TIMES t=factor {$ast = new TimesNode($ast,$t.ast);}
-		 | DIV d=factor {$ast = new DivNode($ast,$d.ast);}
-		 | AND a=factor{ $ast = new AndNode($ast,$a.ast);}
+		(  TIMES t=factor 	{$ast = new TimesNode($ast,$t.ast);}
+		 | DIV d=factor 	{$ast = new DivNode($ast,$d.ast);}
+		 | AND a=factor		{$ast = new AndNode($ast,$a.ast);}
 		)* ;
 
 factor returns [Node ast] : v=value {$ast = $v.ast;}
@@ -408,84 +439,116 @@ factor returns [Node ast] : v=value {$ast = $v.ast;}
 
 value returns [Node ast]	:
 	in = INTEGER	{$ast = new IntNode(Integer.parseInt($in.text));}
-	| TRUE		{$ast = new BoolNode(true);}
-	| FALSE		{$ast = new BoolNode(false);}
-	| NULL		{$ast = new EmptyNode();}
-	| NEW nid=ID LPAR 
-		{	/* new ID()*/ 
-			/*controllo che ID deve essere in classTable */
+	| TRUE			{$ast = new BoolNode(true);}
+	| FALSE			{$ast = new BoolNode(false);}
+	| NULL			{$ast = new EmptyNode();}
+	| NEW nid=ID 
+	{
 			if(!classTable.keySet().contains($nid.text)){
 				System.out.println("Class id" + $nid.text + " at line " + $nid.line + " not declared.");
 				System.exit(0);
 			}
-			 /* STentry della classe*/
-				STentry entry = symTable.get(0).get($nid.text);
-				NewNode newNode = new NewNode($nid.text,entry);
+			STentry entry = symTable.get(0).get($nid.text);
+			
+			System.out.println("size "+ ((ClassTypeNode)entry.getType()).getFields().size());
+			for(FieldNode field: ((ClassTypeNode)entry.getType()).getFields()){
+			System.out.println(field.getID()+" \n");	
+			}
+		
+			NewNode newNode = new NewNode($nid.text,entry);
 		}
-		(e1=exp {newNode.addArg($e1.ast);} 
-			(COMMA e2=exp {newNode.addArg($e2.ast);})*
-		)? {$ast= newNode;}RPAR 
-	| LPAR e = exp RPAR {$ast = $e.ast;}  // Le parentesi lasciano l'albero inalterato.
+	LPAR (e1=exp 
+			{
+				newNode.addArg($e1.ast);
+			} 
+			(COMMA e2=exp 
+				{
+					newNode.addArg($e2.ast);
+				}
+			)*
+		)? 
+		{
+			$ast= newNode;
+			
+		}
+		RPAR 
+	
+	| LPAR e = exp RPAR {$ast = $e.ast;}
 	| IF e1 = exp THEN CLPAR e2 =exp CRPAR
 		ELSE CLPAR e3 = exp CRPAR {$ast = new IfNode($e1.ast,$e2.ast,$e3.ast);}
 	| NOT LPAR e=exp {$ast = new NotNode($e.ast);} RPAR
 	| PRINT LPAR e=exp RPAR	{$ast = new PrintNode($e.ast);}
-	| i=ID // Identificatore di una variabile o funzione. Combinazioni possibili ID (variabile) 
-		{	/* Cerco la dichiarazione dentro la symbol table e il livello di scope corrente fino allo scope globale (level = 0)*/
+	| i=ID 
+		{	/* Cerco la dichiarazione dentro la symbol table e il livello di scope da scope corrente fino allo scope globale (level = 0)*/
 			int j = nestingLevel;
 			STentry entry = null;
-			while(j>=0 && entry==null) {
+			while(j >= 0 && entry == null) {
 				entry = symTable.get(j--).get($i.text);
 			}
 			
-			if(entry==null) { /* Dichiarazione non presente nella symbol table quindi variabile non dichiarata*/
+			if(entry==null) {
 				System.out.println("Var id " + $i.text + " at line " + $i.line + " not declared.");
 				System.exit(0);
 			}
-			$ast = new IdNode($i.text, entry, nestingLevel); /* Inserito il nestinglevel per verifiche sullo scope della variabile */
+			/* Inserito il nestinglevel per verifiche sullo scope della variabile */
+			$ast = new IdNode($i.text, entry, nestingLevel); 
 		}
-		// Supporto alle chiamate a funzioni. Combinazioni possibili ID() (funzione vuota) - ID(exp) (funzione con variabili)
-		( LPAR { ArrayList<Node> arglist = new ArrayList<Node>(); }
-			( a=exp {arglist.add($a.ast); } //tutte volte che incontro un'espressione l'aggiungo alla lista dei parametri
-				(COMMA a1=exp { arglist.add($a1.ast); }
+		( LPAR 
+			{ 
+				ArrayList<Node> arglist = new ArrayList<Node>();
+			}
+			( a=exp 
+				{
+					arglist.add($a.ast);
+				}
+				( COMMA a1=exp 
+					{
+						arglist.add($a1.ast);
+					}
 				)*
-			)? RPAR { $ast = new CallNode($i.text,entry,arglist,nestingLevel); } // Inserito il nestinglevel per verifiche sullo scope della funzione chiamata
+			)? RPAR 
+			{ 
+				$ast = new CallNode($i.text, entry, arglist, nestingLevel);
+			} 
 		
 		| DOT mid=ID
 			{ 
-			  	ArrayList<Node> argslist = new ArrayList<>();
-			  	/* Controllo se è un oggetto/classe */              
-             	if (! (entry.getType() instanceof RefTypeNode)) {
+			  	if (!(entry.getType() instanceof RefTypeNode)) {
                		System.out.println("id " + $i.text + " is not a objects ");
                		System.exit(0);
              	}
-             	RefTypeNode ref = (RefTypeNode)entry.getType();
+			  	
+			  	ArrayList<Node> argslist = new ArrayList<>();           
+				RefTypeNode ref = (RefTypeNode)entry.getType();
              	String objectID = ref.getID();
-				/* controllo che esista il metodo di quella classe  */
 				if(!classTable.get(objectID).containsKey($mid.text)){
 					System.out.println("Method id" + $mid.text + " at line " + $i.line + " not declared.");
 					System.exit(0);
 				}
-				/* STentry della classe è entry */
 				STentry classEntry = symTable.get(0).get(ref.getID());
-				/* STentry del metodo */
 				STentry methodEntry = classTable.get(ref.getID()).get($mid.text);
-				/* Istanzio la ClassCallNode*/
 							
 			}
 			 LPAR
-			 (e=exp { argslist.add($e.ast);} 
-				 (COMMA e1=exp 	{ argslist.add($e1.ast); })* 
+			 ( e=exp 
+			 	{ 
+			 		argslist.add($e.ast);
+			 	} 
+				 ( COMMA e1=exp 	
+				 	{ 
+				 		argslist.add($e1.ast);
+				 	}
+				 )* 
 			 
-			   )?  RPAR 
-			     {ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, classEntry, methodEntry, nestingLevel);
+			   )? RPAR 
+			     {
+			     	ClassCallNode clCallNode = new ClassCallNode(ref.getID(), $mid.text, classEntry, methodEntry, nestingLevel);
 			     	clCallNode.addArgs(argslist);
-			     	
-			     $ast = clCallNode;
+			     	$ast = clCallNode;
 			     }
 			  
-		  )?	
-	         	;
+		  )?
+		  ;
 
 /*------------------------------------------------------------------
  * LEXER RULES

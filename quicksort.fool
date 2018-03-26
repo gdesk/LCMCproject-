@@ -1,24 +1,3 @@
-/*let
-
-  class Account (money:int) {
-  	  fun f : bool (n:int, m:int)
-  	  	let 
-  	  		 var b : int = 3 ;
-  	  	in
-  	  	print(8);
-  	  	
-  	  	
-  	  
-  }
-  
-  class TradingAcc extends Account (invested:int) {
-  
-  }	
-  
-in
-
-	print(5);*/
-	
 let
 
   class List (f:int, r:List) {
