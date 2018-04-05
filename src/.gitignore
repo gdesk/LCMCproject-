@@ -4,15 +4,9 @@
 /FOOLLexer.tokens
 /FOOLListener.java
 /FOOLParser.java
-/FOOLold.tokens
-/FOOLoldLexer.tokens
 /SVM.tokens
 /SVMBaseListener.java
 /SVMLexer.java
 /SVMLexer.tokens
 /SVMListener.java
 /SVMParser.java
-/FOOL1.tokens
-/FOOL1Lexer.java
-/FOOL1Lexer.tokens
-/FOOL1Parser.java
