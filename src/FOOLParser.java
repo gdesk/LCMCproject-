@@ -371,7 +371,7 @@ public class FOOLParser extends Parser {
 										System.exit(0);
 									}
 									classNode.setSuperEntry(superEntry);
-									FOOLlib.addSuperclass((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), (((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null));
+									FOOLlib.addSuperType((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), (((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null));
 									
 									ClassTypeNode superType = (ClassTypeNode) superEntry.getType();
 									classType = new ClassTypeNode(superType.getFields(), superType.getMethods());

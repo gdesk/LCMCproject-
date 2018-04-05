@@ -119,7 +119,7 @@ cllist returns  [ArrayList<DecNode> astlist]
 					System.exit(0);
 				}
 				classNode.setSuperEntry(superEntry);
-				FOOLlib.addSuperclass($cid.text, $eid.text);
+				FOOLlib.addSuperType($cid.text, $eid.text);
 				
 				ClassTypeNode superType = (ClassTypeNode) superEntry.getType();
 				classType = new ClassTypeNode(superType.getFields(), superType.getMethods());
