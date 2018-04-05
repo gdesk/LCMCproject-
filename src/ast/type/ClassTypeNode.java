@@ -12,41 +12,24 @@ public class ClassTypeNode implements Node {
 	private ArrayList<MethodNode> allMethods;
 	
 	public ClassTypeNode(ArrayList<FieldNode> fields, ArrayList<MethodNode> methods) {
-		this.allFields = fields; // incluono quelli ereditati
-		this.allMethods = methods;
-	}
-	public ArrayList<String> getIDs() {
-		ArrayList<String> idFields = new ArrayList<>();
-		for(FieldNode f : this.allFields) {
-			idFields.add(f.getID());
-		}
-		return idFields;
-		
-	}
-	public void refreshFields() {
-		ArrayList<FieldNode> refrFields = new ArrayList<>();
-		refrFields.addAll(allFields);
-		
-		for(FieldNode field: this.allFields) {
-			System.out.println("field ref prima : " + refrFields);
-			refrFields.remove(-field.getOffset()-1);
-			refrFields.add(-field.getOffset()-1, field);
-		}
-		
-		this.allFields.removeAll(this.allFields);
-		System.out.println("field dopo remove: " + this.allFields);
-		this.allFields.addAll(refrFields);
+		this.allFields = new ArrayList<>(fields); // incluono quelli ereditati
+		this.allMethods = new ArrayList<>(methods);
 	}
 	
-	public void refreshMethods() {
-		ArrayList<MethodNode> refrMethod = new ArrayList<>(this.allMethods.size());
-		
-		for(MethodNode method: this.allMethods) {
-			refrMethod.add(method.getOffset(), method);
+	public ArrayList<String> getIDsMethod(){
+		ArrayList<String> idMethods = new ArrayList<>();
+		for(MethodNode f : this.allMethods) {
+			idMethods.add(f.getID());
 		}
+		return idMethods;
+	}
+	
+	public void setMethod(int index, MethodNode method) {
+			this.allMethods.set(index, method);
 		
-		this.allMethods.removeAll(this.allMethods);
-		this.allMethods.addAll(refrMethod);
+	}
+	public void setField(int index, FieldNode field) {
+			this.allFields.set(index, field);
 	}
 	
 	public void addField(FieldNode field) {

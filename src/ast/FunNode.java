@@ -25,9 +25,11 @@ public class FunNode implements Node, DecNode {
 		this.id = i;
 		this.type = t; 
 		this.parlist = new ArrayList<>();
-		this.symType = new ArrowTypeNode(new ArrayList<>(), type);
 	}
 
+	public void setSymType(Node symType) {
+		this.symType = symType;
+	}
 	public void addDec (ArrayList<DecNode> d) {
 		declist=d;
 	}  
@@ -106,8 +108,7 @@ public class FunNode implements Node, DecNode {
 			};
 		}
 
-		FOOLlib.putCode(id + ":\n"+
-				funl+":\n"+
+		FOOLlib.putCode(funl+":\n"+
 				"cfp\n"+ //setta $fp allo $sp
 				"lra\n"+ //inserimento Return Address
 				declCode+

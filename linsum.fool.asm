@@ -5,33 +5,30 @@ lfp
 push function1
 lfp
 push 2
-
-lfp
 push -4
+lfp
 add
 lw
-lfp
 push -5
+lfp
 add
 lw
 js
 print
 halt
 
-g:
 function0:
 cfp
 lra
 lfp
 push 7
 push 5
-
-lfp
 push 2
+lfp
 add
 lw
-lfp
 push 1
+lfp
 add
 lw
 js
@@ -45,7 +42,6 @@ lrv
 lra
 js
 
-linsum:
 function2:
 cfp
 lra
@@ -74,7 +70,6 @@ lrv
 lra
 js
 
-f:
 function1:
 cfp
 lra
@@ -89,15 +84,14 @@ push -3
 lfp
 add
 lw
-
+push -2
 lfp
 lw
-push -2
 add
 lw
+push -3
 lfp
 lw
-push -3
 add
 lw
 js

@@ -23,8 +23,7 @@ public class MethodNode implements DecNode {
 		this.retType = retType;
 		this.parList = new ArrayList<>();
 		this.varList = new ArrayList<>();
-		this.label = FOOLlib.freshFunLabel();
-		this.offset = 0;
+		this.symType = new ArrowTypeNode(new ArrayList<Node>(), this.retType);
 	}
 	
 	public String getLabel() {
@@ -58,72 +57,102 @@ public class MethodNode implements DecNode {
 	public void addExp(Node node) {
 		this.exp = node;
 	}
-	
-	public void setSymType(Node ast) {
-		this.symType = ast;
-	}
+
 
 	@Override
 	public Node typeCheck() {
-		if(varList != null) {
-			for (Node var:varList){
-				var.typeCheck();
-			};
+		for (Node dec : varList) {
+			dec.typeCheck();
 		}
-			
-		if(!(FOOLlib.isSubtype(symType,retType))) {
-			System.out.println("Wrong return type for method "+id);
-		    System.exit(0);
-		}  
+		if (!FOOLlib.isSubtype(exp.typeCheck(), retType)) {
+			System.out.println("Incompatible value for method "+id);
+			System.exit(0);
+		}
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		String varCode="";
-		if(varList != null) {
-			for (Node var:varList){
-				varCode+=var.codeGeneration();
-			};
+//		String varCode="";
+//		if(varList != null) {
+//			for (Node var:varList){
+//				varCode+=var.codeGeneration();
+//			};
+//		}
+//
+//		String popVar="";
+//		if(varList != null) {
+//			for (DecNode var:varList){
+//				if(var.getSymType() instanceof ArrowTypeNode) {
+//					popVar+="pop\n";
+//				}
+//				popVar+="pop\n";
+//			};
+//		}
+//
+//		String popParl="";
+//		if(parList != null) {
+//			for (ParNode par:parList){
+//				if(par.getSymType() instanceof ArrowTypeNode) {
+//					popParl+="pop\n";
+//				}
+//				popParl+="pop\n";
+//			};
+//		}
+//
+//		FOOLlib.putCode(
+//				label+":\n"+
+//				"cfp\n"+ //setta $fp allo $sp
+//				"lra\n"+ //inserimento Return Address
+//				varCode+
+//				exp.codeGeneration()+
+//				"srv\n"+ //pop del return value e memorizzazione in $rv
+//				popVar+ //una pop per ogni dichiarazione
+//				"sra\n"+ //pop del Return Address e memorizzazione in $ra
+//				"pop\n" + //pop di AL
+//				popParl + 
+//				"sfp\n" + // ripristino il $fp al valore del CL 
+//				"lrv\n" + // risultato della funzione sullo stack
+//				"lra\n" + 
+//				"js\n" // salta a $ra
+//				);	  	  
+//	
+//		return "";
+		label = FOOLlib.freshMethodLabel();
+		String declCode = "";
+		for (Node dec : varList) {
+			declCode += dec.codeGeneration();
 		}
-
-		String popVar="";
-		if(varList != null) {
-			for (DecNode var:varList){
-				if(var.getSymType() instanceof ArrowTypeNode) {
-					popVar+="pop\n";
-				}
-				popVar+="pop\n";
-			};
+		
+		String popDecl = "";
+		for (Node dec : varList) {
+			if(((DecNode)dec).getSymType() instanceof ArrowTypeNode)
+				popDecl += "pop\n";
+			popDecl += "pop\n";
 		}
-
-		String popParl="";
-		if(parList != null) {
-			for (ParNode par:parList){
-				if(par.getSymType() instanceof ArrowTypeNode) {
-					popParl+="pop\n";
-				}
-				popParl+="pop\n";
-			};
+		String popParl = "";
+		for (Node par : parList) {
+			if(((ParNode)par).getSymType() instanceof ArrowTypeNode)
+				popParl += "pop\n";
+			popParl += "pop\n";
 		}
-
-		FOOLlib.putCode(
-				label+":\n"+
-				"cfp\n"+ //setta $fp allo $sp
-				"lra\n"+ //inserimento Return Address
-				varCode+
-				exp.codeGeneration()+
-				"srv\n"+ //pop del return value e memorizzazione in $rv
-				popVar+ //una pop per ogni dichiarazione
-				"sra\n"+ //pop del Return Address e memorizzazione in $ra
-				"pop\n" + //pop di AL
-				popParl + 
-				"sfp\n" + // ripristino il $fp al valore del CL 
-				"lrv\n" + // risultato della funzione sullo stack
-				"lra\n" + 
-				"js\n" // salta a $ra
-				);	  	  
-	
+		
+		FOOLlib.putCode(label + ":\n" +         // etichetta "fresh" del metodo
+						"cfp\n" +               // fp=sp - setta $fp allo $sp
+						"lra\n" +               // push(ra) - inserimento Return Address sullo stack
+						declCode +              // generazione codice dichiarazioni interne al metodo
+						exp.codeGeneration() +  // generazione codice corpo del metodo
+						"srv\n" +               // pop del return value e memorizzazione in $rv
+						popDecl +               // pulisco lo stack da quello che mi lasciano le dichiarazioni interne al metodo
+						"sra\n" +               // pop del Return Address e memorizzazione in $ra
+						"pop\n" +               // pop di AL
+						popParl +               // pulisco lo stack da quello che mi lasciano i parametri attuali
+						"sfp\n" +               // ripristino il $fp al CL del chiamante
+						"lrv\n" +               // lascio il risultato del metodo sullo stack
+						"lra\n" +               //
+						"js\n");                // salto a $ra (che ho aggiornato poche righe sopra)
+		
+		/* Ritorno stringa vuota, a differenza del FunNode (che ritorna indirizzo di questo AR ed indirizzo codice della funzione) */
 		return "";
 	}
 

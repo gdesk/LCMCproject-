@@ -41,17 +41,16 @@ public class GENode implements Node {
 
 	@Override
 	public String codeGeneration() {
-		String l1 = FOOLlib.freshLabel(); 
+		String l1 = FOOLlib.freshLabel();
 		String l2 = FOOLlib.freshLabel();
-		return right.codeGeneration() 
-				+ left.codeGeneration() 
-				+ "bleq "+ l1 +"\n"
-				+ "push 0\n" 
-				+ "b " + l2 + "\n" 
-				+ l1 + ":\n"
-				+ "push 1\n" 
-				+ l2 + ":\n";
-
+		return right.codeGeneration() +
+				left.codeGeneration() +
+				"bleq " + l1 + "\n" +
+				"push 0\n" +
+				"b " + l2 + "\n" +
+				l1 + ": \n" +
+				"push 1\n" +
+				l2 + ": \n";
 
 	}
 

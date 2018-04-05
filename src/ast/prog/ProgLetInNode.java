@@ -16,66 +16,57 @@ import lib.*;
 
 public class ProgLetInNode implements Node {
 
-	private ArrayList<ClassNode> cllist;
+	private ArrayList<DecNode> cllist;
 	private ArrayList<DecNode> declist;
 	private Node exp;
 
-	public ProgLetInNode( final ArrayList<DecNode> declist, final Node exp) {
-		this.declist=declist;
-		this.exp=exp;
+	public ProgLetInNode(ArrayList<DecNode> c, ArrayList<DecNode> d, Node e) {
+		cllist = c;
+		declist = d;
+		exp = e;
 	}
 
-	public ProgLetInNode( final ArrayList<ClassNode> cllist, final ArrayList<DecNode> declist, final Node exp){
-		this.cllist = cllist;
-		this.declist = declist;
-		this.exp = exp;
-	}
-
-	@Override
-	public String toPrint(String indent) {
-
-		String cllstr="";
-		String declstr="";
-		
-		if(cllist != null) {
-			for (ClassNode cl:cllist){
-				cllstr+=cl.toPrint(indent+"  ");
-			}
+	public String toPrint(String s) {
+		String str = "";
+		for (Node cl : cllist) {
+			str += cl.toPrint(s + "  ");
 		}
 
-		if(declist != null) {
-			for (Node dec:declist){
-				declstr+=dec.toPrint(indent+"  ");
-			}
+		for (Node dec : declist) {
+			str += dec.toPrint(s + "  ");
 		}
 
-		return indent+"ProgLetIn\n" + cllstr + declstr + exp.toPrint(indent+"  ") ; 
+		return s + "ProgLetIn\n" +
+				str +
+				exp.toPrint(s + "  ");
 	}
 
-	@Override
 	public Node typeCheck() {
-
-		if(cllist != null) {
-			for (DecNode cl:cllist){
-				cl.typeCheck();
-			}
+		for (Node cl : cllist) {
+			cl.typeCheck();
 		}
-		for (DecNode dec:declist){
+		for (Node dec : declist) {
 			dec.typeCheck();
 		}
 		return exp.typeCheck();
 	}
 
-	@Override
 	public String codeGeneration() {
-		String declCode="";
-		for (DecNode dec:declist){
-			declCode+=dec.codeGeneration();
+		String concCode = "";
+		for (DecNode cl : cllist) {
+			concCode += cl.codeGeneration();
 		}
-		return "push 0\n"+
-		declCode+
-		exp.codeGeneration()+
-		"halt\n"+ 
-		FOOLlib.getCode();
+
+		for (DecNode dec : declist) {
+			concCode += dec.codeGeneration();
+		}
+
+		return "push 0\n" +
+				concCode +
+				exp.codeGeneration() +
+				"halt\n" +
+				FOOLlib.getCode();
 	}
-}  
+	String declCode="";
+
+}

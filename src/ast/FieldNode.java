@@ -9,7 +9,6 @@ public class FieldNode implements DecNode{
 	public FieldNode(String id, Node node) {
 		this.fieldID = id;
 		this.type = node;
-		this.offset = 0;
 	}
 	
 	public String getID() {
@@ -23,7 +22,7 @@ public class FieldNode implements DecNode{
 	public void setOffset(final int offset) {
 		this.offset = offset;
 	}
-
+	
 	@Override
 	public Node typeCheck() {
 		return null;

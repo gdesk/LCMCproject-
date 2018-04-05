@@ -1,0 +1,7 @@
+let
+  class Account (money:int) {
+    fun getMon:int () money;
+  }
+  var bl:Account = new Account(2000);
+
+in print(if (bl==null) then {0} else {bl.getMon()});
