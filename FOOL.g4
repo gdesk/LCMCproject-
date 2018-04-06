@@ -101,7 +101,7 @@ cllist returns  [ArrayList<DecNode> astlist]
 			int methodoffset = 0;
 			int varoffset = -2;		
 			ClassNode classNode = new ClassNode($cid.text);
-			ClassTypeNode classType = new ClassTypeNode(new ArrayList<FieldNode>(), new ArrayList< MethodNode>());
+			ClassTypeNode classType = new ClassTypeNode(new ArrayList<Node>(), new ArrayList<Node>());
 			$astlist.add(classNode);
 			HashMap<String,STentry> hm = symTable.get(0);  /* hm sara' sempre a nesting level 0 per le definizioni di classi */
 			classEntry = new STentry(nestingLevel, classType, globalOffset--);
@@ -158,13 +158,14 @@ cllist returns  [ArrayList<DecNode> astlist]
 				 		fieldEntry = new STentry(nestingLevel, $ft.ast, vhm.get($fid.text).getOffset());
 				 		/* Aggiornamento classTypeNode*/
 				 		int index = - fieldEntry.getOffset() - 1;
-						classType.setField(index, field);  
+						classType.setField(index, fieldEntry.getType());  
 			 		}else{
 			 			/* non override*/
 			 			fieldEntry = new STentry(nestingLevel, $ft.ast, fieldoffset--);
-			 			classType.addField(field);
+			 			classType.addField(fieldEntry.getType());
 			 		}
 			 		vhm.put($fid.text, fieldEntry);                         /* aggiornamento Virtual Table */
+					classNode.addField(field);
 					field.setOffset(fieldEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
 			 
 			 	}
@@ -189,17 +190,18 @@ cllist returns  [ArrayList<DecNode> astlist]
 				 		fieldEntry = new STentry(nestingLevel, $ft1.ast, vhm.get($fid1.text).getOffset());
 				 		/* Aggiornamento classTypeNode*/
 				 		int index1 = - fieldEntry.getOffset() - 1;
-						classType.setField(index1, field1);  
+						classType.setField(index1, fieldEntry.getType());  
 			 		}else{
 			 			/* non override*/
 			 			fieldEntry = new STentry(nestingLevel, $ft1.ast, fieldoffset--);
-			 			classType.addField(field1);
+			 			classType.addField(fieldEntry.getType());
 			 		}
 			 		vhm.put($fid1.text, fieldEntry);                         /* aggiornamento Virtual Table */
+					classNode.addField(field1);
 					field1.setOffset(fieldEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
 			 	}
 			 	)*
-				)? RPAR {classNode.addFields(classType.getFields());}   
+				)? RPAR    
               CLPAR
                  ( FUN mid=ID COLON mt=type 
                  	{
@@ -223,13 +225,14 @@ cllist returns  [ArrayList<DecNode> astlist]
 				 		methodEntry.setIsMethod();
 				 		/* Aggiornamento classTypeNode*/
 				 		int index = methodEntry.getOffset();
-						classType.setMethod(index, method);  
+						classType.setMethod(index, methodEntry.getType());  
 			 		}else{
 			 			/* non override*/
 			 			methodEntry = new STentry(nestingLevel, new ArrowTypeNode(new ArrayList<Node>(), $mt.ast ),  methodoffset++);
 			 			methodEntry.setIsMethod();
-			 			classType.addMethod(method);
+			 			classType.addMethod(methodEntry.getType());
 			 		}
+			 		classNode.addMethod(method);
 			 		vhm.put($mid.text, methodEntry);                         /* aggiornamento Virtual Table */
 					method.setOffset(methodEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
                  	HashMap<String,STentry> mhm = new HashMap<String,STentry> (); /* vhmn = 'Virtual Hash Map Nested' */
@@ -309,7 +312,6 @@ cllist returns  [ArrayList<DecNode> astlist]
               CRPAR
               {	
 	         	/* Inserisco i campi e metodi dentro l'istanza di ClassNode, prendendoli dal ClassTypeNode corrente */	
-	         	classNode.addMethods(classType.getMethods());
 	         	symTable.remove(nestingLevel--);
          }
           )+

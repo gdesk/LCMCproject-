@@ -8,6 +8,13 @@ push 1
 add
 shp
 lhp
+push method0
+lhp
+sw
+lhp
+push 1
+add
+shp
 push method1
 lhp
 sw
@@ -15,6 +22,7 @@ lhp
 push 1
 add
 shp
+lhp
 push method2
 lhp
 sw
@@ -22,7 +30,6 @@ lhp
 push 1
 add
 shp
-lhp
 push method3
 lhp
 sw
@@ -30,22 +37,15 @@ lhp
 push 1
 add
 shp
+lhp
+push method2
+lhp
+sw
+lhp
+push 1
+add
+shp
 push method4
-lhp
-sw
-lhp
-push 1
-add
-shp
-lhp
-push method5
-lhp
-sw
-lhp
-push 1
-add
-shp
-push method6
 lhp
 sw
 lhp
@@ -184,7 +184,7 @@ js
 method1:
 cfp
 lra
-push -1
+push -2
 lfp
 lw
 add
@@ -200,22 +200,6 @@ js
 method2:
 cfp
 lra
-push -2
-lfp
-lw
-add
-lw
-srv
-sra
-pop
-sfp
-lrv
-lra
-js
-
-method3:
-cfp
-lra
 push -1
 lfp
 lw
@@ -229,7 +213,7 @@ lrv
 lra
 js
 
-method4:
+method3:
 cfp
 lra
 push 30000
@@ -314,23 +298,7 @@ lrv
 lra
 js
 
-method5:
-cfp
-lra
-push -1
-lfp
-lw
-add
-lw
-srv
-sra
-pop
-sfp
-lrv
-lra
-js
-
-method6:
+method4:
 cfp
 lra
 push 20000

@@ -60,12 +60,13 @@ public class ClassCallNode implements Node {
 		}
 		ArrayList<Node> p = t.getParList();
 		if (!(p.size() == argList.size())) {
-			System.out.println("Wrong number of arguments in the invocation of " + idMethod);
+			System.out.println("ClassCallNode: Wrong number of arguments in the invocation of " + idMethod);
 			System.exit(0);
 		}
 		for (int i = 0; i < argList.size(); i++)
 			if (!(FOOLlib.isSubtype((argList.get(i)).typeCheck(), ((ParNode)p.get(i)).getSymType()))) {
-				System.out.println("Wrong type for " + (i + 1) + "-th argument in the invocation of " + idMethod);
+				System.out.println(argList.get(i).typeCheck()+"--->"+p.get(i));
+				System.out.println("ClassCallNode: Wrong type for " + (i + 1) + "-th argument in the invocation of " + idMethod);
 				System.exit(0);
 			}
 		return t.getRet();

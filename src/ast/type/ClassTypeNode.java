@@ -8,43 +8,43 @@ import ast.Node;
 
 public class ClassTypeNode implements Node {
 	
-	private ArrayList<FieldNode> allFields;
-	private ArrayList<MethodNode> allMethods;
+	private ArrayList<Node> allFields;
+	private ArrayList<Node> allMethods;
 	
-	public ClassTypeNode(ArrayList<FieldNode> fields, ArrayList<MethodNode> methods) {
+	public ClassTypeNode(ArrayList<Node> fields, ArrayList<Node> methods) {
 		this.allFields = new ArrayList<>(fields); // incluono quelli ereditati
 		this.allMethods = new ArrayList<>(methods);
 	}
 	
 	public ArrayList<String> getIDsMethod(){
 		ArrayList<String> idMethods = new ArrayList<>();
-		for(MethodNode f : this.allMethods) {
-			idMethods.add(f.getID());
+		for(Node f : this.allMethods) {
+			idMethods.add(((MethodNode)f).getID());
 		}
 		return idMethods;
 	}
 	
-	public void setMethod(int index, MethodNode method) {
+	public void setMethod(int index, Node method) {
 			this.allMethods.set(index, method);
 		
 	}
-	public void setField(int index, FieldNode field) {
+	public void setField(int index, Node field) {
 			this.allFields.set(index, field);
 	}
 	
-	public void addField(FieldNode field) {
+	public void addField(Node field) {
 		this.allFields.add(field);
 	}
 	
-	public void addMethod(MethodNode method) {
+	public void addMethod(Node method) {
 		this.allMethods.add(method);
 	}
 	
-	public ArrayList<FieldNode> getFields(){
+	public ArrayList<Node> getFields(){
 		return allFields;
 	}
 	
-	public ArrayList<MethodNode> getMethods(){
+	public ArrayList<Node> getMethods(){
 		return allMethods;
 	}
 	

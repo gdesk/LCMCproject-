@@ -27,6 +27,14 @@ public class ClassNode implements DecNode {
 		this.methods.addAll(methods);
 	}
 	
+	public void addField(final FieldNode field) {
+		this.fields.add(field);
+	}
+
+	public void addMethod( final MethodNode method) {
+		this.methods.add(method);
+	}
+	
 	public void setSuperEntry(STentry superEntry) {
 		this.superEntry = superEntry;
 	}
@@ -86,8 +94,8 @@ public class ClassNode implements DecNode {
 		}
 		if (superEntry != null) {  // caso con ereditarieta'
 			ClassTypeNode fatherType = (ClassTypeNode) superEntry.getType();
-			ArrayList<FieldNode> fatherFieldsType = (fatherType).getFields();
-			ArrayList<FieldNode> childFieldsType = ((ClassTypeNode)symType).getFields();
+			ArrayList<Node> fatherFieldsType = (fatherType).getFields();
+			ArrayList<Node> childFieldsType = ((ClassTypeNode)symType).getFields();
 
 			/* Vecchio controllo senza ottimizzazione (scorro tutti i campi del padre)
 			for (int i = 0; i < fatherFieldsType.size(); i++) {
@@ -110,8 +118,8 @@ public class ClassNode implements DecNode {
 				}
 			}
 
-			ArrayList<MethodNode> fatherMethodsType = (fatherType).getMethods();
-			ArrayList<MethodNode> childMethodsType = ((ClassTypeNode)symType).getMethods();
+			ArrayList<Node> fatherMethodsType = (fatherType).getMethods();
+			ArrayList<Node> childMethodsType = ((ClassTypeNode)symType).getMethods();
 
 			/* Vecchio controllo senza ottimizzazione (scorro tutti i campi del padre)
 			for (int i = 0; i < fatherMethodsType.size(); i++) {

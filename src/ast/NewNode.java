@@ -27,15 +27,16 @@ public class NewNode implements Node {
 
 	@Override
 	public Node typeCheck() {
-		ArrayList<FieldNode> p = ((ClassTypeNode)entry.getType()).getFields();
+		ArrayList<Node> p = ((ClassTypeNode)entry.getType()).getFields();
 		
 		if (!(p.size() == argList.size())) {
 			System.out.println("NewNode : Wrong number of parameters in the invocation of " + id);
 			System.exit(0);
 		}
 		for (int i = 0; i < argList.size(); i++)
-			if (!(FOOLlib.isSubtype((argList.get(i)).typeCheck(), p.get(i).getSymType()))) {
-				System.out.println("Wrong type for " + (i + 1) + "-th argument in the invocation of " + id);
+			if (!(FOOLlib.isSubtype((argList.get(i)).typeCheck(),(p.get(i))))) {
+				System.out.println((argList.get(i)).typeCheck() + "---->"+ p.get(i) );
+				System.out.println("NewNode: Wrong type for " + (i + 1) + "-th argument in the invocation of " + id);
 				System.exit(0);
 			}
 		return new RefTypeNode(id);
