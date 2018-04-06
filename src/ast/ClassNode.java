@@ -18,20 +18,12 @@ public class ClassNode implements DecNode {
 		this.fields = new ArrayList<FieldNode>();
 		this.id=id;
 	}
-	
-	public void addFields(final ArrayList<FieldNode> fields) {
-		this.fields.addAll(fields);
-	}
 
-	public void addMethods( final ArrayList<MethodNode> methods) {
-		this.methods.addAll(methods);
-	}
-	
 	public void addField(final FieldNode field) {
 		this.fields.add(field);
 	}
 
-	public void addMethod( final MethodNode method) {
+	public void addMethod(final MethodNode method) {
 		this.methods.add(method);
 	}
 	
@@ -50,92 +42,38 @@ public class ClassNode implements DecNode {
 
 	@Override
 	public Node typeCheck() {
-//		if(this.methods !=null) {
-//			for(MethodNode meth : this.methods) {
-//				meth.typeCheck();
-//			}
-//		}
-//		
-//		if(this.superEntry != null) {
-//			ArrayList<FieldNode> parentFields = ((ClassTypeNode)this.superEntry.getType()).getFields();
-//			ArrayList<MethodNode> parentMethods = ((ClassTypeNode)this.superEntry.getType()).getMethods();
-//			
-//			for(int i = 0; i < parentFields.size(); i++) {
-//				FieldNode field = this.fields.get(i);
-//				FieldNode parentField = parentFields.get(i);
-//				
-//				/* calcolo la posizione in base all'offset*/
-//				int position = -parentField.getOffset()-1;
-//			
-//				/* Controllo di correttezza solo per i campi su cui è fatto overriding */
-//				if(position < parentFields.size()) {
-//					FOOLlib.isSubtype(field, parentField);
-//				}
-//				
-//			}
-//			
-//			for (int i = 0; i < parentMethods.size(); i++) {
-//				MethodNode method = this.methods.get(i);
-//				MethodNode parentMethod = parentMethods.get(i);
-//				
-//				/* calcolo la posizione in base all'offset*/
-//				int position= parentMethod.getOffset();
-//				
-//				/* Controllo di correttezza solo per i metodi su cui è fatto overriding*/
-//				if(position < parentMethods.size()) {
-//					FOOLlib.isSubtype(method, parentMethod);
-//				}
-//			}		
-//		}
-//		
-//		return null;
 		for (Node method : methods) {
 			method.typeCheck();
 		}
+		
 		if (superEntry != null) {  // caso con ereditarieta'
-			ClassTypeNode fatherType = (ClassTypeNode) superEntry.getType();
-			ArrayList<Node> fatherFieldsType = (fatherType).getFields();
-			ArrayList<Node> childFieldsType = ((ClassTypeNode)symType).getFields();
-
-			/* Vecchio controllo senza ottimizzazione (scorro tutti i campi del padre)
-			for (int i = 0; i < fatherFieldsType.size(); i++) {
-				if (!FOOLlib.isSubtype(childFieldsType.get(i), fatherFieldsType.get(i))) {
-					System.out.println("Incompatible type for field overriding");
-					System.exit(0);
-				}
-			}
-			*/
+			ClassTypeNode superType = (ClassTypeNode) superEntry.getType();
+			ArrayList<Node> superFields = (superType).getFields();
+			ArrayList<Node> fields = ((ClassTypeNode)symType).getFields();
 
 			/* Ottimizzazione: checking piu' efficiente dei campi (non controllo quelli del padre di cui non sto facendo overriding) */
-			for (Node childField: fields) {
-				int fieldOffset = ((FieldNode)childField).getOffset();
+			for (Node field: this.fields) {
+				int fieldOffset = ((FieldNode)field).getOffset();
 				int index = -fieldOffset-1;
-				if (index < fatherFieldsType.size()) {
-					if (!FOOLlib.isSubtype(childFieldsType.get(index), fatherFieldsType.get(index))) {
+				
+				if (index < superFields.size()) {
+					if (!FOOLlib.isSubtype(fields.get(index), superFields.get(index))) {
 						System.out.println("Incompatible type for field overriding");
 						System.exit(0);
 					}
 				}
 			}
 
-			ArrayList<Node> fatherMethodsType = (fatherType).getMethods();
-			ArrayList<Node> childMethodsType = ((ClassTypeNode)symType).getMethods();
-
-			/* Vecchio controllo senza ottimizzazione (scorro tutti i campi del padre)
-			for (int i = 0; i < fatherMethodsType.size(); i++) {
-				if (!FOOLlib.isSubtype(childMethodsType.get(i), fatherMethodsType.get(i))) {
-					System.out.println("Incompatible value for method");
-					System.exit(0);
-				}
-			}
-			*/
+			ArrayList<Node> superMethods = (superType).getMethods();
+			ArrayList<Node> methods = ((ClassTypeNode)symType).getMethods();
 
 			/* Ottimizzazione: checking piu' efficiente dei metodi (non controllo quelli del padre di cui non sto facendo overriding) */
-			for (Node childMethod: methods) {
-				int methodOffset = ((MethodNode)childMethod).getOffset();
+			for (Node method: this.methods) {
+				int methodOffset = ((MethodNode)method).getOffset();
 				int index = methodOffset;
-				if (index < fatherMethodsType.size()) {
-					if (!FOOLlib.isSubtype(childMethodsType.get(index), fatherMethodsType.get(index))) {
+				
+				if (index < superMethods.size()) {
+					if (!FOOLlib.isSubtype(methods.get(index), superMethods.get(index))) {
 						System.out.println("Incompatible type for method overriding");
 						System.exit(0);
 					}

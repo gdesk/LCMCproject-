@@ -73,52 +73,9 @@ public class MethodNode implements DecNode {
 
 	@Override
 	public String codeGeneration() {
-//		String varCode="";
-//		if(varList != null) {
-//			for (Node var:varList){
-//				varCode+=var.codeGeneration();
-//			};
-//		}
-//
-//		String popVar="";
-//		if(varList != null) {
-//			for (DecNode var:varList){
-//				if(var.getSymType() instanceof ArrowTypeNode) {
-//					popVar+="pop\n";
-//				}
-//				popVar+="pop\n";
-//			};
-//		}
-//
-//		String popParl="";
-//		if(parList != null) {
-//			for (ParNode par:parList){
-//				if(par.getSymType() instanceof ArrowTypeNode) {
-//					popParl+="pop\n";
-//				}
-//				popParl+="pop\n";
-//			};
-//		}
-//
-//		FOOLlib.putCode(
-//				label+":\n"+
-//				"cfp\n"+ //setta $fp allo $sp
-//				"lra\n"+ //inserimento Return Address
-//				varCode+
-//				exp.codeGeneration()+
-//				"srv\n"+ //pop del return value e memorizzazione in $rv
-//				popVar+ //una pop per ogni dichiarazione
-//				"sra\n"+ //pop del Return Address e memorizzazione in $ra
-//				"pop\n" + //pop di AL
-//				popParl + 
-//				"sfp\n" + // ripristino il $fp al valore del CL 
-//				"lrv\n" + // risultato della funzione sullo stack
-//				"lra\n" + 
-//				"js\n" // salta a $ra
-//				);	  	  
-//	
-//		return "";
+		
 		label = FOOLlib.freshMethodLabel();
+		
 		String declCode = "";
 		for (Node dec : varList) {
 			declCode += dec.codeGeneration();
@@ -130,6 +87,7 @@ public class MethodNode implements DecNode {
 				popDecl += "pop\n";
 			popDecl += "pop\n";
 		}
+		
 		String popParl = "";
 		for (Node par : parList) {
 			if(((ParNode)par).getSymType() instanceof ArrowTypeNode)

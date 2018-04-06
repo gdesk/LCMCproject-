@@ -14,7 +14,6 @@ public class RefTypeNode implements Node {
 		return this.idClass;
 	}
 
-
 	@Override
 	public Node typeCheck() {
 		return null;
@@ -29,5 +28,4 @@ public class RefTypeNode implements Node {
 	public String toPrint(String indent) {
 		return indent+"RefTypeNode: "+ this.idClass+"\n";
 	}
-
 }

@@ -1,7 +1,6 @@
 package ast.prog;
 import java.util.ArrayList;
 
-import ast.ClassNode;
 import ast.DecNode;
 import ast.Node;
 import lib.*;
@@ -42,17 +41,21 @@ public class ProgLetInNode implements Node {
 	}
 
 	public Node typeCheck() {
+		
 		for (Node cl : cllist) {
 			cl.typeCheck();
 		}
+		
 		for (Node dec : declist) {
 			dec.typeCheck();
 		}
+		
 		return exp.typeCheck();
 	}
 
 	public String codeGeneration() {
 		String concCode = "";
+		
 		for (DecNode cl : cllist) {
 			concCode += cl.codeGeneration();
 		}
@@ -67,6 +70,4 @@ public class ProgLetInNode implements Node {
 				"halt\n" +
 				FOOLlib.getCode();
 	}
-	String declCode="";
-
 }

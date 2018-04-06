@@ -115,45 +115,6 @@ public class CallNode implements Node {
 					
 					"js\n";                                   // effettuo il salto (poppando dallo stack e salvando anche l'ip su ra)
 		}
-	/*	String parCode=""; 
-		for (int i=parList.size()-1; i>=0; i--) {
-			parCode+=parList.get(i).codeGeneration();
-		}
-
-		String getAR=""; //recupero l'AR in cui è dichiarata la funzione che sto usando
-		if (!this.entry.isMethod()) {
-			for (int i=0;i<nestingLevel-entry.getNestinglevel();i++) {
-				//differenza di nesting level tra dove sono e la dichiarazione di "id"
-				getAR+="lw\n";
-			}	
-		}else {
-			for (int i=0;i<nestingLevel-entry.getNestinglevel();i++) {
-				//differenza di nesting level tra dove sono e la dichiarazione di "id"
-				getAR+= "lw\n" +
-						"push 1\n"+
-						"add\n";
-			}
-		}
-
-		return //allocazione della mia parte dell'AR della funzione che sto chiamando
-				"lfp\n"+ //CL
-				parCode+"\n" + //allocazione valori parametri
-				//Recupera FP ad AR dichiarazione funzione (Per settare l'access link)
-				"lfp\n"+
-				getAR+ //AL
-				//codice per recuperare l'inidirizzo a cui saltare (stesso delle variabili)
-				"push "+entry.getOffset()+"\n"+ //metto l'offset sullo stack
-				"add\n"+
-				"lw\n"+ 
-
- 				//Recupera indir funzione (Per saltare al codice della funzione)
- 				"lfp\n"+
- 				getAR+ //risalgo la catena statica e ottengo l'indirizzo dell'AR della variabile
- 				"push "+(entry.getOffset()-1)+"\n"+ //metto l'offset sullo stack
- 				"add\n"+
- 				"lw\n"+ //carico sullo stack l'indirizzo a cui saltare
- 				//effettuo il salto
- 				"js\n";*/
 	}
 
 }  

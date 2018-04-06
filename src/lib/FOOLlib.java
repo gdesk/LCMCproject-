@@ -36,13 +36,14 @@ public class FOOLlib {
 	public static ArrayList<String> getDispatchTable(int offset) {
 		return dispatchTables.get(offset);
 	}
-	//valuta se il tipo "a" è <= al tipo "b", dove "a" e "b" sono tipi di base: int o bool
+	
 	public static boolean isSubtype (Node a, Node b) {
 		Node nodeA = a;
 		Node nodeB = b;
 		Boolean checkPar = true;
-		/*Covarianza es : String sottotipo di Object x tipo di ritorno*/
-		/* Controvarianza es: Object sottotipo di String  per parametri*/
+		
+		/* Covarianza esempio : String sottotipo di Object x tipo di ritorno*/
+		/* Controvarianza esempio: Object sottotipo di String  per parametri*/
 		if(a instanceof ArrowTypeNode && b instanceof ArrowTypeNode) {
 			/* Preparazione per controllo la co-varianza sul tipo di ritorno*/
 			nodeA = ((ArrowTypeNode)nodeA).getRet();
@@ -85,7 +86,7 @@ public class FOOLlib {
 	}
 
 	public static void putCode(String c) {
-		funCode+="\n"+c; //aggiunge una linea vuota di separazione prima della funzione
+		funCode+="\n"+c; 
 	}
 
 	public static String getCode() {
@@ -101,7 +102,7 @@ public class FOOLlib {
 			return a;
 		}
 
-		// Verifichiamo che b sia sottotipo di a e tutti i suoi superType
+		/* verifico ereditarietà multipla*/
 		if(a instanceof RefTypeNode && b instanceof RefTypeNode) {
 			String sa = ((RefTypeNode)a).getID();
 			while(sa != null) {

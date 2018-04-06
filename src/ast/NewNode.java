@@ -2,7 +2,6 @@ package ast;
 
 import java.util.ArrayList;
 
-import ast.type.ArrowTypeNode;
 import ast.type.ClassTypeNode;
 import ast.type.RefTypeNode;
 import lib.FOOLlib;
@@ -12,8 +11,6 @@ public class NewNode implements Node {
 	private String id;
 	private STentry entry; 
 	private ArrayList<Node> argList;
-
-
 
 	public NewNode(final String id, STentry entry) {
 		this.id = id;
@@ -44,35 +41,7 @@ public class NewNode implements Node {
 
 	@Override
 	public String codeGeneration() {
-//		/* Mettiamo il valore di tutti i parametri sullo stack (in ordine di apparizione) */
-//		String code = "";
-//		if(!(this.argList.size() == 0)) {
-//			for (int i = argList.size()-1; i >= 0 ; i--) {
-//				code += argList.get(i).codeGeneration();
-//			}
-//		}
-//		
-//		/* Prendo i valori dei parametri uno per volta e lo carico sullo heap, incrementando hp ogni volta*/
-//		for(Node argNode : this.argList) {
-//			code += "lhp\n" +		//carico il valore di hp sullo stack
-//					"sw\n"+			//metto all'indirizzo di hp (sullo heap) il parametro caricato sullo stack (dall'ultimo al primo)
-//					"lhp\n"+		//carico il valore di hp sullo stack per aggiornarlo
-//					"push 1\n" +			
-//					"add\n"+		//incremento
-//					"shp\n";		//aggiorno hp
-//		}
-//		
-//		code += "push " + (FOOLlib.MEMSIZE+entry.getOffset()) + "\n"+ //carico sullo stack l'indirizzo al quale era stata dichiarata la classe
-//				"lw\n" +		//carico sullo stack in dispatch pointer
-//				"lhp\n" +		//carico sullo stack il valore di hp (diventerà 'object pointer della classe a cui faccio la new)
-//				"sw\n"+			//metto all'indirizzo puntato da hp il dispatch pointer
-//				"lhp\n"+		//lascio sullo stack il valore di hp
-//				"lhp\n"+		//carico il valore di hp sullo stack per aggiornarlo
-//				"push 1\n"+
-//				"add\n"+		//incremento
-//				"shp\n";		//aggiorno
-//
-//		return code;
+
 		String code = "";
 		for (Node param: argList) {  // mettiamo temporaneamente sullo stack il valore di tutti i parametri (in ordine di apparizione)
 			code += param.codeGeneration();
