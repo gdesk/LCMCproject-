@@ -11,7 +11,7 @@ public class MethodNode implements DecNode {
 
 	private String id;
 	private Node retType;
-	private ArrayList<ParNode> parList;
+	private ArrayList<Node> parList;
 	private ArrayList<VarNode> varList;
 	private Node exp; 
 	private Node symType;
@@ -46,7 +46,7 @@ public class MethodNode implements DecNode {
 		return parList.size();
 	}
 	
-	public void addParList(ArrayList<ParNode> parList){
+	public void addParList(ArrayList<Node> parList){
 		this.parList.addAll(parList);
 	}
 
@@ -120,7 +120,7 @@ public class MethodNode implements DecNode {
 		String varstr = "";
 
 		if (parList != null) {
-			for(ParNode par: parList) {
+			for(Node par: parList) {
 				parstr += par.toPrint(indent+"  ");
 			}
 		}

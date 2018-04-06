@@ -117,9 +117,8 @@ public class FOOLParser extends Parser {
 					HashMap<String,STentry> hm = new HashMap<String,STentry> ();
 					symTable.add(hm);
 
-					/* Usiamo dei flag per memorizzare quali dichiarazioni ci saranno dentro al LET: cllist, declist o entrambe */
-					boolean clFlag = false;
-					boolean decFlag = false;
+					boolean isCl = false;
+					boolean isDec = false;
 				
 			setState(41);
 			switch (_input.LA(1)) {
@@ -148,17 +147,13 @@ public class FOOLParser extends Parser {
 				case CLASS:
 					{
 					setState(25); ((ProgContext)_localctx).c = cllist();
-
-									clFlag = true;
-								
+					 isCl = true; 
 					setState(30);
 					_la = _input.LA(1);
 					if (_la==VAR || _la==FUN) {
 						{
 						setState(27); ((ProgContext)_localctx).d = declist();
-
-											decFlag = true;
-										
+						 isDec = true; 
 						}
 					}
 
@@ -168,9 +163,7 @@ public class FOOLParser extends Parser {
 				case FUN:
 					{
 					setState(32); ((ProgContext)_localctx).d = declist();
-
-									decFlag = true;
-								
+					 isDec = true; 
 					}
 					break;
 				default:
@@ -179,15 +172,14 @@ public class FOOLParser extends Parser {
 				setState(37); match(IN);
 				setState(38); ((ProgContext)_localctx).e = exp();
 
-							/* Inseriamo lista vuota dove necessario */
-							if (clFlag && decFlag) {
-								((ProgContext)_localctx).ast =  new ProgLetInNode(((ProgContext)_localctx).c.astlist, ((ProgContext)_localctx).d.astlist, ((ProgContext)_localctx).e.ast);
-							} else if (clFlag) {
-								((ProgContext)_localctx).ast =  new ProgLetInNode(((ProgContext)_localctx).c.astlist, new ArrayList<DecNode>(), ((ProgContext)_localctx).e.ast);
-							} else { /* if (decFlag) { */
-								((ProgContext)_localctx).ast =  new ProgLetInNode(new ArrayList<DecNode>(), ((ProgContext)_localctx).d.astlist, ((ProgContext)_localctx).e.ast);
-							}
-						
+									if (isCl && isDec) {
+										((ProgContext)_localctx).ast =  new ProgLetInNode(((ProgContext)_localctx).c.astlist, ((ProgContext)_localctx).d.astlist, ((ProgContext)_localctx).e.ast);
+									} else if (isCl) {
+										((ProgContext)_localctx).ast =  new ProgLetInNode(((ProgContext)_localctx).c.astlist, new ArrayList<DecNode>(), ((ProgContext)_localctx).e.ast);
+									} else { 
+										((ProgContext)_localctx).ast =  new ProgLetInNode(new ArrayList<DecNode>(), ((ProgContext)_localctx).d.astlist, ((ProgContext)_localctx).e.ast);
+									}
+								
 				}
 				break;
 			default:
@@ -329,6 +321,7 @@ public class FOOLParser extends Parser {
 			{
 
 					((CllistContext)_localctx).astlist =  new ArrayList<DecNode>();
+					/* variabile locale per la ridefinizione erronea di campi e metodi */
 					HashSet<String> localVariable;
 					STentry classEntry;
 					STentry fieldEntry;
@@ -344,19 +337,22 @@ public class FOOLParser extends Parser {
 				setState(48); ((CllistContext)_localctx).cid = match(ID);
 
 							localVariable = new HashSet<>();
+							/* L'offset della classe non � definito qui perch� � il globalOffset gi� definito sopra */
 							int fieldoffset = -1;
 							int methodoffset = 0;
-							int varoffset = -2;		
+							int varoffset = -2;	
+								
 							ClassNode classNode = new ClassNode((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null));
 							ClassTypeNode classType = new ClassTypeNode(new ArrayList<Node>(), new ArrayList<Node>());
 							_localctx.astlist.add(classNode);
-							HashMap<String,STentry> hm = symTable.get(0);  /* hm sara' sempre a nesting level 0 per le definizioni di classi */
+							HashMap<String,STentry> hm = symTable.get(0);  
 							classEntry = new STentry(nestingLevel, classType, globalOffset--);
 							if ( hm.put((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), classEntry) != null ) {
 								System.out.println("Class id "+(((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null)+" at line "+(((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getLine():0)+" already declared");
 								System.exit(0);
 							}
-							HashMap<String,STentry> vhm = new HashMap<String,STentry>(); /*virtual table nuova*/
+							/* creazione virtual table (vuota) */
+							HashMap<String,STentry> vhm = new HashMap<String,STentry>();
 						
 				setState(53);
 				_la = _input.LA(1);
@@ -370,23 +366,32 @@ public class FOOLParser extends Parser {
 										System.out.println("Class "+ (((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null) +" extends from nonexisting "+(((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null)+ " class");
 										System.exit(0);
 									}
+									
 									classNode.setSuperEntry(superEntry);
+									/* aggiunta nella HasMap che mappa gli ID delle classi con ID delle sue superclassi */
 									FOOLlib.addSuperType((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), (((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null));
 									
+									/* Inseriamo nel classTypeNode i metodi e i campi ereditati dalla superclasse */
 									ClassTypeNode superType = (ClassTypeNode) superEntry.getType();
 									classType = new ClassTypeNode(superType.getFields(), superType.getMethods());
-									vhm = (HashMap<String,STentry>) classTable.get((((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null));  /* prendo la virtual table della classe che abbiamo esteso e la clono */
-									fieldoffset = - classType.getFields().size() - 1;                    /* aggiorno offset per i campi nel caso stia ereditando */
+									/* Prendo la virtual Table della classe creata */
+									vhm = (HashMap<String,STentry>) classTable.get((((CllistContext)_localctx).eid!=null?((CllistContext)_localctx).eid.getText():null));  
+									/* Aggiornamento offset classTypeNode nel caso in cui ci sia una classe ereditata */
+									fieldoffset = - classType.getFields().size() - 1;                  
 									methodoffset = classType.getMethods().size(); 
 								
 					}
 				}
 
 
-								symTable.add(vhm);             /* aggiungiamo virtual table alla Symbol Table */
-								classTable.put((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), vhm);  /* aggiungiamo virtual table alla Class Table */
-								classEntry.addType(classType);       /* aggiungiamo il ClassTypeNode alla STentry della classe (dentro al nesting level 0 della Symbol Table) */
+								/* Aggiunta della virtual Table nella symTable */
+								symTable.add(vhm);             
+								/* Aggiunta della virtual Table nella classTable */
+								classTable.put((((CllistContext)_localctx).cid!=null?((CllistContext)_localctx).cid.getText():null), vhm);  
+							
+								classEntry.addType(classType);      
 								classNode.setSymType(classType);
+								
 								nestingLevel++;    
 							
 				setState(56); match(LPAR);
@@ -398,9 +403,9 @@ public class FOOLParser extends Parser {
 					setState(58); match(COLON);
 					setState(59); ((CllistContext)_localctx).ft = type();
 
-								 	
+								 		/* Controllo se il campo � gi� stato creato (attraverso la local variable) */
 								 		if(localVariable.contains((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null))) {
-							 	  			System.out.println("Field" + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null) + " at line " + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getLine():0) + " already created in localVariable(HashSet<String>).");
+							 	  			System.out.println("Field" + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null) + " at line " + (((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getLine():0) + " already created.");
 											System.exit(0);
 						 	  			}
 						 	  			localVariable.add((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null)); 
@@ -408,26 +413,30 @@ public class FOOLParser extends Parser {
 						 	  			FieldNode field = new FieldNode((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), ((CllistContext)_localctx).ft.ast);
 						 	  			
 						 	  			if(vhm.get((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null)) != null) {
-						 	  			
+						 	  				
+											/* Controllo che non sia un metodo */
 											if(vhm.get((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null)).isMethod()) {
 												System.out.println("Field id "+(((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null)+" cannot override a method");
 												System.exit(0); 
 									 		}
 									 		
-									 		/* override */
+									 		/* Faccio override (campo gi� presente in virtual table) */
+									 		
 									 		fieldEntry = new STentry(nestingLevel, ((CllistContext)_localctx).ft.ast, vhm.get((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null)).getOffset());
-									 		/* Aggiornamento classTypeNode*/
+									 		/* Aggiornamento classTypeNode */
 									 		int index = - fieldEntry.getOffset() - 1;
 											classType.setField(index, fieldEntry.getType());  
 								 		}else{
-								 			/* non override*/
+								 			/* Non faccio override*/
 								 			fieldEntry = new STentry(nestingLevel, ((CllistContext)_localctx).ft.ast, fieldoffset--);
 								 			classType.addField(fieldEntry.getType());
 								 		}
-								 		vhm.put((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), fieldEntry);                         /* aggiornamento Virtual Table */
+								 		
+								 		/* Aggiunta del campo in virtual table */
+								 		vhm.put((((CllistContext)_localctx).fid!=null?((CllistContext)_localctx).fid.getText():null), fieldEntry);                        
 										classNode.addField(field);
-										field.setOffset(fieldEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
-								 
+										/* Ottimizzazione typeChecking parametri: settiamo l'offset del campo */   
+										field.setOffset(fieldEntry.getOffset());         
 								 	
 					setState(69);
 					_errHandler.sync(this);
@@ -440,8 +449,9 @@ public class FOOLParser extends Parser {
 						setState(63); match(COLON);
 						setState(64); ((CllistContext)_localctx).ft1 = type();
 
+									 		/* Controllo se il campo � gi� stato creato (attraverso la local variable) */
 									 		if(localVariable.contains((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null))) {
-								 	  			System.out.println("Field" + (((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null) + " at line " + (((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getLine():0) + " already created in localVariable(HashSet<String>).");
+								 	  			System.out.println("Field" + (((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null) + " at line " + (((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getLine():0) + " already created.");
 												System.exit(0);
 							 	  			}
 							 	  			localVariable.add((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null)); 
@@ -449,25 +459,29 @@ public class FOOLParser extends Parser {
 							 	  			FieldNode field1 = new FieldNode((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null), ((CllistContext)_localctx).ft1.ast);
 							 	  			
 							 	  			if(vhm.get((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null)) != null) {
+												
+												/* Controllo che non sia un metodo */
 												if(vhm.get((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null)).isMethod()) {
 													System.out.println("Field id "+(((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null)+" cannot override a method");
 													System.exit(0); 
 										 		}
 										 		
-										 		/* override */
+										 		/* Faccio override (campo gi� presente in virtual table) */
 										 		
 										 		fieldEntry = new STentry(nestingLevel, ((CllistContext)_localctx).ft1.ast, vhm.get((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null)).getOffset());
-										 		/* Aggiornamento classTypeNode*/
+										 		/* Aggiornamento classTypeNode */
 										 		int index1 = - fieldEntry.getOffset() - 1;
 												classType.setField(index1, fieldEntry.getType());  
 									 		}else{
-									 			/* non override*/
+									 			/* Non faccio override*/
 									 			fieldEntry = new STentry(nestingLevel, ((CllistContext)_localctx).ft1.ast, fieldoffset--);
 									 			classType.addField(fieldEntry.getType());
 									 		}
-									 		vhm.put((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null), fieldEntry);                         /* aggiornamento Virtual Table */
+									 		/* Aggiunta del campo in virtual table */
+									 		vhm.put((((CllistContext)_localctx).fid1!=null?((CllistContext)_localctx).fid1.getText():null), fieldEntry);                       
 											classNode.addField(field1);
-											field1.setOffset(fieldEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
+											/* Ottimizzazione typeChecking parametri: settiamo l'offset del campo */  
+											field1.setOffset(fieldEntry.getOffset());           
 									 	
 						}
 						}
@@ -491,8 +505,9 @@ public class FOOLParser extends Parser {
 					setState(78); match(COLON);
 					setState(79); ((CllistContext)_localctx).mt = type();
 
+								 		/* Controllo se il metodo � gi� stato creato (attraverso la local variable) */
 								 		if(localVariable.contains((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null))) {
-							 	  			System.out.println("Method" + (((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null) + " at line " + (((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getLine():0) + " already created in localVariable(HashSet<String>).");
+							 	  			System.out.println("Method" + (((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null) + " at line " + (((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getLine():0) + " already created.");
 											System.exit(0);
 						 	  			}
 						 	  			localVariable.add((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null)); 
@@ -500,36 +515,41 @@ public class FOOLParser extends Parser {
 						 	  			MethodNode method = new MethodNode((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null), ((CllistContext)_localctx).mt.ast);
 						 	  			
 						 	  			if(vhm.get((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null)) != null) {
+											
+											/* Controllo che sia un metodo */
 											if(!vhm.get((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null)).isMethod()) {
 												System.out.println("Method id "+(((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null)+" cannot override a method");
 												System.exit(0); 
 									 		}
 									 		
-									 		/* override */
+									 		/* Faccio override (metodo gi� presente in virtual table) */
 									 		
 									 		methodEntry = new STentry(nestingLevel, new ArrowTypeNode(new ArrayList<Node>(), ((CllistContext)_localctx).mt.ast ), vhm.get((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null)).getOffset());
 									 		methodEntry.setIsMethod();
-									 		/* Aggiornamento classTypeNode*/
+									 		/* Aggiornamento classTypeNode */
 									 		int index = methodEntry.getOffset();
 											classType.setMethod(index, methodEntry.getType());  
 								 		}else{
-								 			/* non override*/
+								 			/* Non faccio override*/
 								 			methodEntry = new STentry(nestingLevel, new ArrowTypeNode(new ArrayList<Node>(), ((CllistContext)_localctx).mt.ast ),  methodoffset++);
 								 			methodEntry.setIsMethod();
 								 			classType.addMethod(methodEntry.getType());
 								 		}
-								 		classNode.addMethod(method);
-								 		vhm.put((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null), methodEntry);                         /* aggiornamento Virtual Table */
-										method.setOffset(methodEntry.getOffset());          /* Ottimizzazione typehecking parametri: ci salviamo l'offset */   
-					                 	HashMap<String,STentry> mhm = new HashMap<String,STentry> (); /* vhmn = 'Virtual Hash Map Nested' */
+								 		/* Aggiunta del metodo in virtual table */
+								 		vhm.put((((CllistContext)_localctx).mid!=null?((CllistContext)_localctx).mid.getText():null), methodEntry);                         
+										classNode.addMethod(method);
+										/* Ottimizzazione typeChecking : settiamo l'offset del metodo */ 
+										method.setOffset(methodEntry.getOffset());             
+					                 	
+					                 	nestingLevel++;
+					                 	HashMap<String,STentry> mhm = new HashMap<String,STentry> (); 
 										symTable.add(mhm);
 								 	
 					setState(81); match(LPAR);
 
-					                 		ArrayList<ParNode> parlist = new ArrayList<ParNode>();
-					                 		ArrayList<Node> parlistnode = new ArrayList<Node>();
+					                 		ArrayList<Node> parlist = new ArrayList<Node>();
+											
 											int parOffset = 1;
-											nestingLevel++;
 					                 	
 					setState(100);
 					_la = _input.LA(1);
@@ -541,16 +561,13 @@ public class FOOLParser extends Parser {
 
 						                 			ParNode par = new ParNode((((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getText():null), ((CllistContext)_localctx).fh.ast);
 						                 			parlist.add(par);
-						                 			parlistnode.add(par);
 						                 			
-						                 		if(par.getSymType() instanceof ArrowTypeNode) {
-													parOffset++;
-												}
-						                 			
-						                 			if(mhm.put((((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getText():null), new STentry(nestingLevel, ((CllistContext)_localctx).fh.ast, parOffset++)) != null){
-														System.out.println("Par ID: " + (((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getText():null) + " at line " + (((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getLine():0) + " already declared");
-														System.exit(0);
-							                 		}
+						                 		if(par.getSymType() instanceof ArrowTypeNode) parOffset++;
+						                 		/* Aggiunta paramentri in virtual table se non presenti (altrimenti errore)*/
+						                 		if(mhm.put((((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getText():null), new STentry(nestingLevel, ((CllistContext)_localctx).fh.ast, parOffset++)) != null){
+													System.out.println("Par ID: " + (((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getText():null) + " at line " + (((CllistContext)_localctx).parid!=null?((CllistContext)_localctx).parid.getLine():0) + " already declared");
+													System.exit(0);
+							                 	}
 											
 						setState(95);
 						_errHandler.sync(this);
@@ -565,10 +582,9 @@ public class FOOLParser extends Parser {
 
 							                 	   		ParNode par1 = new ParNode((((CllistContext)_localctx).parid1!=null?((CllistContext)_localctx).parid1.getText():null), ((CllistContext)_localctx).fh1.ast);
 							                 			parlist.add(par1);
-							                 			parlistnode.add(par1);              		
-							                 		if(par1.getSymType() instanceof ArrowTypeNode) {
-														parOffset++;
-													}
+							                 			            		
+							                 			if(par1.getSymType() instanceof ArrowTypeNode) parOffset++;
+							                 			/* Aggiunta paramentri in virtual table se non presenti (altrimenti errore)*/
 							                 			if(mhm.put((((CllistContext)_localctx).parid1!=null?((CllistContext)_localctx).parid1.getText():null), new STentry(nestingLevel, ((CllistContext)_localctx).fh1.ast, parOffset++)) != null){
 															System.out.println("Par ID: " + (((CllistContext)_localctx).parid1!=null?((CllistContext)_localctx).parid1.getText():null) + " at line " + (((CllistContext)_localctx).parid1!=null?((CllistContext)_localctx).parid1.getLine():0) + " already declared");
 															System.exit(0);
@@ -581,10 +597,10 @@ public class FOOLParser extends Parser {
 							_la = _input.LA(1);
 						}
 
-						                 	 	for(Node p : parlistnode) System.out.println(((ParNode)p).getSymType());
-						                 	 	
+						                 	 	                 	 	
 						                 	   	method.addParList(parlist);
-						                 	   	methodEntry.addType(new ArrowTypeNode(parlistnode, ((CllistContext)_localctx).mt.ast));
+												/* Aggiornamento tipo del metodo */                 	   
+						                 	   	methodEntry.addType(new ArrowTypeNode(parlist, ((CllistContext)_localctx).mt.ast));
 						                 	   
 						}
 					}
@@ -614,6 +630,7 @@ public class FOOLParser extends Parser {
 								                     	
 								                     		VarNode var = new VarNode((((CllistContext)_localctx).vid!=null?((CllistContext)_localctx).vid.getText():null), ((CllistContext)_localctx).vt.ast, ((CllistContext)_localctx).ex.ast);
 								                     		varlist.add(var);
+															/* Aggiunta variabili in virtual table se non presenti (altrimenti errore)*/
 															if(mhm.put((((CllistContext)_localctx).vid!=null?((CllistContext)_localctx).vid.getText():null),new STentry(nestingLevel, ((CllistContext)_localctx).vt.ast, varoffset--)) != null) {
 																System.out.println("Var id" + (((CllistContext)_localctx).vid!=null?((CllistContext)_localctx).vid.getText():null) + " at line " + (((CllistContext)_localctx).vid!=null?((CllistContext)_localctx).vid.getLine():0) + " already declared.");
 																System.exit(0);
@@ -636,6 +653,7 @@ public class FOOLParser extends Parser {
 					setState(123); ((CllistContext)_localctx).exp1 = exp();
 
 						                     	method.addExp(((CllistContext)_localctx).exp1.ast);
+					                    		
 					                    		symTable.remove(nestingLevel--);
 						                     
 					setState(125); match(SEMIC);
@@ -646,10 +664,9 @@ public class FOOLParser extends Parser {
 					_la = _input.LA(1);
 				}
 				setState(132); match(CRPAR);
-					
-					         	/* Inserisco i campi e metodi dentro l'istanza di ClassNode, prendendoli dal ClassTypeNode corrente */	
+						
 					         	symTable.remove(nestingLevel--);
-				         
+				       		  
 				}
 				}
 				setState(136); 
@@ -901,6 +918,7 @@ public class FOOLParser extends Parser {
 					setState(180); ((DeclistContext)_localctx).e = exp();
 						
 										f.addBody(((DeclistContext)_localctx).e.ast);
+										
 										symTable.remove(nestingLevel--); 
 									
 					}
@@ -910,8 +928,8 @@ public class FOOLParser extends Parser {
 				}
 				setState(185); match(SEMIC);
 
-							if (nestingLevel == 0) {
-								globalOffset = offset;
+								if (nestingLevel == 0) {
+									globalOffset = offset;
 							}
 						
 				}
@@ -1552,9 +1570,7 @@ public class FOOLParser extends Parser {
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 					{
 					setState(297); ((ValueContext)_localctx).e1 = exp();
-
-									newNode.addArg(((ValueContext)_localctx).e1.ast);
-								
+					 newNode.addArg(((ValueContext)_localctx).e1.ast);	
 					setState(305);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
@@ -1563,9 +1579,7 @@ public class FOOLParser extends Parser {
 						{
 						setState(299); match(COMMA);
 						setState(300); ((ValueContext)_localctx).e2 = exp();
-
-											newNode.addArg(((ValueContext)_localctx).e2.ast);
-										
+						 newNode.addArg(((ValueContext)_localctx).e2.ast);
 						}
 						}
 						setState(307);
@@ -1575,10 +1589,7 @@ public class FOOLParser extends Parser {
 					}
 				}
 
-
-							((ValueContext)_localctx).ast =  newNode;
-							
-						
+				 ((ValueContext)_localctx).ast =  newNode; 
 				setState(311); match(RPAR);
 				}
 				break;
@@ -1648,17 +1659,13 @@ public class FOOLParser extends Parser {
 				case LPAR:
 					{
 					setState(343); match(LPAR);
-
-								ArrayList<Node> arglist = new ArrayList<Node>();
-							
+					 ArrayList<Node> arglist = new ArrayList<Node>();	
 					setState(356);
 					_la = _input.LA(1);
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
 						setState(345); ((ValueContext)_localctx).a = exp();
-
-										arglist.add(((ValueContext)_localctx).a.ast);
-									
+						 arglist.add(((ValueContext)_localctx).a.ast); 
 						setState(353);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
@@ -1667,9 +1674,7 @@ public class FOOLParser extends Parser {
 							{
 							setState(347); match(COMMA);
 							setState(348); ((ValueContext)_localctx).a = exp();
-
-												arglist.add(((ValueContext)_localctx).a.ast);
-											
+							 arglist.add(((ValueContext)_localctx).a.ast); 
 							}
 							}
 							setState(355);
@@ -1680,9 +1685,7 @@ public class FOOLParser extends Parser {
 					}
 
 					setState(358); match(RPAR);
-
-								((ValueContext)_localctx).ast =  new CallNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null),entry,arglist,nestingLevel);
-							
+					 ((ValueContext)_localctx).ast =  new CallNode((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null),entry,arglist,nestingLevel); 
 					}
 					break;
 				case DOT:
@@ -1691,26 +1694,25 @@ public class FOOLParser extends Parser {
 					setState(361); ((ValueContext)_localctx).im = match(ID);
 					setState(362); match(LPAR);
 
-								if (!(entry.getType() instanceof RefTypeNode)) {
-									System.out.println((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null)+" at line "+(((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getLine():0)+" is not an object.");
-									System.exit(0);
-								}
-								ArrayList<Node> arglist = new ArrayList<Node>();
-								String classId = ((RefTypeNode) entry.getType()).getID();
-								STentry methodEntry = classTable.get(classId).get((((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getText():null));
-								if (methodEntry == null) {
-									System.out.println("Method Id "+(((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getText():null)+" at line "+(((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getLine():0)+" not declared");
-									System.exit(0);
-								}
-							
+									if (!(entry.getType() instanceof RefTypeNode)) {
+										System.out.println((((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getText():null)+" at line "+(((ValueContext)_localctx).i!=null?((ValueContext)_localctx).i.getLine():0)+" is not an object.");
+										System.exit(0);
+									}
+									
+									ArrayList<Node> arglist = new ArrayList<Node>();
+									String classId = ((RefTypeNode) entry.getType()).getID();
+									STentry methodEntry = classTable.get(classId).get((((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getText():null));
+									if (methodEntry == null) {
+										System.out.println("Method Id "+(((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getText():null)+" at line "+(((ValueContext)_localctx).im!=null?((ValueContext)_localctx).im.getLine():0)+" not declared");
+										System.exit(0);
+									}
+								
 					setState(375);
 					_la = _input.LA(1);
 					if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LPAR) | (1L << NOT) | (1L << TRUE) | (1L << FALSE) | (1L << IF) | (1L << PRINT) | (1L << NEW) | (1L << NULL) | (1L << INTEGER) | (1L << ID))) != 0)) {
 						{
 						setState(364); ((ValueContext)_localctx).fe = exp();
-
-										arglist.add(((ValueContext)_localctx).fe.ast);
-									
+						 arglist.add(((ValueContext)_localctx).fe.ast); 
 						setState(372);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
@@ -1719,9 +1721,7 @@ public class FOOLParser extends Parser {
 							{
 							setState(366); match(COMMA);
 							setState(367); ((ValueContext)_localctx).e = exp();
-
-												arglist.add(((ValueContext)_localctx).e.ast);
-											
+							 arglist.add(((ValueContext)_localctx).e.ast); 
 							}
 							}
 							setState(374);
